@@ -1,0 +1,70 @@
+title: Mood checkins
+description: Description of your Jig
+type: jig.default
+
+datasources:
+  mood-checkins:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/mood-checkins
+  
+      query: 
+        SELECT 
+          id, 
+          '$.feelings', 
+          '$.reasons', 
+          '$.mood', 
+          '$.date', 
+          '$.note',
+          '$.image' 
+        FROM [default/mood-checkins] 
+
+children:
+  - type: component.list
+    options:
+      data: =@ctx.datasources.mood-checkins
+      maximumItemsToRender: 8
+      item: 
+        type: component.expander
+        options:
+          header:
+            centerElement: 
+              type: component.titles
+              options:
+                title: ='I felt ' & $eval(@ctx.current.item.mood).mood & ' on ' & $fromMillis($toMillis(@ctx.current.item.date), '[D01]. [M01]')
+          children:
+            - type: component.list
+              options:
+                data: =@ctx.datasources.mood-checkins.reasons
+                maximumItemsToRender: 8
+                item: 
+                  type: component.list-item
+                  options:
+                    title: =$eval(@ctx.current.item).name
+            - type: component.list
+              options:
+                data: =@ctx.datasources.mood-checkins.feelings
+                maximumItemsToRender: 8
+                item: 
+                  type: component.list-item
+                  options:
+                    title: =$eval(@ctx.current.item).name
+            - type: component.image
+              options:
+                source:
+                  uri: =@ctx.current.item.image
+            - type: component.entity
+              options:
+                children:
+                  - type: component.entity-field
+                    options:
+                      label: ''
+                      value: =@ctx.current.item.note
+                      contentType: default
+                      isMultiline: true
+                      
+                  
+            

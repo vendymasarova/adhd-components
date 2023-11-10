@@ -1,0 +1,32 @@
+type: component.default
+children:
+  - type: component.view
+    options:
+      style:
+        flex: 
+          shrink: 1
+          direction: row
+      children:
+        - type: component.view
+          options:
+            style:
+              flex: 
+                direction: row
+                shrink: 1
+              radius: large
+              background:
+                color: color9
+              alignItems: center
+              gap: medium
+              margin: 
+                right: small
+              padding: 
+                vertical: small
+                horizontal: medium
+            children:
+              - type: component.text
+                options:
+                  value: =@ctx.inputs.chips.emoji
+              - type: component.text
+                options:
+                  value: =@ctx.inputs.chips.name

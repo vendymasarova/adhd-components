@@ -1,0 +1,69 @@
+title: Name
+description: =@ctx.datasources.mood-checkins.year
+type: jig.default
+
+datasources:
+  mood-checkins:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_LOCAL
+
+      entities:
+        - entity: default/mood-checkins
+        - entity: default/dates
+
+      query: |
+        SELECT
+          a.id AS id,
+          STRFTIME('%d.%m.%Y', json_extract(a.data, '$.date')) AS date,
+          STRFTIME('%Y', json_extract(b.data, '$.date')) AS year,
+          json_extract(a.data, '$.day') AS numberOfDay,
+          STRFTIME('%d', json_extract(a.data, '$.date')) AS day,
+          json_extract(a.data, '$.date') AS dayDate,
+          json_extract(b.data, '$.mood') AS mood
+        FROM [default/dates] a
+        LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date'))
+        WHERE numberOfDay > @actualDay -5
+        AND numberOfDay <= @actualDay
+        ORDER BY numberOfDay 
+      queryParameters:
+        actualDay: =@ctx.datasources.actualDay.day
+        actualYear: =$fromMillis($toMillis($now()), '[Y]')
+        
+  actualDay:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+
+      entities:
+        - default/dates
+
+      query:
+        SELECT
+        id,
+        STRFTIME('%d', json_extract(data, '$.date')) AS date,
+        '$.day'
+        FROM [default/dates]
+        WHERE date = @today
+      queryParameters:
+        today: =$fromMillis($toMillis($now()), '[D01]')
+
+children:
+  - type: component.list
+    options:
+      data: =@ctx.datasources.mood-checkins
+      maximumItemsToRender: 5
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      item:
+        type: component.custom-component
+        componentId: checkins-calendar-item
+        inputs:
+          checkins: =@ctx.current.item
+          # day: =@ctx.current.item.day
+          # date: =@ctx.current.item.date
+          # dates: =@ctx.current.item
+          # dayDate: =@ctx.current.item.dayDate
+          goTo: true
+          # numberOfDay: =@ctx.current.item.numberOfDay
+          numberOfActualDay: =@ctx.datasources.actualDay.day

@@ -1,0 +1,96 @@
+title: =$fromMillis($toMillis(@ctx.datasources.mood-checkins.date), '[D01]. [M01].')
+# title: =$substring(str, start[, length])(@ctx.solution.state.emotion-day), 0,2
+type: jig.default
+placeholders:
+  - title: No data to display
+    when: =$type(@ctx.datasources.mood-checkins.mood) != null ? false:true
+    icon: missing-data
+
+datasources:
+  mood-checkins: 
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/mood-checkins
+  
+      query: 
+        SELECT 
+          id, 
+          '$.date', 
+          '$.feelings',
+          '$.reasons',
+          '$.image',
+          '$.step',
+          '$.note',
+          '$.mood'
+        FROM [default/mood-checkins]
+        WHERE STRFTIME('%d.%m.%Y', json_extract(data, '$.date')) = @date
+      queryParameters:
+        date: =@ctx.solution.state.checkin-day
+        
+children:
+  - type: component.custom-component
+    when: =$type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
+    componentId: title
+    inputs:
+      size: small
+      title: ='Why did you feel:' & ' ' & $eval(@ctx.datasources.mood-checkins.mood).mood
+  - type: component.list
+    when: =$type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
+    options:
+      data: =$eval(@ctx.datasources.mood-checkins.reasons)
+      maximumItemsToRender: 8
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      item: 
+        type: component.custom-component
+        componentId: chips
+        inputs:
+          chips: =@ctx.current.item
+  - type: component.custom-component
+    when: =$type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
+    componentId: title
+    inputs:
+      size: small
+      title: How exactly did you feel?
+  - type: component.list
+    when: =$type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
+    options:
+      data: =$eval(@ctx.datasources.mood-checkins.feelings)
+      maximumItemsToRender: 8
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      item: 
+        type: component.custom-component
+        componentId: chips
+        inputs:
+          chips: =@ctx.current.item
+  - type: component.custom-component
+    when: =@ctx.datasources.mood-checkins.image and $type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
+    componentId: title
+    inputs:
+      size: small
+      title: Pic of the day
+  - type: component.image
+    when: =@ctx.datasources.mood-checkins.image and $type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
+    options:
+      source:
+        uri: =@ctx.datasources.mood-checkins.image
+  - type: component.custom-component
+    when: =@ctx.datasources.mood-checkins.note and $type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
+    componentId: title
+    inputs:
+      size: small
+      title: Note of the day
+  - type: component.entity
+    when: =@ctx.datasources.mood-checkins.note and $type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
+    options:
+      children:
+        - type: component.entity-field
+          options:
+            isMultiline: true
+            label: ''
+            value: =@ctx.datasources.mood-checkins.note
+        

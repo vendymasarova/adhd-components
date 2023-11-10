@@ -1,0 +1,185 @@
+title: Name
+type: jig.default
+
+actions:
+  - children:
+      - type: action.action-list
+        options:
+          title: Save mood
+          isSequential: true
+          actions:
+            - type: action.execute-entity
+              options:
+                provider: DATA_PROVIDER_DYNAMIC
+                entity: default/mood-checkins
+                method: save
+                goBack: home
+                data:
+                  mood: =@ctx.datasources.mood-category
+                  date: =$now()
+                  reasons: =@ctx.datasources.reasons
+                  feelings: =@ctx.datasources.feelings
+                  image: =@ctx.components.image.state.value
+                  note: =@ctx.components.note.state.value
+                onSuccess: 
+                  title: Successfully saved
+                  description: Your record was saved
+            - type: action.execute-entities
+              options: 
+                provider: DATA_PROVIDER_DYNAMIC
+                entity: default/reasons
+                goBack: stay
+                method: save
+                data: | 
+                    =$map(@ctx.datasources.reasons.id , function($v , $i , $a) {
+                    $.{
+                      "id" : $string($v),
+                      "isChecked" : 0 
+                    }
+                    })
+            - type: action.execute-entities
+              options: 
+                provider: DATA_PROVIDER_DYNAMIC
+                entity: default/mood-category
+                goBack: stay
+                method: save
+                data: | 
+                    =$map(@ctx.datasources.mood-category.id , function($v , $i , $a) {
+                    $.{
+                      "id" : $string($v),
+                      "isChecked" : 0 
+                    }
+                    })
+            - type: action.execute-entities
+              options: 
+                provider: DATA_PROVIDER_DYNAMIC
+                entity: default/feelings
+                goBack: stay
+                method: save
+                data: | 
+                    =$map(@ctx.datasources.feelings.id , function($v , $i , $a) {
+                    $.{
+                      "id" : $string($v),
+                      "isChecked" : 0 
+                    }
+                    })
+            
+    # - type: action.execute-entities
+    #   options:
+    #     provider: DATA_PROVIDER_DYNAMIC
+    #     entity: default/mood-notes
+    #     method: save
+    #     data:
+    #       image: =@ctx.components.image.state.value
+    #       date: =@ctx.components.date.state.value
+    #       reasons: =@ctx.datasources.reasons
+    #       feelings: =@ctx.datasources.feelings
+    #       mood: =@ctx.solution.state.mood
+    #       note: =@ctx.components.note.state.value
+    #     onSuccess: 
+    #       title: Successfully saved
+    #       description: Your record was saved
+
+datasources:
+  mood-category: 
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+    
+      entities:
+        - default/mood-category
+    
+      query: 
+        SELECT 
+        id, 
+        '$.mood', 
+        '$.image',
+        '$.isChecked',
+        '$.order'
+        FROM [default/mood-category] 
+        WHERE '$.isChecked' = true
+        ORDER BY '$.order' asc
+        
+  reasons: 
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+    
+      entities:
+        - default/reasons
+    
+      query: 
+        SELECT id, 
+        '$.name', 
+        '$.isChecked',
+        '$.emoji'
+        FROM [default/reasons] 
+        WHERE '$.isChecked' = true
+        ORDER BY '$.name' asc
+        
+  feelings: 
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+    
+      entities:
+        - default/feelings
+    
+      query: 
+        SELECT id, 
+        '$.name', 
+        '$.isChecked',
+        '$.emoji'
+        FROM [default/feelings] 
+        WHERE '$.isChecked' = true
+        ORDER BY '$.name' asc
+        
+children:
+  - type: component.section
+    options:
+      title: Why do you feel happy
+      children:
+        - type: component.list
+          options:
+            data: =@ctx.datasources.reasons
+            maximumItemsToRender: 8
+            item: 
+              type: component.list-item
+              options:
+                title: =@ctx.current.item.emoji & ' ' & @ctx.current.item.name
+  - type: component.section
+    options:
+      title: Other feelings
+      children:
+        - type: component.list
+          options:
+            data: =@ctx.datasources.feelings
+            maximumItemsToRender: 8
+            item: 
+              type: component.list-item
+              options:
+                title: =@ctx.current.item.emoji & ' ' & @ctx.current.item.name
+  - type: component.section
+    options:
+      title: More details
+      children:
+        - type: component.form
+          instanceId: mood-details
+          options:
+            children:
+              - type: component.media-field
+                instanceId: image
+                options:
+                  isRequired: false
+                  isOptionalLabelHidden: true
+                  label: Choose a picture
+                  mediaType: image
+              - type: component.text-field
+                instanceId: note
+                options:
+                  isRequired: false  
+                  isOptionalLabelHidden: true
+                  label: Something to write down?
+                  textArea: medium
+                  icon: pencil
+              

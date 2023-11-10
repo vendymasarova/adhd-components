@@ -1,0 +1,20 @@
+name: adhd-components
+title: adhd-components
+category: health
+widgets:
+  - size: 1x1 # choose size of the widget on the home hub
+    jigId: first-step
+  - size: 1x1 # choose size of the widget on the home hub
+    jigId: mood-recap-composite
+    
+home:
+- instanceId: home
+  jigId: custom-home
+    
+
+assets:
+  icons:
+    - circle # auto-generated
+    - contact # auto-generated
+    - mood-happy # auto-generated
+    - pencil # auto-generated

@@ -1,0 +1,7 @@
+title: Mood recap
+type: jig.composite
+
+children:
+  - jigId: mood-recap-list
+    isTitleHidden: true
+  - jigId: mood-recap-detail

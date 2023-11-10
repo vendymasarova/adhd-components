@@ -1,0 +1,105 @@
+type: component.default
+children:
+  - type: component.view
+    options:
+      style:
+        margin:
+          right: small
+      children:
+        - type: component.card
+          options:
+            color: =$number(@ctx.inputs.checkins.numberOfDay) = $number(@ctx.inputs.numberOfActualDay) ? 'color9':''
+            onPress: 
+              type: action.action-list
+              options:
+                isSequential: true
+                actions:
+                  - type: action.set-state
+                    options:
+                      state: =@ctx.solution.state.checkin-day
+                      value: =@ctx.inputs.checkins.date
+                  - type: action.go-to
+                    when: =@ctx.inputs.goTo = true ? true:false
+                    options:
+                      linkTo: mood-recap-composite
+            children:
+              - type: component.view
+                options:
+                  style:
+                    flex: 
+                      basis: 1
+                    padding: small
+                    gap: medium
+                    alignItems: center
+                    justifyContent: space-between
+                  children:
+                    - type: component.view
+                      options:
+                        style:
+                          
+                        children:
+                          - type: component.text
+                            options:
+                              value: =$fromMillis($toMillis(@ctx.inputs.checkins.dayDate), '[D]')
+                              align: center
+                              weight: =$fromMillis($toMillis(@ctx.inputs.checkins.dayDate), '[D01]') = $substring(@ctx.solution.state.checkin-day, 0,2) and @ctx.inputs.goTo = false ? 'bold':'semi-bold'
+                              color: =$fromMillis($toMillis(@ctx.inputs.checkins.dayDate), '[D01]') = $substring(@ctx.solution.state.checkin-day, 0,2) and @ctx.inputs.goTo = false ? 'color8':''
+                          - type: component.text
+                            options:
+                              value: =$substring($fromMillis($toMillis(@ctx.inputs.checkins.dayDate), '[FNn]'), 0, 3)
+                              align: center
+                              size: small
+                              emphasis: medium
+                    - type: component.icon
+                      when: =$number(@ctx.inputs.checkins.numberOfDay) = $number(@ctx.inputs.numberOfActualDay) and $type(@ctx.inputs.checkins.mood) = 'null' ? true:false 
+                      # when: =$number(@ctx.inputs.day) = $number($fromMillis($toMillis($now()), '[D]')) and $type(@ctx.inputs.checkins.mood) = 'null' ? true:false 
+                      options:
+                        icon: circle
+                        size: 25
+                    - type: component.icon
+                      when: =$number(@ctx.inputs.checkins.numberOfDay) > $number(@ctx.inputs.numberOfActualDay) and $type(@ctx.inputs.checkins.mood) = 'null' ? true:false 
+                      options:
+                        icon: circle
+                        size: 25
+                    - type: component.image
+                      when: =$number(@ctx.inputs.checkins.numberOfDay) < $number(@ctx.inputs.numberOfActualDay) and $type(@ctx.inputs.checkins.mood) = 'null' ? true:false 
+                      options:
+                        size:
+                          width: 25
+                          height: 25
+                        source:
+                          uri: https://t14345253.p.clickup-attachments.com/t14345253/e92873e3-0548-4a72-82e7-11e449d0a3fa/water%20drop.png?view=open
+                    - type: component.image
+                      when: =$eval(@ctx.inputs.checkins.mood).mood = 'Bad' ? true:false
+                      options:
+                        size:
+                          width: 25
+                          height: 25
+                        source:
+                          uri: https://t14345253.p.clickup-attachments.com/t14345253/0aa270ac-8c8c-4b15-a106-ac6bf4302288/Emoticon.png?view=open
+                    - type: component.image
+                      when: =$eval(@ctx.inputs.checkins.mood).mood = 'Neutral' ? true:false
+                      options:
+                        size:
+                          width: 25
+                          height: 25
+                        source:
+                          uri: https://t14345253.p.clickup-attachments.com/t14345253/fc9f900c-bfd0-4512-8f38-4cad794c7ca3/Nodding.png?view=open
+                    - type: component.image
+                      when: =$eval(@ctx.inputs.checkins.mood).mood = 'Quite good' ? true:false
+                      options:
+                        size:
+                          width: 25
+                          height: 25
+                        source:
+                          uri: https://t14345253.p.clickup-attachments.com/t14345253/6779f0a2-510a-48cb-ba28-561546c80ea1/Emoticons.png?view=open
+                    - type: component.image
+                      when: =$eval(@ctx.inputs.checkins.mood).mood = 'Happy' ? true:false
+                      options:
+                        size:
+                          width: 25
+                          height: 25
+                        source:
+                          uri: https://t14345253.p.clickup-attachments.com/t14345253/5e7da50e-945b-47c3-89dc-a5f3d9f351b0/Nodding-1.png?view=open 
+                                    
+                                

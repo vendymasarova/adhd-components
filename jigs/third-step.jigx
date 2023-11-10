@@ -1,0 +1,61 @@
+title: Feeling anything else?
+type: jig.list
+icon: contact
+
+actions:
+  - children:
+      - type: action.action-list
+        options:
+          title: Next step
+          isSequential: true
+          actions:
+            - type: action.execute-entities
+              options: 
+                provider: DATA_PROVIDER_DYNAMIC
+                entity: default/feelings
+                goBack: stay
+                method: save
+                data: | 
+                    =$map(@ctx.datasources.feelings.id , function($v , $i , $a) {
+                    $.{
+                      "id" : $string($v),
+                      "isChecked" : $v in @ctx.jig.state.selected.id ? 1 : 0 
+                    }
+                    })
+            - type: action.reset-state
+              options:
+                state: =@ctx.jig.state.selected
+            - type: action.go-to
+              options:
+                linkTo: fourth-step
+
+datasources:
+  feelings: 
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+    
+      entities:
+        - default/feelings
+    
+      query: 
+        SELECT id, 
+        '$.name', 
+        '$.isChecked',
+        '$.emoji'
+        FROM [default/feelings] 
+        ORDER BY '$.name'
+        
+data: =@ctx.datasources.feelings
+item:
+  type: component.list-item
+  options:
+    title: =@ctx.current.item.emoji & ' ' & @ctx.current.item.name
+    # progress: =@ctx.current.item.isChecked = 1 ? 1 :0
+    # color:
+    #   - when: =@ctx.current.item.isChecked = 1 ? true:false
+    #     color: color9
+    rightElement: 
+      element: checkbox
+      value: |
+        =@ctx.current.item.isChecked = 1 ? true : false
