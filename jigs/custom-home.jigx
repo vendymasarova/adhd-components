@@ -81,9 +81,31 @@ datasources:
         WHERE date = @today
       queryParameters:
         today: =$fromMillis($toMillis($now()), '[D01]')
+        
+  actual-day-and-mood:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_LOCAL
+
+      entities:
+        - entity: default/mood-checkins
+        - entity: default/dates
+
+      query: |
+        SELECT
+          a.id AS id,
+          STRFTIME('%d', json_extract(a.data, '$.date')) AS date,
+          json_extract(a.data, '$.day') AS day,
+          json_extract(b.data, '$.mood') AS mood
+        FROM [default/dates] a
+        LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date'))
+        WHERE date = @today
+      queryParameters:
+        today: =$fromMillis($toMillis($now()), '[D01]')
 
 children:
   - type: component.custom-component
+    # when: =@ctx.datasources.reminders != null
     when: =($fromMillis($toMillis($now()), '[H01]') >= @ctx.datasources.reminders.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.datasources.reminders.reminderEnd) ? true:false
     componentId: title
     inputs:
@@ -92,7 +114,7 @@ children:
       icon: arrow-right
       # subtitle: =($fromMillis($toMillis($now()), '[H01]') <= @ctx.datasources.reminders.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= '00') ? 'isHidden':'isShown'
   - type: component.list
-    when: =($fromMillis($toMillis($now()), '[H01]') >= @ctx.datasources.reminders.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.datasources.reminders.reminderEnd) ? true:false
+    # when: =($fromMillis($toMillis($now()), '[H01]') >= @ctx.datasources.reminders.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.datasources.reminders.reminderEnd) ? true:false
     options:
       data: =@ctx.datasources.reminders
       maximumItemsToRender: 8
@@ -103,6 +125,8 @@ children:
         componentId: reminder
         inputs:
           reminder: =@ctx.current.item
+          today: =@ctx.datasources.actual-day-and-mood.date
+          mood: =@ctx.datasources.actual-day-and-mood.mood
   - type: component.custom-component
     componentId: title
     inputs:

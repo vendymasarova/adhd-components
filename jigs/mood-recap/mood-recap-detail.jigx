@@ -2,11 +2,11 @@ title: =$fromMillis($toMillis(@ctx.datasources.mood-checkins.date), '[D01]. [M01
 type: jig.default
 placeholders:
   - title: No data to display
-    when: =$type(@ctx.datasources.mood-checkins.mood) != null ? false:true
+    when: =($type(@ctx.datasources.mood-checkins.mood) != null) ? false:true
     icon: missing-data
-  - title: Check your mood at 6pm
-    when: =($type(@ctx.datasources.mood-checkins.mood)) = null and (@ctx.solution.state.checkin-day = $fromMillis($toMillis($now()), '[D01].[M01].[Y]')) ? true:false
-    icon: missing-data
+  # - title: Check your mood at 6pm
+  #   when: =($type($eval(@ctx.datasources.mood-checkins.mood).mood) != null)  or (@ctx.solution.state.checkin-day = $fromMillis($toMillis($now()), '[D01].[M01].[Y]')) ? 'joo':'nee'
+  #   icon: missing-data
 
 datasources:
   mood-checkins: 
