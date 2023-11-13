@@ -1,0 +1,113 @@
+type: component.default
+children:
+  - type: component.view
+    when: =($fromMillis($toMillis($now()), '[H01]') >= @ctx.inputs.reminder.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.inputs.reminder.reminderEnd) ? true:false
+    options:
+      style:
+        flex: 
+          shrink: 1
+          grow: 1
+        radius: large
+        padding: none
+        margin:
+          right: small 
+      children:
+        - type: component.card
+          options:
+            direction: column
+            color: =@ctx.inputs.reminder.type = 'school' ? 'color3':@ctx.inputs.reminder.type = 'personal' ? 'color8':'color2'
+            children:
+              - type: component.view
+                options:
+                  style:
+                    flex:
+                      shrink: 1
+                    gap: small
+                    width: 320
+                  children:
+                    - type: component.view
+                      options:
+                        style:
+                          flex:
+                            # shrink: 1
+                            direction: row
+                          gap: small
+                          justifyContent: space-between
+                          alignItems: center
+                        children:         
+                          - type: component.text
+                            options:
+                              value: =@ctx.inputs.reminder.reminder-title
+                              align: left
+                              size: small
+                          - type: component.text
+                            options:
+                              value: =@ctx.inputs.reminder.reminder-time
+                              weight: bold
+                              align: left        
+                              size: small                
+                    - type: component.view
+                      options: 
+                        onPress: 
+                          type: action.action-list
+                          options:
+                            isSequential: false
+                            actions:
+                              - type: action.go-to
+                                when: =@ctx.inputs.reminder.has-detail = 1 ? true:false
+                                options:
+                                  linkTo: =@ctx.inputs.reminder.linkTo
+                                  parameters:
+                                    routineId: =@ctx.inputs.reminder.routine_id
+                                    strategyId: =@ctx.inputs.reminder.routine_id
+                        style:
+                          flex: 
+                            direction: row
+                          radius: large
+                          justifyContent: flex-start
+                          alignItems: center
+                          gap: small
+                        children: 
+                          - type: component.view
+                            options:
+                              style:
+                                padding: none
+                              children:
+                                - type: component.image
+                                  options:
+                                    size: 
+                                      height: 50
+                                      width: 50
+                                    source:
+                                      uri: =@ctx.inputs.reminder.image
+                              
+                          - type: component.view
+                            options:
+                              style:
+                                flex:
+                                  direction: column
+                                  grow: 1
+                                gap: none
+                                padding: none
+                              children:
+                                - type: component.text
+                                  options:
+                                    value: =@ctx.inputs.reminder.routine-subject != null ? @ctx.inputs.reminder.routine-subject:'See your checklist'
+                                    # Daily meds
+                                    weight: bold
+                                    align: left  
+                                - type: component.text
+                                  when: =@ctx.inputs.reminder.routine-description != null ? true:false
+                                  options:
+                                    value: =@ctx.inputs.reminder.routine-description
+                                    size: small
+                          - type: component.icon
+                            when: =@ctx.inputs.reminder.linkTo != null ? true:false
+                            options:
+                              icon: arrow-right
+                          - type: component.icon
+                            when: =@ctx.inputs.reminder.isCheckable = 1 ? true:false
+                            options:
+                              icon: =@ctx.solution.state.meds = 0 ? 'checkbox-unchecked':'checkbox-checked'
+                    
+                                    

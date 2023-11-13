@@ -1,5 +1,4 @@
 title: How do you feel
-description: =$string(@ctx.jig.state.selected)
 type: jig.list
 icon: mood-happy
 

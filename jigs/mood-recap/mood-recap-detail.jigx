@@ -1,9 +1,11 @@
 title: =$fromMillis($toMillis(@ctx.datasources.mood-checkins.date), '[D01]. [M01].')
-# title: =$substring(str, start[, length])(@ctx.solution.state.emotion-day), 0,2
 type: jig.default
 placeholders:
   - title: No data to display
     when: =$type(@ctx.datasources.mood-checkins.mood) != null ? false:true
+    icon: missing-data
+  - title: Check your mood at 6pm
+    when: =($type(@ctx.datasources.mood-checkins.mood)) = null and (@ctx.solution.state.checkin-day = $fromMillis($toMillis($now()), '[D01].[M01].[Y]')) ? true:false
     icon: missing-data
 
 datasources:

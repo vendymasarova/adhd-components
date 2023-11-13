@@ -30,9 +30,9 @@ children:
                   size: small
                   emphasis: high
         - type: component.icon
-          when: =$type(@ctx.inputs.link) != null
+          when: =@ctx.inputs.link != null
           options:
-            icon: =@ctx.inputs.icon != null
+            icon: =@ctx.inputs.icon 
             color: color9
             shape: circle
             type: duotone

@@ -40,7 +40,7 @@ children:
                         children:
                           - type: component.text
                             options:
-                              value: =$fromMillis($toMillis(@ctx.inputs.checkins.dayDate), '[D]')
+                              value: =$fromMillis($toMillis(@ctx.inputs.checkins.dayDate), '[D01]')
                               align: center
                               weight: =$fromMillis($toMillis(@ctx.inputs.checkins.dayDate), '[D01]') = $substring(@ctx.solution.state.checkin-day, 0,2) and @ctx.inputs.goTo = false ? 'bold':'semi-bold'
                               color: =$fromMillis($toMillis(@ctx.inputs.checkins.dayDate), '[D01]') = $substring(@ctx.solution.state.checkin-day, 0,2) and @ctx.inputs.goTo = false ? 'color8':''

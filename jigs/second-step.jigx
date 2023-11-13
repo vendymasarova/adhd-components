@@ -1,6 +1,5 @@
 title: Why do you feel this way?
 type: jig.list
-description: =$string(@ctx.jig.state.selected)
 icon: mood-happy
 
 actions:
