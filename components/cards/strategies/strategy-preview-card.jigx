@@ -1,0 +1,114 @@
+type: component.default
+children:
+  - type: component.view
+    when: =(@ctx.inputs.strategies.strategy_id = @ctx.solution.state.idStrategy) or $not(@ctx.solution.state.idStrategy != null)
+    options:
+      style:
+        margin: 
+          right: small
+      children:
+        - type: component.card
+          options:
+            color: color3
+            onPress: 
+              when: =(@ctx.inputs.strategies.strategy_id = @ctx.solution.state.idStrategy) or $not(@ctx.solution.state.idStrategy != null)
+              type: action.go-to
+              options:
+                linkTo: strategy-detail
+                parameters:
+                  strategyId: =@ctx.inputs.strategies.strategy_id
+            children:
+              - type: component.view
+                options:
+                  style:
+                    flex:
+                      grow: 1
+                      shrink: 1
+                      basis: 1
+                    gap: medium
+                    width: 320
+                      # min: 320
+                  children:
+                    - type: component.view
+                      when: =@ctx.inputs.strategies.isDone = 1 ? true:false
+                      options:
+                        style:
+                          position: absolute
+                          top: small
+                          right: small
+                        children:
+                          - type: component.icon
+                            options:
+                              icon: check
+                              size: regular
+                              shape: circle
+                              type: contained
+                              emphasis: high
+                              
+                    # CONTENT
+                    - type: component.view
+                      options:
+                        style:
+                          flex:
+                            #  grow: 1
+                             basis: 2
+                          padding:
+                            vertical : medium
+                        children:
+                          - type: component.image
+                            options:
+                              size: 
+                                height: 230
+                              resizeMode: contain
+                              source:
+                                uri: =@ctx.inputs.strategies.image
+
+              
+                    - type: component.view
+                      options:
+                        style:
+                          flex: 
+                            # grow: 1
+                            basis: 1
+                            direction: column
+                        children:
+                          - type: component.text
+                            options:
+                              size: small
+                              value: =@ctx.inputs.strategies.category_name
+                          - type: component.text
+                            options:
+                              value: =@ctx.inputs.strategies.name
+                              align: left
+                              size: large
+                              weight: extra-bold
+                          - type: component.view
+                            options:
+                              style:
+                                padding:
+                                  top: small
+                                  # bottom: medium
+                              children:
+                                - type: component.text
+                                  options:
+                                    value:  =@ctx.inputs.strategies.description
+                                    align: left
+                                    size: medium
+                                    weight: regular
+                                    emphasis: high
+                                    numberOfLines: 1
+                                    # weight: regular
+                
+                    - type: component.progress-bar
+                      when: =@ctx.inputs.strategies.isDone = 0 ? true:false
+                      options:
+                        steps: =@ctx.inputs.numberOfSteps
+                        size: small
+                        value:
+                          current: =@ctx.inputs.isDoneNumber
+                          max: =@ctx.inputs.numberOfSteps
+                        subtitle:
+                          value: =@ctx.inputs.isDoneNumber & '/' & @ctx.inputs.numberOfSteps
+                        color:  =@ctx.inputs.isDoneNumber = @ctx.inputs.numberOfSteps ? 'positive':'warning'
+        
+              

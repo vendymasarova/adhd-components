@@ -1,0 +1,23 @@
+type: datasource.sqlite
+options:
+  provider: DATA_PROVIDER_DYNAMIC
+
+  entities:
+    - default/strategies
+
+  query: 
+    SELECT 
+      id, 
+      '$.name',
+      '$.time',
+      '$.category_id',
+      '$.category_name',
+      '$.finishTime',
+      '$.description',
+      '$.image',
+      '$.isDone',
+      '$.isInProgress',
+      '$.strategy_id',
+      '$.steps',
+      json_array_length(json_extract(data, '$.steps')) AS numberOfSteps 
+    FROM [default/strategies] 

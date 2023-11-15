@@ -1,0 +1,155 @@
+title: ' '
+type: jig.default
+
+datasources:
+  strategies: 
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/strategies
+  
+      query: 
+        SELECT 
+          id, 
+          '$.name',
+          '$.time',
+          '$.category_id',
+          '$.category_name',
+          '$.finishTime',
+          '$.description',
+          '$.image',
+          '$.isDone',
+          '$.isInProgress',
+          '$.strategy_id',
+          '$.steps',
+          json_array_length(json_extract(data, '$.steps')) AS numberOfSteps 
+        FROM [default/strategies] 
+        WHERE '$.strategy_id' = @strategyId
+      queryParameters:
+        strategyId: =@ctx.jig.inputs.strategyId
+  
+  steps:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/steps
+  
+      query: 
+        SELECT 
+          id,
+          '$.title',
+          '$.step',
+          '$.step_id',
+          '$.isChecked',
+          '$.strategy_id',
+          '$.isRevealed'
+        FROM [default/steps] 
+        WHERE '$.strategy_id' = @strategyId
+        ORDER BY '$.step'
+      queryParameters:
+       strategyId: =@ctx.jig.inputs.strategyId
+  
+  row_count:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/steps
+  
+      query: |
+        SELECT COUNT(*) AS row_count
+        FROM [default/steps] 
+        WHERE '$.strategy_id' = @strategyId
+        ORDER BY '$.step'
+      queryParameters:
+        strategyId: =@ctx.jig.inputs.strategyId
+        
+  isDone_count:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/steps
+  
+      query: |
+        SELECT COUNT(*) AS isDone
+        FROM [default/steps] 
+        WHERE '$.strategy_id' = @strategyId
+        AND '$.isChecked' = 1
+      queryParameters:
+        strategyId: =@ctx.jig.inputs.strategyId
+        
+  results:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/strategies-results
+  
+      query: 
+        SELECT 
+        id, 
+        '$.end',
+        '$.start',
+        '$.time',
+        '$.strategyId'
+        FROM [default/strategies-results]
+        WHERE '$.strategyId' = @strategyId
+        ORDER BY '$.time' asc
+      queryParameters:
+        strategyId: =@ctx.jig.inputs.strategyId
+
+children:
+  - type: component.custom-component
+    componentId: strategy-card
+    inputs:
+      strategies: =@ctx.datasources.strategies
+      numberOfSteps: =@ctx.datasources.row_count.row_count
+      isDoneNumber: =@ctx.datasources.isDone_count.isDone
+  
+  - type: component.list
+    when: =@ctx.datasources.strategies.isDone = 1 and @ctx.datasources.strategies.isInProgress = 0
+    options:
+      data: =@ctx.datasources.results
+      item: 
+        type: component.list-item
+        options:
+          title: =@ctx.current.item.time & ' min' 
+          leftElement: 
+            element: icon
+            icon: reward-stars-5
+            isDuotone: false
+          divider: solid
+          progress: =@ctx.datasources.results.time != '00:00' ? true:false
+          color: 
+            - when: true
+              color: color3
+  - type: component.custom-component
+    componentId: start-btn
+    inputs: 
+      strategyId: =@ctx.jig.inputs.strategyId
+  - type: component.list
+    when: =@ctx.datasources.strategies.isInProgress = 1
+    options:
+      data: =@ctx.datasources.steps
+      item: 
+        type: component.custom-component
+        componentId: strategy-steps-card
+        inputs:
+          steps: =@ctx.current.item
+          isChecked: =@ctx.current.item.isChecked
+          numberOfSteps: =@ctx.datasources.row_count.row_count
+          isDoneCount: =@ctx.datasources.isDone_count.isDone
+  - type: component.custom-component
+    componentId: steps-actions-btns
+    inputs: 
+      strategyId: =@ctx.jig.inputs.strategyId
+      stepsCount: =@ctx.datasources.row_count.row_count
+      isDoneCount: =@ctx.datasources.isDone_count.isDone

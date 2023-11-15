@@ -1,0 +1,12 @@
+type: datasource.sqlite
+options:
+  provider: DATA_PROVIDER_DYNAMIC
+
+  entities:
+    - default/components
+
+  query: 
+    SELECT 
+    id, 
+    '$.component'
+    FROM [default/components] 

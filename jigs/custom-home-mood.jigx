@@ -106,7 +106,7 @@ datasources:
 children:
   - type: component.custom-component
     # when: =@ctx.datasources.reminders != null
-    when: =($fromMillis($toMillis($now()), '[H01]') >= @ctx.datasources.reminders.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.datasources.reminders.reminderEnd) ? true:false
+    when: =@ctx.datasources.actualDay.date = $fromMillis($toMillis($now()), '[D01]')  and ($fromMillis($toMillis($now()), '[H01]') >= @ctx.datasources.reminders.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.datasources.reminders.reminderEnd) ? true:false
     componentId: title
     inputs:
       title: Reminders

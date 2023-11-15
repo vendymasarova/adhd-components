@@ -8,13 +8,20 @@ widgets:
     jigId: mood-recap-composite
 home:
 - instanceId: home
-  jigId: custom-home
+  when: =@ctx.datasources.component-data.component = 0
+  jigId: custom-home-mood
+- instanceId: home2
+  when: =@ctx.datasources.component-data.component = 1
+  jigId: custom-home-strategies
     
 
 assets:
   icons:
     - arrow-right # auto-generated
+    - check # auto-generated
+    - check-circle-1 # auto-generated
     - circle # auto-generated
     - contact # auto-generated
     - mood-happy # auto-generated
     - pencil # auto-generated
+    - reward-stars-5 # auto-generated

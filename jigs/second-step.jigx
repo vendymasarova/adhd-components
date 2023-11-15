@@ -51,10 +51,10 @@ item:
   type: component.list-item
   options:
     title: =@ctx.current.item.emoji & ' ' & @ctx.current.item.name
-    # progress: =@ctx.current.item.isChecked = 1 ? 1 :0
-    # color:
-    #   - when: =@ctx.current.item.isChecked = 1 ? true:false
-    #     color: color9
+    progress: =@ctx.current.item.isChecked = 1 ? 1 :0
+    color:
+      - when: =@ctx.current.item.isChecked = 1 ? true:false
+        color: color9
     rightElement: 
       element: checkbox
       value: |

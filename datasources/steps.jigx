@@ -1,0 +1,18 @@
+type: datasource.sqlite
+options:
+  provider: DATA_PROVIDER_DYNAMIC
+
+  entities:
+    - default/steps
+
+  query: 
+    SELECT 
+      id,
+      '$.title',
+      '$.step',
+      '$.step_id',
+      '$.isChecked',
+      '$.strategy_id'
+      '$.isRevealed'
+    FROM [default/steps] 
+    ORDER BY '$.step'

@@ -1,0 +1,104 @@
+type: component.default
+children:
+  - type: component.view
+    when: =@ctx.datasources.strategies[strategy_id = @ctx.inputs.strategyId].isInProgress = 0 ? false:true
+    options:
+      style:
+        flex:
+          grow: 1
+          shrink: 1
+          basis: 1
+          direction: row
+        gap: small
+      children:
+        - type: component.view
+          options:
+            style:
+              flex: 
+                grow: 1
+                basis: 2
+            children:
+              - type: component.button
+                options:
+                  title: Start over
+                  type: secondary
+                  onPress: 
+                    type: action.action-list
+                    options:
+                      isSequential: true
+                      actions:
+                        - type: action.execute-entity
+                          options:
+                            provider: DATA_PROVIDER_DYNAMIC
+                            entity: default/strategies
+                            method: update
+                            goBack: stay
+                            data: =@ctx.datasources.strategies[strategy_id = @ctx.inputs.strategyId].{"id" :id, "isInProgress" :false, "isDone" :false}
+                        - type: action.execute-entities
+                          options:
+                            provider: DATA_PROVIDER_DYNAMIC
+                            entity: default/steps
+                            method: update
+                            goBack: stay
+                            data: =@ctx.datasources.steps[strategy_id = @ctx.inputs.strategyId].{"id" :id, "isRevealed" :false, "isChecked" :0}
+                        
+        - type: component.view
+          options:
+            style:
+              flex: 
+                grow: 1
+                basis: 1
+            children:
+              - type: component.button
+                options:
+                  title: Finish
+                  type: primary
+                  style:
+                    isDisabled: =@ctx.inputs.stepsCount != @ctx.inputs.isDoneCount
+                  onPress: 
+                    type: action.action-list
+                    options:
+                      isSequential: true
+                      actions:
+                        - type: action.set-state
+                          options:
+                            state: =@ctx.solution.state.activityFinishTime
+                            value: =$now()
+                        - type: action.execute-entity
+                          options:
+                            provider: DATA_PROVIDER_DYNAMIC
+                            entity: default/strategies
+                            method: update
+                            goBack: stay
+                            data: =@ctx.datasources.strategies[strategy_id = @ctx.inputs.strategyId].{"id" :id, "isInProgress" :false, "isDone" :true}
+                        - type: action.execute-entities
+                          options:
+                            provider: DATA_PROVIDER_DYNAMIC
+                            entity: default/steps
+                            method: update
+                            goBack: stay
+                            data: =@ctx.datasources.steps[strategy_id = @ctx.inputs.strategyId].{"id" :id, "isRevealed" :false, "isChecked" :0}
+                        - type: action.execute-entities
+                          options: 
+                            provider: DATA_PROVIDER_DYNAMIC
+                            entity: default/strategies-results
+                            method: update
+                            goBack: stay
+                            data:    
+                              id: =$uuid()
+                              start: =@ctx.solution.state.activityStartTime
+                              end: =@ctx.solution.state.activityFinishTime
+                              time: =$fromMillis($toMillis(@ctx.solution.state.activityFinishTime) - $toMillis(@ctx.solution.state.activityStartTime), '[m01]:[s01]') 
+                              strategyId: =@ctx.inputs.strategyId
+                            onSuccess: 
+                              title: Successfully saved
+                              description: Your result for this strategy was saved
+                        - type: action.reset-state
+                          options:
+                            state: =@ctx.solution.state.activityStartTime
+                        - type: action.reset-state
+                          options:
+                            state: =@ctx.solution.state.activityFinishTime
+                        
+                            
+                                    

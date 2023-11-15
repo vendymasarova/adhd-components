@@ -5,4 +5,8 @@ tables:
   mood-checkins:
   mood-category:
   routines:
+  components:
+  strategies: 
+  steps:
+  strategies-results:
   
