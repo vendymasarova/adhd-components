@@ -56,9 +56,9 @@ children:
                             top: medium
                         children:
                           - type: component.button
-                            when: =@ctx.inputs.steps.isChecked = 0
+                            when: =@ctx.inputs.steps.isChecked = 0 
                             options:
-                              title: Reveal next step
+                              title: =@ctx.inputs.steps.step = @ctx.inputs.numberOfSteps ? 'Check last step':'Reveal next step'
                               type: secondary
                               isCompact: true
                                 
@@ -68,7 +68,8 @@ children:
                                   isSequential: true
                                   actions:
                                     - type: action.execute-entity
-                                      when: =@ctx.inputs.numberOfSteps != @ctx.inputs.isDoneCount
+                                      # when: =@ctx.inputs.numberOfSteps != @ctx.inputs.isDoneCount ? true:false
+                                      when: =@ctx.datasources.steps[strategy_id = @ctx.inputs.steps.strategy_id and step = @ctx.inputs.steps.step].step != @ctx.inputs.numberOfSteps
                                       options:
                                         provider: DATA_PROVIDER_DYNAMIC
                                         entity: default/steps
