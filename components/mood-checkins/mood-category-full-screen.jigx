@@ -1,0 +1,215 @@
+type: component.default
+children:
+  - type: component.view
+    options:
+      style:
+        flex: 
+          grow: 1
+        justifyContent: space-evenly
+      children:
+        - type: component.view
+          options:
+            style:
+              margin: 
+                top: large
+              justifyContent: center
+              alignItems: center
+            children:
+              - type: component.image
+                when: =@ctx.solution.state.mood = 'Bad' ? true:false
+                options:
+                  size:
+                    width: 180
+                    height: 180
+                  source:
+                    uri: =@ctx.datasources.mood-category-data[order = 4].image
+              - type: component.image
+                when: =@ctx.solution.state.mood = 'Neutral' ? true:false
+                options:
+                  size:
+                    width: 180
+                    height: 180
+                  source:
+                    uri: =@ctx.datasources.mood-category-data[order = 3].image
+              - type: component.image
+                when: =@ctx.solution.state.mood = 'Quite Good' ? true:false
+                options:
+                  size:
+                    width: 180
+                    height: 180
+                  source:
+                    uri: =@ctx.datasources.mood-category-data[order = 2].image
+              - type: component.image
+                when: =@ctx.solution.state.mood = 'Happy' ? true:false
+                options:
+                  size:
+                    width: 180
+                    height: 180
+                  source:
+                    uri: =@ctx.datasources.mood-category-data[order = 1].image
+        - type: component.view
+          options:
+            style:
+              flex: 
+                direction: column
+            children:
+              - type: component.text
+                options:
+                  value: =@ctx.solution.state.mood = 0 ? 'I feel...':'I feel' & ' ' & @ctx.solution.state.mood
+                  size: large
+                  align: center
+                  emphasis: high
+        - type: component.view
+          options:
+            style:
+              flex:
+                grow: 1
+                direction: row
+              height:
+                min: 180
+              margin: 
+                vertical: large
+              gap: small
+            children:
+              - type: component.view
+                options:
+                  style:
+                    flex:
+                      grow: 1
+                      basis: 1
+                    gap: small
+                    height:
+                      min: 180
+                  children:
+                    - type: component.card
+                      options:
+                        color: =@ctx.solution.state.mood = 'Bad' ? 'color9':''
+                        onPress: 
+                          type: action.set-state
+                          options:
+                            state: =@ctx.solution.state.mood
+                            value: Bad
+                        children:
+                          - type: component.view
+                            options:
+                              style:
+                                flex: 
+                                  grow: 1
+                                justifyContent: center
+                                alignItems: center
+                                padding: small
+                                gap: small
+                                height: 
+                                  max: 100
+                              children:
+                                - type: component.image
+                                  options:
+                                    size:
+                                      height: 50
+                                      width: 50
+                                    source:
+                                      uri: =@ctx.datasources.mood-category-data[order = 4].image
+                                - type: component.text
+                                  options:
+                                    value: Bad
+                                    weight: semi-bold
+                    - type: component.card
+                      options:
+                        color: =@ctx.solution.state.mood = 'Neutral' ? 'color9':''
+                        onPress: 
+                          type: action.set-state
+                          options:
+                            state: =@ctx.solution.state.mood
+                            value: Neutral
+                        children:
+                          - type: component.view
+                            options:
+                              style:
+                                flex: 
+                                  grow: 1
+                                padding: small
+                                justifyContent: center
+                                alignItems: center
+                                gap: small
+                              children:
+                                - type: component.image
+                                  options:
+                                    size:
+                                      height: 50
+                                      width: 50
+                                    source:
+                                      uri: =@ctx.datasources.mood-category-data[order = 3].image
+                                - type: component.text
+                                  options:
+                                    value: Neutral
+                                    weight: semi-bold
+              - type: component.view
+                options:
+                  style:
+                    flex: 
+                      grow: 1  
+                      basis: 1
+                    gap: small
+                    height: 
+                      min: 180
+                  children:
+                    - type: component.card
+                      options:
+                        color: =@ctx.solution.state.mood = 'Quite Good' ? 'color9':''
+                        onPress: 
+                          type: action.set-state
+                          options:
+                            state: =@ctx.solution.state.mood
+                            value: Quite Good
+                        children:
+                          - type: component.view
+                            options:
+                              style:
+                                flex: 
+                                  grow: 1
+                                padding: small
+                                justifyContent: center
+                                alignItems: center
+                                gap: small
+                              children:
+                                - type: component.image
+                                  options:
+                                    size:
+                                      height: 50
+                                      width: 50
+                                    source:
+                                      uri: =@ctx.datasources.mood-category-data[order = 2].image
+                                - type: component.text
+                                  options:
+                                    value: Quite Good
+                                    weight: semi-bold
+                    - type: component.card
+                      options:
+                        color: =@ctx.solution.state.mood = 'Happy' ? 'color9':''
+                        onPress: 
+                          type: action.set-state
+                          options:
+                            state: =@ctx.solution.state.mood
+                            value: Happy
+                        children:
+                          - type: component.view
+                            options:
+                              style:
+                                flex: 
+                                  grow: 1
+                                padding: small
+                                justifyContent: center
+                                alignItems: center
+                                gap: small
+                              children:
+                                - type: component.image
+                                  options:
+                                    size:
+                                      height: 50
+                                      width: 50
+                                    source:
+                                      uri: =@ctx.datasources.mood-category-data[order = 1].image
+                                - type: component.text
+                                  options:
+                                    value: Happy
+                                    weight: semi-bold

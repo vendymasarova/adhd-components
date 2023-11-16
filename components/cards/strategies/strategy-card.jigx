@@ -14,20 +14,16 @@ children:
       children:
         - type: component.card
           options:
-            onPress: 
-              type: action.action-list
-              options:
-                isSequential: true
-                actions:
-                  - type: action.set-state
-                    options:
-                      state: =@ctx.solution.state.strategyId
-                      value: =@ctx.inputs.strategies.strategy_id
-                  - type: action.go-to
-                    options:
-                      linkTo: strategies-detail
-                      parameters:
-                        strategyId: =@ctx.inputs.strategies.strategy_id
+            # onPress: 
+            #   type: action.action-list
+            #   options:
+            #     isSequential: true
+            #     actions:
+            #       - type: action.go-to
+            #         options:
+            #           linkTo: strategies-detail
+            #           parameters:
+            #             strategyId: =@ctx.inputs.strategies.strategy_id
             direction: column
             children:
               - type: component.view

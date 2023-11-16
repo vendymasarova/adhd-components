@@ -70,7 +70,7 @@ children:
                         source:
                           uri: https://t14345253.p.clickup-attachments.com/t14345253/e92873e3-0548-4a72-82e7-11e449d0a3fa/water%20drop.png?view=open
                     - type: component.image
-                      when: =$eval(@ctx.inputs.checkins.mood).mood = 'Bad' ? true:false
+                      when: =@ctx.inputs.checkins.mood = 'Bad' ? true:false
                       options:
                         size:
                           width: 25
@@ -78,7 +78,7 @@ children:
                         source:
                           uri: https://t14345253.p.clickup-attachments.com/t14345253/0aa270ac-8c8c-4b15-a106-ac6bf4302288/Emoticon.png?view=open
                     - type: component.image
-                      when: =$eval(@ctx.inputs.checkins.mood).mood = 'Neutral' ? true:false
+                      when: =@ctx.inputs.checkins.mood = 'Neutral' ? true:false
                       options:
                         size:
                           width: 25
@@ -86,7 +86,7 @@ children:
                         source:
                           uri: https://t14345253.p.clickup-attachments.com/t14345253/fc9f900c-bfd0-4512-8f38-4cad794c7ca3/Nodding.png?view=open
                     - type: component.image
-                      when: =$eval(@ctx.inputs.checkins.mood).mood = 'Quite good' ? true:false
+                      when: =@ctx.inputs.checkins.mood = 'Quite Good' ? true:false
                       options:
                         size:
                           width: 25
@@ -94,7 +94,7 @@ children:
                         source:
                           uri: https://t14345253.p.clickup-attachments.com/t14345253/6779f0a2-510a-48cb-ba28-561546c80ea1/Emoticons.png?view=open
                     - type: component.image
-                      when: =$eval(@ctx.inputs.checkins.mood).mood = 'Happy' ? true:false
+                      when: =@ctx.inputs.checkins.mood = 'Happy' ? true:false
                       options:
                         size:
                           width: 25

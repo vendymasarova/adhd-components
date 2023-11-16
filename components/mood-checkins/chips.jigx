@@ -17,7 +17,7 @@ children:
               background:
                 color: color9
               alignItems: center
-              gap: medium
+              gap: small
               margin: 
                 right: small
               padding: 

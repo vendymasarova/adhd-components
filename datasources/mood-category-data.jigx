@@ -1,0 +1,15 @@
+type: datasource.sqlite
+options:
+  provider: DATA_PROVIDER_DYNAMIC
+
+  entities:
+    - default/mood-category
+
+  query:
+    SELECT
+      id,
+      '$.order',
+      '$.image',
+      '$.mood',
+      '$.isChecked'
+    FROM [default/mood-category]

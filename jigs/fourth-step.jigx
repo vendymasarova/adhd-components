@@ -1,4 +1,4 @@
-title: Name
+title: Mood recap
 type: jig.default
 
 actions:
@@ -13,9 +13,8 @@ actions:
                 provider: DATA_PROVIDER_DYNAMIC
                 entity: default/mood-checkins
                 method: save
-                goBack: home
                 data:
-                  mood: =@ctx.datasources.mood-category
+                  mood: =@ctx.solution.state.mood
                   date: =$now()
                   reasons: =@ctx.datasources.reasons
                   feelings: =@ctx.datasources.feelings
@@ -24,11 +23,16 @@ actions:
                 onSuccess: 
                   title: Successfully saved
                   description: Your record was saved
+            - type: action.reset-state
+              options:
+                state: =@ctx.solution.state.mood
+            - type: action.reset-state
+              options:
+                state: =@ctx.components.mood-details.state.data
             - type: action.execute-entities
               options: 
                 provider: DATA_PROVIDER_DYNAMIC
                 entity: default/reasons
-                goBack: stay
                 method: save
                 data: | 
                     =$map(@ctx.datasources.reasons.id , function($v , $i , $a) {
@@ -41,7 +45,6 @@ actions:
               options: 
                 provider: DATA_PROVIDER_DYNAMIC
                 entity: default/mood-category
-                goBack: stay
                 method: save
                 data: | 
                     =$map(@ctx.datasources.mood-category.id , function($v , $i , $a) {
@@ -54,8 +57,8 @@ actions:
               options: 
                 provider: DATA_PROVIDER_DYNAMIC
                 entity: default/feelings
-                goBack: stay
                 method: save
+                goBack: home
                 data: | 
                     =$map(@ctx.datasources.feelings.id , function($v , $i , $a) {
                     $.{
@@ -63,22 +66,6 @@ actions:
                       "isChecked" : 0 
                     }
                     })
-            
-    # - type: action.execute-entities
-    #   options:
-    #     provider: DATA_PROVIDER_DYNAMIC
-    #     entity: default/mood-notes
-    #     method: save
-    #     data:
-    #       image: =@ctx.components.image.state.value
-    #       date: =@ctx.components.date.state.value
-    #       reasons: =@ctx.datasources.reasons
-    #       feelings: =@ctx.datasources.feelings
-    #       mood: =@ctx.solution.state.mood
-    #       note: =@ctx.components.note.state.value
-    #     onSuccess: 
-    #       title: Successfully saved
-    #       description: Your record was saved
 
 datasources:
   mood-category: 
@@ -135,51 +122,64 @@ datasources:
         ORDER BY '$.name' asc
         
 children:
-  - type: component.section
+  - type: component.custom-component
+    componentId: title
+    inputs:
+      title: ='Why do you feel' & ' ' & @ctx.solution.state.mood
+      size: regular
+  - type: component.list
     options:
-      title: Why do you feel happy
-      children:
-        - type: component.list
-          options:
-            data: =@ctx.datasources.reasons
-            maximumItemsToRender: 8
-            item: 
-              type: component.list-item
-              options:
-                title: =@ctx.current.item.emoji & ' ' & @ctx.current.item.name
-  - type: component.section
+      data: =@ctx.datasources.reasons
+      maximumItemsToRender: 8
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      item: 
+        type: component.custom-component
+        componentId: chips
+        inputs: 
+          chips: =@ctx.current.item
+        # type: component.list-item
+        # options:
+        #   title: =@ctx.current.item.emoji & ' ' & @ctx.current.item.name
+  - type: component.custom-component
+    componentId: title
+    inputs:
+      title: Your other feelings  
+      size: regular
+  - type: component.list
     options:
-      title: Other feelings
-      children:
-        - type: component.list
-          options:
-            data: =@ctx.datasources.feelings
-            maximumItemsToRender: 8
-            item: 
-              type: component.list-item
-              options:
-                title: =@ctx.current.item.emoji & ' ' & @ctx.current.item.name
-  - type: component.section
+      data: =@ctx.datasources.feelings
+      maximumItemsToRender: 8
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      item: 
+        type: component.custom-component
+        componentId: chips
+        inputs: 
+          chips: =@ctx.current.item
+  - type: component.custom-component
+    componentId: title
+    inputs:
+      title: Do you want to add details? 
+      size: regular
+  - type: component.form
+    instanceId: mood-details
     options:
-      title: More details
       children:
-        - type: component.form
-          instanceId: mood-details
+        - type: component.media-field
+          instanceId: image
           options:
-            children:
-              - type: component.media-field
-                instanceId: image
-                options:
-                  isRequired: false
-                  isOptionalLabelHidden: true
-                  label: Choose a picture
-                  mediaType: image
-              - type: component.text-field
-                instanceId: note
-                options:
-                  isRequired: false  
-                  isOptionalLabelHidden: true
-                  label: Something to write down?
-                  textArea: medium
-                  icon: pencil
-              
+            isRequired: false
+            isOptionalLabelHidden: true
+            label: Upload a picture of the day
+            mediaType: image
+            icon: image-file-add
+        - type: component.text-field
+          instanceId: note
+          options:
+            isRequired: false  
+            isOptionalLabelHidden: true
+            label: Something to write down?
+            textArea: medium
+            icon: pencil
+        

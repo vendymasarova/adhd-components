@@ -37,8 +37,8 @@ children:
     when: =$type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
     componentId: title
     inputs:
-      size: small
-      title: ='Why did you feel:' & ' ' & $eval(@ctx.datasources.mood-checkins.mood).mood
+      size: regular
+      title: ='Why did you feel:' & ' ' & @ctx.datasources.mood-checkins.mood
   - type: component.list
     when: =$type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
     options:
@@ -55,8 +55,8 @@ children:
     when: =$type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
     componentId: title
     inputs:
-      size: small
-      title: How exactly did you feel?
+      size: regular
+      title: What else did you feel?
   - type: component.list
     when: =$type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
     options:
@@ -73,7 +73,7 @@ children:
     when: =@ctx.datasources.mood-checkins.image and $type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
     componentId: title
     inputs:
-      size: small
+      size: regular
       title: Pic of the day
   - type: component.image
     when: =@ctx.datasources.mood-checkins.image and $type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
@@ -84,7 +84,7 @@ children:
     when: =@ctx.datasources.mood-checkins.note and $type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
     componentId: title
     inputs:
-      size: small
+      size: regular
       title: Note of the day
   - type: component.entity
     when: =@ctx.datasources.mood-checkins.note and $type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false

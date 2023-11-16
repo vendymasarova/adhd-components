@@ -1,0 +1,18 @@
+title: How do you feel
+description: ''
+type: jig.default
+
+actions:
+  - children:
+      - type: action.action-list
+        options:
+          title: Next
+          isSequential: true
+          actions:
+            - type: action.go-to
+              options:
+                linkTo: second-step
+
+children:
+  - type: component.custom-component
+    componentId: mood-category-full-screen
