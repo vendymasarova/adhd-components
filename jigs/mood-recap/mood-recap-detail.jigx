@@ -38,7 +38,7 @@ children:
     componentId: title
     inputs:
       size: regular
-      title: ='Why did you feel:' & ' ' & @ctx.datasources.mood-checkins.mood
+      title: ='Why did you feel' & ' ' & @ctx.datasources.mood-checkins.mood
   - type: component.list
     when: =$type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
     options:

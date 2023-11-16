@@ -51,7 +51,7 @@ children:
             children:
               - type: component.button
                 options:
-                  title: Finish
+                  title: Save result
                   type: primary
                   style:
                     isDisabled: =@ctx.inputs.stepsCount != @ctx.inputs.isDoneCount
@@ -60,10 +60,10 @@ children:
                     options:
                       isSequential: true
                       actions:
-                        - type: action.set-state
-                          options:
-                            state: =@ctx.solution.state.activityFinishTime
-                            value: =$now()
+                        # - type: action.set-state
+                        #   options:
+                        #     state: =@ctx.solution.state.activityFinishTime
+                        #     value: =$now()
                         - type: action.execute-entity
                           options:
                             provider: DATA_PROVIDER_DYNAMIC

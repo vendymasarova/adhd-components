@@ -103,6 +103,7 @@ datasources:
         FROM [default/strategies-results]
         WHERE '$.strategyId' = @strategyId
         ORDER BY '$.time' asc
+        LIMIT 3
       queryParameters:
         strategyId: =@ctx.jig.inputs.strategyId
 
@@ -114,10 +115,21 @@ children:
       numberOfSteps: =@ctx.datasources.row_count.row_count
       isDoneNumber: =@ctx.datasources.isDone_count.isDone
   
+  - type: component.custom-component
+    when: =@ctx.datasources.strategies.isDone = 1 and @ctx.datasources.strategies.isInProgress = 0
+    componentId: title
+    inputs:
+      title: 'Your 3 best results:'
+      # size: regular
   - type: component.list
     when: =@ctx.datasources.strategies.isDone = 1 and @ctx.datasources.strategies.isInProgress = 0
     options:
       data: =@ctx.datasources.results
+      # maximumItemsToRender: 3
+      # onShowMorePress:
+      #   type: action.go-to
+      #   options:
+      #     linkTo: 
       item: 
         type: component.list-item
         options:

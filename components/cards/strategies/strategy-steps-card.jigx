@@ -87,6 +87,11 @@ children:
                                         data:
                                           id: =@ctx.inputs.steps.id
                                           isChecked: true
+                                    - type: action.set-state
+                                      when: =@ctx.datasources.steps[strategy_id = @ctx.inputs.steps.strategy_id and step = @ctx.inputs.steps.step].step = @ctx.inputs.numberOfSteps
+                                      options:
+                                        state: =@ctx.solution.state.activityFinishTime
+                                        value: =$now()
                           - type: component.view
                             options:
                               style:
@@ -98,3 +103,63 @@ children:
                                     icon: check-circle-1
                                     size: large
                                     color: positive
+        # - type: component.view
+        #   when: =@ctx.datasources.steps[strategy_id = @ctx.inputs.steps.strategy_id and step = @ctx.inputs.steps.step].step = @ctx.inputs.numberOfSteps and @ctx.datasources.steps[strategy_id = @ctx.inputs.steps.strategy_id and step = @ctx.inputs.steps.step].isChecked = 1 ? true:false
+        #   options:
+        #     style:
+              
+        #     children:
+        #       - type: component.button
+        #         options:
+        #           title: sfaf
+        #           type: primary
+        #           isCompact: true
+  - type: component.view
+    when: =@ctx.datasources.steps[strategy_id = @ctx.inputs.steps.strategy_id and step = @ctx.inputs.steps.step].step = @ctx.inputs.numberOfSteps and @ctx.datasources.steps[strategy_id = @ctx.inputs.steps.strategy_id and step = @ctx.inputs.steps.step].isChecked = 1 ? true:false
+    options:
+      style:
+        margin:
+          vertical: large
+      children:
+        - type: component.text
+          options:
+            value: Hurray!! 🎊
+            align: center
+            size: large
+            weight: bold
+        - type: component.view
+          options:
+            style:
+              margin: 
+                top: medium
+                bottom: medium
+            children:
+              - type: component.text
+                options:
+                  value: 'You finished this strategy in:'
+                  align: center
+                  size: medium
+                  weight: medium
+              - type: component.view
+                options:
+                  style:
+                    margin: 
+                      top: small
+                  children:
+                    - type: component.text
+                      options:
+                        align: center
+                        size: regular
+                        weight: semi-bold
+                        value: =$type(@ctx.solution.state.activityFinishTime) != null ? $fromMillis($toMillis(@ctx.solution.state.activityFinishTime) - $toMillis(@ctx.solution.state.activityStartTime), '[m01]') & ' min. ' & $fromMillis($toMillis(@ctx.solution.state.activityFinishTime) - $toMillis(@ctx.solution.state.activityStartTime), '[s01]') & ' sec.':'jfsfjao'
+        - type: component.view
+          options:
+            style:
+            children:
+              - type: component.image
+                options:
+                  size: 
+                    height: 100
+                  resizeMode: contain
+                  source:
+                    uri: https://t14345253.p.clickup-attachments.com/t14345253/ab7925cc-a8f7-4d17-9e51-961d0c5a00f0/Party.png?view=open
