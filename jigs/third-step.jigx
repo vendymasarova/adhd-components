@@ -51,16 +51,6 @@ item:
   type: component.list-item
   options:
     title: =@ctx.current.item.emoji & ' ' & @ctx.current.item.name
-    progress: |
-      =$map(@ctx.datasources.feelings.id , function($v , $i , $a) {
-      $.{
-        "id" : $string($v),
-        "isChecked" : $v in @ctx.jig.state.selected.id ? 1 : 0 
-      }
-      })
-    color:
-      - when: =@ctx.jig.state.selected.id = @ctx.current.item.id ? true:false
-        color: color9
     rightElement: 
       element: checkbox
       value: |

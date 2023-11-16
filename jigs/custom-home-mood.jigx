@@ -106,12 +106,11 @@ datasources:
 children:
   - type: component.custom-component
     # when: =@ctx.datasources.reminders != null
-    when: =@ctx.datasources.actualDay.date = $fromMillis($toMillis($now()), '[D01]')  and ($fromMillis($toMillis($now()), '[H01]') >= @ctx.datasources.reminders.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.datasources.reminders.reminderEnd) ? true:false
+    # when: =@ctx.datasources.actualDay.date = $fromMillis($toMillis($now()), '[D01]')  and ($fromMillis($toMillis($now()), '[H01]') >= @ctx.datasources.reminders.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.datasources.reminders.reminderEnd) and @ctx.datasources.actual-day-and-mood.mood = null ? true:false
     componentId: title
     inputs:
       title: Reminders
-      link: notifications
-      icon: arrow-right
+      subtitle: =@ctx.datasources.actualDay.date = $fromMillis($toMillis($now()), '[D01]')  and ($fromMillis($toMillis($now()), '[H01]') >= @ctx.datasources.reminders.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.datasources.reminders.reminderEnd) and @ctx.datasources.actual-day-and-mood.mood = null ? null:'You are all done! 🎉'
       # subtitle: =($fromMillis($toMillis($now()), '[H01]') <= @ctx.datasources.reminders.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= '00') ? 'isHidden':'isShown'
   - type: component.list
     # when: =($fromMillis($toMillis($now()), '[H01]') >= @ctx.datasources.reminders.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.datasources.reminders.reminderEnd) ? true:false

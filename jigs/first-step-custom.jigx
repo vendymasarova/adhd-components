@@ -6,7 +6,7 @@ actions:
   - children:
       - type: action.action-list
         options:
-          title: Next
+          title: Next step
           isSequential: true
           actions:
             - type: action.go-to
