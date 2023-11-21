@@ -1,0 +1,53 @@
+type: component.default
+children:
+  - type: component.view
+    options:
+      style:
+        flex: 
+          direction: row
+          grow: 1
+          shrink: 1
+          basis: 1
+        alignItems: center
+        justifyContent: space-between
+        margin: 
+          bottom: small
+      children:
+        - type: component.view
+          options:
+            style:
+              flex:
+                direction: row
+              alignItems: center
+              gap: small
+                # grow: 1
+            children:
+              - type: component.icon
+                options:
+                  icon: reward-stars-4
+                  color: color3
+                  type: duotone
+                  shape: circle
+              - type: component.text
+                options:
+                  value: =@ctx.inputs.results.time
+        - type: component.view
+          options:
+            style:
+              flex:
+                direction: row
+              alignItems: center
+              gap: minimal
+            children:
+              - type: component.text
+                options:
+                  value: ="+ " & @ctx.inputs.results.gems
+                  color: color11
+                  weight: bold
+              - type: component.image
+                options:
+                  size: 
+                    height: 20
+                    width: 20
+                  source:
+                    uri: https://t14345253.p.clickup-attachments.com/t14345253/31e80384-418c-40c6-9d8d-02a42d4bd731/Diamond.png?view=open

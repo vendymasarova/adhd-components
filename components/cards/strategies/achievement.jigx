@@ -1,0 +1,66 @@
+type: component.default
+children:
+  - type: component.view
+    options:
+      style:
+        flex: 
+          grow: 1
+        padding: 
+          # horizontal: medium
+          bottom: medium
+        margin:
+          right: small
+      children:
+        - type: component.card
+          options:
+            color: =@ctx.inputs.numberOfResults = @ctx.inputs.achievements.achievement-goal ? "positive":""
+            children:
+              - type: component.view
+                options:
+                  style:
+                    flex: 
+                      grow: 1
+                      # shrink: 1
+                      # basis: 1
+                    width:
+                      max: 150
+                  children:
+                    - type: component.view
+                      options:
+                        style:
+                          flex:
+                            grow: 1
+                            shrink: 1
+                        children:
+                          - type: component.text
+                            options:
+                              value: =@ctx.inputs.achievements.achievement-name                 
+                              size: medium
+                              align: center
+                    - type: component.view
+                      options:
+                        style:
+                          flex:
+                            grow: 1  
+                            shrink: 1
+                        children:
+                          - type: component.text
+                            options:
+                              value: =@ctx.inputs.achievements.achievement-description            
+                              emphasis: medium
+                              align: center
+                    - type: component.image
+                      options:
+                        size: 
+                          height: 80
+                        source:
+                          uri: =@ctx.inputs.achievements.achievement-image
+                        resizeMode: contain
+                    - type: component.progress-bar
+                      options:
+                        color: color11
+                        size: small
+                        value:
+                          current: =@ctx.inputs.numberOfResults
+                          max: =@ctx.inputs.achievements.achievement-goal
+                        

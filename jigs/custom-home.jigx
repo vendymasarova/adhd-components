@@ -1,4 +1,4 @@
-title: Mood caption
+title: Adhd 
 type: jig.default
 
 datasources:
@@ -84,8 +84,74 @@ datasources:
         WHERE date = @today
       queryParameters:
         today: =$fromMillis($toMillis($now()), '[D01]')
+        
+  strategies-with-steps:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
 
+      entities:
+        - entity: default/steps
+        - entity: default/strategies
+
+      query: |
+        SELECT
+          a.id AS id,
+          json_extract(a.data, '$.name') AS name,
+          json_extract(a.data, '$.time') AS time,
+          json_extract(a.data, '$.category_id') AS category_id,
+          json_extract(a.data, '$.category_name') AS category_name,
+          json_extract(a.data, '$.description') AS description,
+          json_extract(a.data, '$.preview') AS preview,
+          json_extract(a.data, '$.image') AS image,
+          json_extract(a.data, '$.isDone') AS isDone,
+          json_extract(a.data, '$.isInProgress') AS isInProgress,
+          json_extract(a.data, '$.strategy_id') AS strategy_id,
+          json_extract(a.data, '$.isActive') AS isActive,
+          json_extract(b.data, '$.step') AS step_title,
+          json_extract(b.data, '$.step') AS step,
+          json_extract(b.data, '$.step_id') AS step_id,
+          json_extract(b.data, '$.isChecked') AS step_isChecked,
+          (
+          SELECT COUNT(*)
+          FROM [default/steps] s
+          WHERE json_extract(s.data, '$.strategy_id') = json_extract(a.data, '$.strategy_id')
+          ) AS total_steps,
+          (
+            SELECT COUNT(*)
+            FROM [default/steps] s
+            WHERE json_extract(s.data, '$.isChecked') = 1
+            AND json_extract(s.data, '$.strategy_id') = json_extract(a.data, '$.strategy_id')
+          ) AS isDoneNumber
+        FROM [default/strategies] a
+        LEFT JOIN [default/steps] b ON json_extract(a.data, '$.strategy_id') = json_extract(b.data, '$.strategy_id')
+        WHERE isActive = 1
+        GROUP BY strategy_id
+        ORDER BY isDone
+        
+  results:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/strategies-results
+  
+      query: 
+        SELECT 
+        id, 
+        '$.gems'
+        FROM [default/strategies-results]
+        
 children:
+  - type: component.custom-component
+    componentId: header-component
+    inputs:
+      avatar: https://t14345253.p.clickup-attachments.com/t14345253/78f1ae20-94cd-438b-90dd-92812838e663/avatar1.png?view=open
+      welcomeMessage: Hello, Jane! 👋
+      name: Jane
+      date: =$fromMillis($toMillis($now()), '[FNn], [D]. [M]. [Y]')
+      gems: =$sum(@ctx.datasources.results.gems)
   - type: component.custom-component
     componentId: title
     inputs:
@@ -122,3 +188,23 @@ children:
           checkins: =@ctx.current.item
           goTo: true
           numberOfActualDay: =@ctx.datasources.actual-day-and-mood.day
+  - type: component.custom-component
+    componentId: title
+    inputs: 
+      title: Learnings
+      icon: arrow-righ
+  - type: component.list
+    options:
+      data: =@ctx.datasources.strategies-with-steps
+      maximumItemsToRender: 8
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      item:
+        type: component.custom-component
+        componentId: strategy-preview-card
+        inputs:
+          strategies: =@ctx.current.item
+          numberOfSteps: =@ctx.current.item.total_steps
+          isDoneNumber: =@ctx.current.item.isDoneNumber
+          goTo: true
+          strategyId: =@ctx.jig.inputs.strategyId

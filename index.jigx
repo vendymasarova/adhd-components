@@ -8,11 +8,12 @@ widgets:
     jigId: mood-recap-composite
 home:
 - instanceId: home
-  when: =@ctx.datasources.component-data.component = 0
-  jigId: custom-home-mood
-- instanceId: home2
-  when: =@ctx.datasources.component-data.component = 1
-  jigId: custom-home-strategies
+  jigId: custom-home
+#   when: =@ctx.datasources.component-data.component = 0
+#   jigId: custom-home-mood
+# - instanceId: home2
+#   when: =@ctx.datasources.component-data.component = 1
+#   jigId: custom-home-strategies
     
 
 assets:
@@ -25,4 +26,4 @@ assets:
     - image-file-add # auto-generated
     - mood-happy # auto-generated
     - pencil # auto-generated
-    - reward-stars-5 # auto-generated
+    - reward-stars-4 # auto-generated

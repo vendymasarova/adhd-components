@@ -3,7 +3,7 @@ children:
   - type: component.button
     when: =@ctx.datasources.strategies[strategy_id = @ctx.inputs.strategyId].isInProgress = 1 ? false:true
     options:
-      title: =@ctx.datasources.strategies[strategy_id = @ctx.inputs.strategyId].isDone = 1 ? 'Start over':'Lets start'
+      title: =@ctx.datasources.strategies[strategy_id = @ctx.inputs.strategyId].isDone = 1 ? 'Do it again':'Lets start'
       type: primary
       onPress: 
         type: action.action-list
@@ -29,3 +29,7 @@ children:
                 method: update
                 goBack: stay
                 data: =@ctx.datasources.strategies[strategy_id = @ctx.inputs.strategyId].{"id" :id, "isInProgress" :true}
+            - type: action.set-state
+              options:
+                state: =@ctx.solution.state.idStrategy
+                value: =@ctx.inputs.strategyId

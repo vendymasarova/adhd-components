@@ -1,5 +1,4 @@
-title: Name
-description: Description of your Jig
+title: Strategies
 type: jig.default
 
 datasources:
@@ -20,6 +19,7 @@ datasources:
           json_extract(a.data, '$.category_id') AS category_id,
           json_extract(a.data, '$.category_name') AS category_name,
           json_extract(a.data, '$.description') AS description,
+          json_extract(a.data, '$.preview') AS preview,
           json_extract(a.data, '$.image') AS image,
           json_extract(a.data, '$.isDone') AS isDone,
           json_extract(a.data, '$.isInProgress') AS isInProgress,
@@ -44,12 +44,13 @@ datasources:
         LEFT JOIN [default/steps] b ON json_extract(a.data, '$.strategy_id') = json_extract(b.data, '$.strategy_id')
         WHERE isActive = 1
         GROUP BY strategy_id
+        ORDER BY isDone
 
 children:
   - type: component.custom-component
     componentId: title
     inputs: 
-      title: Strategies
+      title: Learnings
       icon: arrow-righ
   - type: component.list
     options:

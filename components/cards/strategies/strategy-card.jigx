@@ -60,7 +60,7 @@ children:
                                       justifyContent: center
                                       alignItems: center
                                       background:
-                                        color: =@ctx.inputs.strategies.category_id = 1 ? 'color2':@ctx.inputs.strategies.category_id = 2 ? 'color8':'color3'
+                                        color: color3
                                       radius: medium
                                     children:
                                       - type: component.image

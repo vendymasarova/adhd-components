@@ -33,7 +33,7 @@ children:
                             entity: default/strategies
                             method: update
                             goBack: stay
-                            data: =@ctx.datasources.strategies[strategy_id = @ctx.inputs.strategyId].{"id" :id, "isInProgress" :false, "isDone" :false}
+                            data: =@ctx.datasources.strategies[strategy_id = @ctx.inputs.strategyId].{"id" :id, "isInProgress" :false}
                         - type: action.execute-entities
                           options:
                             provider: DATA_PROVIDER_DYNAMIC
@@ -41,6 +41,9 @@ children:
                             method: update
                             goBack: stay
                             data: =@ctx.datasources.steps[strategy_id = @ctx.inputs.strategyId].{"id" :id, "isRevealed" :false, "isChecked" :0}
+                        - type: action.reset-state
+                          options:
+                            state: =@ctx.solution.state.idStrategy
                         
         - type: component.view
           options:
@@ -89,6 +92,7 @@ children:
                               start: =@ctx.solution.state.activityStartTime
                               end: =@ctx.solution.state.activityFinishTime
                               time: =$fromMillis($toMillis(@ctx.solution.state.activityFinishTime) - $toMillis(@ctx.solution.state.activityStartTime), '[m01]:[s01]') 
+                              gems: 20
                               strategyId: =@ctx.inputs.strategyId
                             onSuccess: 
                               title: Successfully saved
@@ -99,6 +103,9 @@ children:
                         - type: action.reset-state
                           options:
                             state: =@ctx.solution.state.activityFinishTime
+                        - type: action.reset-state
+                          options:
+                            state: =@ctx.solution.state.idStrategy
                         
                             
                                     
