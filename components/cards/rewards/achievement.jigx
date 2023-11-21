@@ -5,9 +5,6 @@ children:
       style:
         flex: 
           grow: 1
-        padding: 
-          # horizontal: medium
-          bottom: medium
         margin:
           right: small
       children:
@@ -20,8 +17,6 @@ children:
                   style:
                     flex: 
                       grow: 1
-                      # shrink: 1
-                      # basis: 1
                     width:
                       max: 150
                   children:
@@ -57,6 +52,7 @@ children:
                           uri: =@ctx.inputs.achievements.achievement-image
                         resizeMode: contain
                     - type: component.progress-bar
+                      when: =@ctx.inputs.progressbar
                       options:
                         color: color11
                         size: small

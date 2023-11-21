@@ -50,18 +50,18 @@ datasources:
         SELECT
           a.id AS id,
           STRFTIME('%d.%m.%Y', json_extract(a.data, '$.date')) AS date,
-          STRFTIME('%Y', json_extract(b.data, '$.date')) AS year,
           json_extract(a.data, '$.day') AS numberOfDay,
           STRFTIME('%d', json_extract(a.data, '$.date')) AS day,
-          json_extract(a.data, '$.date') AS dayDate,
-          json_extract(b.data, '$.mood') AS mood
+          json_extract(b.data, '$.mood') AS mood,
+          json_extract(a.data, '$.date') AS dayDate
         FROM [default/dates] a
         LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date'))
         WHERE numberOfDay > @actualDay -5
         AND numberOfDay <= @actualDay
+        GROUP BY date
         ORDER BY numberOfDay 
       queryParameters:
-        actualDay: =@ctx.datasources.actual-day-and-mood.day
+        actualDay: =@ctx.datasources.actualDay.day
         actualYear: =$fromMillis($toMillis($now()), '[Y]')
         
   actual-day-and-mood:
@@ -128,6 +128,24 @@ datasources:
         WHERE isActive = 1
         GROUP BY strategy_id
         ORDER BY isDone
+  
+  actualDay:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+
+      entities:
+        - default/dates
+
+      query:
+        SELECT
+        id,
+        STRFTIME('%d', json_extract(data, '$.date')) AS date,
+        '$.day'
+        FROM [default/dates]
+        WHERE date = @today
+      queryParameters:
+        today: =$fromMillis($toMillis($now()), '[D01]')
         
   results:
     type: datasource.sqlite
@@ -187,7 +205,7 @@ children:
         inputs:
           checkins: =@ctx.current.item
           goTo: true
-          numberOfActualDay: =@ctx.datasources.actual-day-and-mood.day
+          numberOfActualDay: =@ctx.datasources.actualDay.day
   - type: component.custom-component
     componentId: title
     inputs: 

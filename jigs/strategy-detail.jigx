@@ -180,7 +180,7 @@ children:
   - type: component.custom-component
     componentId: title
     inputs:
-      title: 'Claim your rewards'
+      title: 'Rewards'
   - type: component.list
     when: =@ctx.datasources.strategies.isInProgress = 0
     options:

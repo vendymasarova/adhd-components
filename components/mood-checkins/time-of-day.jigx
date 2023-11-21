@@ -1,0 +1,90 @@
+type: component.default
+children:
+  - type: component.view
+    options:
+      style:
+        flex:
+          direction: row
+          grow: 1
+          basis: 1
+        gap: small
+        # height:
+        #   min: 60
+      children:
+        - type: component.view
+          options:
+            style:
+              flex: 
+                grow: 1
+                basis: 1
+            children:
+              - type: component.card
+                options:
+                  # color: =@ctx.solution.state.timeOfDay = 'morning' ? 'color3':''
+                  onPress: 
+                    type: action.set-state
+                    options:
+                      state: =@ctx.solution.state.timeOfDay
+                      value: morning
+                  children:
+                    - type: component.view
+                      options:
+                        style:
+                          flex: 
+                            grow: 1
+                            basis: 1
+                            direction: row
+                          alignItems: center
+                          gap: small
+                        children:
+                          - type: component.image
+                            options:
+                              size:
+                                height: 36
+                                width: 36
+                              source:
+                                uri: https://t14345253.p.clickup-attachments.com/t14345253/ac1fa789-0105-4f17-be4c-d81eccca62a8/Sun.png?view=open
+                          - type: component.text
+                            options:
+                              value: Morning
+                              weight: semi-bold
+                              color: =@ctx.solution.state.timeOfDay = 'morning' ? 'color3':''
+        - type: component.view
+          options:
+            style:
+              flex: 
+                grow: 1
+                basis: 1
+            children:                      
+              - type: component.card
+                options:
+                  # color: =@ctx.solution.state.timeOfDay = 'evening' ? 'color3':''
+                  onPress: 
+                    type: action.set-state
+                    options:
+                      state: =@ctx.solution.state.timeOfDay
+                      value: evening
+                  children:
+                    - type: component.view
+                      options:
+                        style:
+                          flex: 
+                            grow: 1
+                            basis: 1
+                            direction: row
+                          alignItems: center
+                          gap: small
+                        children:
+                          - type: component.image
+                            options:
+                              size:
+                                height: 36
+                                width: 36
+                              source:
+                                uri: https://t14345253.p.clickup-attachments.com/t14345253/1bf5f31c-30de-4bd1-8b23-5a1e5d519682/Moon.png?view=open
+                          - type: component.text
+                            options:
+                              value: Evening
+                              weight: semi-bold
+                              color: =@ctx.solution.state.timeOfDay = 'evening' ? 'color3':''
+                              

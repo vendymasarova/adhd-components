@@ -1,9 +1,9 @@
-title: =$fromMillis($toMillis(@ctx.datasources.mood-checkins.date), '[D01]. [M01].')
+title: =$type(@ctx.datasources.mood-checkins.date) != null ? $fromMillis($toMillis(@ctx.datasources.mood-checkins.date), '[D01]. [M01].'):'No data here '
 type: jig.default
-placeholders:
-  - title: No data to display
-    when: =($type(@ctx.datasources.mood-checkins.mood) != null) ? false:true
-    icon: missing-data
+# placeholders:
+#   - title: No data to display
+#     when: =($type(@ctx.datasources.mood-checkins.mood) != null) ? false:true
+#     icon: missing-data
   # - title: Check your mood at 6pm
   #   when: =($type($eval(@ctx.datasources.mood-checkins.mood).mood) != null)  or (@ctx.solution.state.checkin-day = $fromMillis($toMillis($now()), '[D01].[M01].[Y]')) ? 'joo':'nee'
   #   icon: missing-data
@@ -26,13 +26,18 @@ datasources:
           '$.image',
           '$.step',
           '$.note',
-          '$.mood'
+          '$.mood',
+          '$.time_of_day'
         FROM [default/mood-checkins]
         WHERE STRFTIME('%d.%m.%Y', json_extract(data, '$.date')) = @date
+        AND '$.time_of_day' = @timeOfDay
       queryParameters:
         date: =@ctx.solution.state.checkin-day
+        timeOfDay: =@ctx.solution.state.timeOfDay
         
 children:
+  - type: component.custom-component
+    componentId: time-of-day
   - type: component.custom-component
     when: =$type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
     componentId: title

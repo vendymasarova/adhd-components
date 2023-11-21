@@ -20,6 +20,7 @@ actions:
                   feelings: =@ctx.datasources.feelings
                   image: =@ctx.components.image.state.value
                   note: =@ctx.components.note.state.value
+                  time_of_day: =@ctx.components.time_of_day.state.value
                 onSuccess: 
                   title: Successfully saved
                   description: Your record was saved
@@ -182,4 +183,11 @@ children:
             label: Something to write down?
             textArea: medium
             icon: pencil
+        - type: component.text-field
+          instanceId: time_of_day
+          options:
+            isHidden: true
+            isRequired: false
+            initialValue: =$number($fromMillis($toMillis($now()), '[H01]')) >= 18 ? 'evening':'morning'
+            label: ' '
         

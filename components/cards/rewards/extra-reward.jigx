@@ -1,0 +1,105 @@
+type: component.default
+children:
+  - type: component.view
+    options:
+      style:
+        margin:
+          right: small
+      children:
+        - type: component.card
+          options:
+            children:
+              - type: component.view
+                options:
+                  style:
+                    flex: 
+                      grow: 1
+                    width: 
+                      # max: 180
+                  children:
+                    - type: component.view
+                      options:
+                        style:
+                          flex:
+                            grow: 1
+                            direction: row
+                          alignItems: center
+                          gap: small
+                        children:
+                          # top 
+                          - type: component.view
+                            options:
+                              style:
+                                flex:
+                                  grow: 1
+                                  direction: row
+                                alignItems: center
+                                gap: small
+                              children:
+                                - type: component.image
+                                  options:
+                                    size: 
+                                      width: 80
+                                      height: 80
+                                    source:
+                                      uri: =@ctx.inputs.rewards.image
+                                - type: component.view
+                                  options:
+                                    style:
+                                      gap: minimal
+                                      justifyContent: center
+                                    children:
+                                      - type: component.text
+                                        options:
+                                          value: =@ctx.inputs.rewards.name
+                                          size: medium
+                                      - type: component.view
+                                        options:
+                                          style:
+                                            flex:
+                                              direction: row
+                                            alignItems: center
+                                            gap: minimal
+                                          children:
+                                            - type: component.image
+                                              options:
+                                                size: 
+                                                  height: 30
+                                                  width: 30
+                                                source:
+                                                  uri: https://t14345253.p.clickup-attachments.com/t14345253/31e80384-418c-40c6-9d8d-02a42d4bd731/Diamond.png?view=open
+                                            - type: component.text
+                                              options:
+                                                value: =@ctx.inputs.rewards.points
+                                                color: color11
+                                                weight: bold
+                    - type: component.progress-bar
+                      options:
+                        size: tiny
+                        color: color11
+                        value:
+                          current: =@ctx.inputs.gems
+                          max: =@ctx.inputs.rewards.points
+                    - type: component.view
+                      when: =@ctx.inputs.gems = @ctx.inputs.rewards.points ? true:false
+                      options:
+                        style:
+                          flex:
+                            direction: row
+                          alignItems: center
+                          justifyContent: center
+                          gap: small
+                          padding: 
+                            top: medium
+                        children:
+                          - type: component.text
+                            options:
+                              value: Claim your reward
+                              size: regular
+                              weight: semi-bold
+                              color: color11
+                          - type: component.icon
+                            options:
+                              icon: arrow-right
+                              size: small
+                              

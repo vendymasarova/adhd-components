@@ -1,0 +1,81 @@
+title: Name
+description: Description of your Jig
+type: jig.default
+
+datasources:
+  achievements: 
+    type: datasource.static
+    options:
+      data:
+        - id: 1
+          achievement-name: Rookie
+          achievement-description: Complete Beat the clock strategy 3 times 
+          achievement-image: https://t14345253.p.clickup-attachments.com/t14345253/b1d16757-ab6d-469d-861f-b593a05a3a7b/reward1.png          
+          achievement-progress: 90
+          achievement-goal: 3
+          achievement-level: Level 1
+          
+  extra-reward: 
+    type: datasource.static
+    options:
+      data:
+        - id: 1
+          name: Movie ticket
+          image: https://t14345253.p.clickup-attachments.com/t14345253/7a9172fe-d1d7-45ba-8d61-dd1133fbdc31/Movie%20ticket.png?view=open
+          points: 180
+       
+  results:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/strategies-results
+  
+      query: 
+        SELECT 
+        id, 
+        '$.end',
+        '$.start',
+        '$.time',
+        '$.gems',
+        '$.strategyId'
+        FROM [default/strategies-results]
+        
+children:
+  - type: component.custom-component
+    componentId: points-preview-card
+    inputs: 
+      results: =@ctx.datasources.results
+  - type: component.custom-component
+    componentId: title
+    inputs:
+      title: Rewards
+  - type: component.list
+    options:
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      maximumItemsToRender: 3
+      data: =@ctx.datasources.achievements
+      item: 
+        type: component.custom-component
+        componentId: achievement
+        inputs:
+          achievements: =@ctx.current.item
+          progressbar: false
+  - type: component.custom-component
+    componentId: title
+    inputs:
+      title: Extra Rewards
+  - type: component.list
+    options:
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      maximumItemsToRender: 3
+      data: =@ctx.datasources.extra-reward
+      item: 
+        type: component.custom-component
+        componentId: extra-reward
+        inputs:
+          rewards: =@ctx.current.item
+          gems: =$sum(@ctx.datasources.results.gems)

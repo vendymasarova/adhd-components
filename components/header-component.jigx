@@ -48,6 +48,10 @@ children:
                       direction: row
                     alignItems: center
                     gap: minimal
+                  onPress: 
+                    type: action.go-to
+                    options:
+                      linkTo: rewards
                   children:
                     - type: component.image
                       options:

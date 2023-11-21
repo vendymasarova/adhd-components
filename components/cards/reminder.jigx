@@ -2,7 +2,7 @@ type: component.default
 children:
   - type: component.view
     # when: =($fromMillis($toMillis($now()), '[H01]') >= @ctx.inputs.reminder.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.inputs.reminder.reminderEnd) ? true:false
-    when: =(@ctx.inputs.today = $fromMillis($toMillis($now()), '[D01]') and $type(@ctx.inputs.mood) = 'null') and (($fromMillis($toMillis($now()), '[H01]') >= @ctx.inputs.reminder.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.inputs.reminder.reminderEnd)) ? true:false
+    # when: =(@ctx.inputs.today = $fromMillis($toMillis($now()), '[D01]') and $type(@ctx.inputs.mood) = 'null') and (($fromMillis($toMillis($now()), '[H01]') >= @ctx.inputs.reminder.reminderStart) and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.inputs.reminder.reminderEnd)) ? true:false
     options:
       style:
         flex: 

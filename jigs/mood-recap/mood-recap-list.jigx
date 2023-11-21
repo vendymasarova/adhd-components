@@ -25,6 +25,7 @@ datasources:
         LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date'))
         WHERE numberOfDay > @actualDay -5
         AND numberOfDay <= @actualDay
+        GROUP BY date
         ORDER BY numberOfDay 
       queryParameters:
         actualDay: =@ctx.datasources.actualDay.day

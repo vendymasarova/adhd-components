@@ -1,0 +1,32 @@
+type: component.default
+children:
+  - type: component.card
+    options:
+      children:
+        - type: component.text
+          options:
+            value: Available points
+            size: regular
+            align: center
+        - type: component.view
+          options:
+            style:
+              flex:
+                direction: row
+              alignItems: center
+              justifyContent: center
+              gap: small
+            children:
+              - type: component.image
+                options:
+                  size: 
+                    height: 40
+                    width: 40
+                  source:
+                    uri: https://t14345253.p.clickup-attachments.com/t14345253/31e80384-418c-40c6-9d8d-02a42d4bd731/Diamond.png?view=open
+              - type: component.text
+                options:
+                  value: =$sum(@ctx.inputs.results.gems)
+                  color: color11
+                  weight: bold
+                  size: large
