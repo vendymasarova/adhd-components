@@ -178,6 +178,7 @@ children:
     inputs: 
       strategyId: =@ctx.jig.inputs.strategyId
   - type: component.custom-component
+    when: =@ctx.datasources.strategies.isDone = 1 and @ctx.datasources.strategies.isInProgress = 0 and @ctx.datasources.results
     componentId: title
     inputs:
       title: 'Rewards'

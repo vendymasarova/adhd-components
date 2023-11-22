@@ -1,4 +1,7 @@
 title: Adhd 
+description: =($fromMillis($toMillis($now()), '[h01]:[m01][P]') >= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-start), '[h01]:[m01][P]')) ? 'není':'je'
+# description: =($fromMillis($toMillis($now()), '[h01]:[m01][P]') >= $fromMillis($toMillis(@ctx.datasources.reminders.reminderStart), '[h01]:[m01][P]') and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.inputs.reminder.reminderEnd) ? true:false
+
 type: jig.default
 
 datasources:
@@ -28,7 +31,9 @@ datasources:
           '$.has-detail',
           '$.priority',
           '$.linkTo',
-          STRFTIME('%H', json_extract(data, '$.reminder-start')) AS reminderStart,
+          '$.reminder-start',
+          '$.reminder-end',
+          STRFTIME('%P', json_extract(data, '$.reminder-start')) AS reminderStart,
           STRFTIME('%H', json_extract(data, '$.reminder-end')) AS reminderEnd
         FROM [default/routines]
         WHERE '$.isReminiscent' = true

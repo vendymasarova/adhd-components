@@ -20,7 +20,7 @@ children:
             children:
               - type: component.card
                 options:
-                  # color: =@ctx.solution.state.timeOfDay = 'morning' ? 'color3':''
+                  # color: =@ctx.solution.state.timeOfDay = 'morning' ? 'color8':''
                   onPress: 
                     type: action.set-state
                     options:
@@ -48,7 +48,7 @@ children:
                             options:
                               value: Morning
                               weight: semi-bold
-                              color: =@ctx.solution.state.timeOfDay = 'morning' ? 'color3':''
+                              color: =@ctx.solution.state.timeOfDay = 'morning' ? 'color8':''
         - type: component.view
           options:
             style:
@@ -58,7 +58,7 @@ children:
             children:                      
               - type: component.card
                 options:
-                  # color: =@ctx.solution.state.timeOfDay = 'evening' ? 'color3':''
+                  # color: =@ctx.solution.state.timeOfDay = 'evening' ? 'color8':''
                   onPress: 
                     type: action.set-state
                     options:
@@ -86,5 +86,5 @@ children:
                             options:
                               value: Evening
                               weight: semi-bold
-                              color: =@ctx.solution.state.timeOfDay = 'evening' ? 'color3':''
+                              color: =@ctx.solution.state.timeOfDay = 'evening' ? 'color8':''
                               
