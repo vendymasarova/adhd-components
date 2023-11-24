@@ -20,6 +20,7 @@ datasources:
           json_extract(a.data, '$.day') AS numberOfDay,
           STRFTIME('%d', json_extract(a.data, '$.date')) AS day,
           json_extract(b.data, '$.mood') AS mood,
+          json_extract(b.data, '$.time_of_day') AS time_of_day,
           json_extract(a.data, '$.date') AS dayDate
         FROM [default/dates] a
         LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date'))
@@ -30,7 +31,9 @@ datasources:
       queryParameters:
         actualDay: =@ctx.datasources.actualDay.day
         actualYear: =$fromMillis($toMillis($now()), '[Y]')
-        
+        timeOfDay: =@ctx.solution.state.timeOfDay
+
+                
   actualDay:
     type: datasource.sqlite
     options:
@@ -42,12 +45,13 @@ datasources:
       query:
         SELECT
         id,
-        STRFTIME('%d', json_extract(data, '$.date')) AS date,
+        STRFTIME('%d.%m.%Y', json_extract(data, '$.date')) AS date,
         '$.day'
         FROM [default/dates]
         WHERE date = @today
       queryParameters:
-        today: =$fromMillis($toMillis($now()), '[D01]')
+        today: =$fromMillis($toMillis($now()), '[D01].[M01].[Y]')
+        
 
 children:
   - type: component.list

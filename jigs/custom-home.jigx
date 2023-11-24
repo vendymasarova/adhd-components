@@ -1,7 +1,4 @@
 title: Adhd 
-description: =($fromMillis($toMillis($now()), '[h01]:[m01][P]') >= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-start), '[h01]:[m01][P]')) ? 'není':'je'
-# description: =($fromMillis($toMillis($now()), '[h01]:[m01][P]') >= $fromMillis($toMillis(@ctx.datasources.reminders.reminderStart), '[h01]:[m01][P]') and ($fromMillis($toMillis($now()), '[H01]') <= @ctx.inputs.reminder.reminderEnd) ? true:false
-
 type: jig.default
 
 datasources:
@@ -145,12 +142,12 @@ datasources:
       query:
         SELECT
         id,
-        STRFTIME('%d', json_extract(data, '$.date')) AS date,
+        STRFTIME('%d.%m.%Y', json_extract(data, '$.date')) AS date,
         '$.day'
         FROM [default/dates]
         WHERE date = @today
       queryParameters:
-        today: =$fromMillis($toMillis($now()), '[D01]')
+        today: =$fromMillis($toMillis($now()), '[D01].[M01].[Y]')
         
   results:
     type: datasource.sqlite
