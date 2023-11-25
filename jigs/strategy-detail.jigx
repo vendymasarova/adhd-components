@@ -1,4 +1,4 @@
-title: =@ctx.datasources.row_count_results.results_count
+title: ' '
 type: jig.default
 
 datasources:
