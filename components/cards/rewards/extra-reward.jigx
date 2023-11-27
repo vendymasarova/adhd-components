@@ -3,19 +3,27 @@ children:
   - type: component.view
     options:
       style:
+        flex: 
+          grow: 1
+          shrink: 1
         margin:
           right: small
       children:
         - type: component.card
           options:
+            color:  =@ctx.inputs.gems = @ctx.inputs.rewards.points ? 'positive':''
+            onPress: 
+              type: action.go-to
+              when: =@ctx.inputs.gems = @ctx.inputs.rewards.points
+              options:
+                linkTo: reward-detail
             children:
               - type: component.view
                 options:
                   style:
                     flex: 
                       grow: 1
-                    width: 
-                      # max: 180
+                      # shrink: 1
                   children:
                     - type: component.view
                       options:
@@ -23,7 +31,7 @@ children:
                           flex:
                             grow: 1
                             direction: row
-                          alignItems: center
+                          # alignItems: center
                           gap: small
                         children:
                           # top 
@@ -33,21 +41,32 @@ children:
                                 flex:
                                   grow: 1
                                   direction: row
-                                alignItems: center
                                 gap: small
+                                padding: 
+                                  bottom: medium
                               children:
-                                - type: component.image
+                                - type: component.view
                                   options:
-                                    size: 
-                                      width: 80
+                                    style:
+                                      background:
+                                        color: color3
+                                      radius: small
                                       height: 80
-                                    source:
-                                      uri: =@ctx.inputs.rewards.image
+                                      width: 80
+                                    children:
+                                      - type: component.image
+                                        options:
+                                          size: 
+                                            width: 80
+                                            height: 80
+                                          resizeMode: cover
+                                          source:
+                                            uri: =@ctx.inputs.rewards.image
                                 - type: component.view
                                   options:
                                     style:
                                       gap: minimal
-                                      justifyContent: center
+                                      # justifyContent: center
                                     children:
                                       - type: component.text
                                         options:
@@ -73,33 +92,34 @@ children:
                                                 value: =@ctx.inputs.rewards.points
                                                 color: color11
                                                 weight: bold
+                                                size: medium
                     - type: component.progress-bar
+                      # when: =@ctx.inputs.gems != @ctx.inputs.rewards.points
                       options:
-                        size: tiny
+                        size: small
                         color: color11
                         value:
                           current: =@ctx.inputs.gems
                           max: =@ctx.inputs.rewards.points
-                    - type: component.view
-                      when: =@ctx.inputs.gems = @ctx.inputs.rewards.points ? true:false
-                      options:
-                        style:
-                          flex:
-                            direction: row
-                          alignItems: center
-                          justifyContent: center
-                          gap: small
-                          padding: 
-                            top: medium
-                        children:
-                          - type: component.text
-                            options:
-                              value: Claim your reward
-                              size: regular
-                              weight: semi-bold
-                              color: color11
-                          - type: component.icon
-                            options:
-                              icon: arrow-right
-                              size: small
+                    # - type: component.view
+                    #   when: =@ctx.inputs.gems = @ctx.inputs.rewards.points ? true:false
+                    #   options:
+                    #     style:
+                    #       flex:
+                    #         direction: row
+                    #       alignItems: center
+                    #       justifyContent: flex-end
+                    #       gap: small
+                    #       padding: 
+                    #         top: medium
+                    #     children:
+                    #       - type: component.text
+                    #         options:
+                    #           value: Claim your reward
+                    #           size: regular
+                    #           weight: semi-bold
+                    #       - type: component.icon
+                    #         options:
+                    #           icon: arrow-right
+                    #           size: small
                               

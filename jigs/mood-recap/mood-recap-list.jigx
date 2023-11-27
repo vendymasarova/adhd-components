@@ -23,11 +23,12 @@ datasources:
           json_extract(b.data, '$.time_of_day') AS time_of_day,
           json_extract(a.data, '$.date') AS dayDate
         FROM [default/dates] a
-        LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date'))
-        WHERE numberOfDay > @actualDay -5
-        AND numberOfDay <= @actualDay
-        GROUP BY date
-        ORDER BY numberOfDay 
+        LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date')) AND (time_of_day = @timeOfDay OR time_of_day IS NULL)
+        WHERE numberOfDay > @actualDay - 5
+          AND numberOfDay <= @actualDay
+        GROUP BY date, time_of_day
+        HAVING COUNT(*) = 1
+        ORDER BY numberOfDay;
       queryParameters:
         actualDay: =@ctx.datasources.actualDay.day
         actualYear: =$fromMillis($toMillis($now()), '[Y]')
@@ -54,6 +55,8 @@ datasources:
         
 
 children:
+  - type: component.custom-component
+    componentId: time-of-day
   - type: component.list
     options:
       data: =@ctx.datasources.mood-checkins

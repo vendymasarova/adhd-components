@@ -70,6 +70,14 @@ children:
                         source:
                           uri: https://t14345253.p.clickup-attachments.com/t14345253/e92873e3-0548-4a72-82e7-11e449d0a3fa/water%20drop.png?view=open
                     - type: component.image
+                      when: =$type(@ctx.inputs.checkins.time_of_day) = null
+                      options:
+                        size:
+                          width: 25
+                          height: 25
+                        source:
+                          uri: https://t14345253.p.clickup-attachments.com/t14345253/e92873e3-0548-4a72-82e7-11e449d0a3fa/water%20drop.png?view=open
+                    - type: component.image
                       when: =@ctx.inputs.checkins.mood = 'Bad' ? true:false
                       options:
                         size:

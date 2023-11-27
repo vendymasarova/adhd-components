@@ -157,6 +157,10 @@ children:
       isDoneNumber: =@ctx.datasources.isDone_count.isDone
   
   - type: component.custom-component
+    componentId: start-btn
+    inputs: 
+      strategyId: =@ctx.jig.inputs.strategyId
+  - type: component.custom-component
     when: =@ctx.datasources.strategies.isDone = 1 and @ctx.datasources.strategies.isInProgress = 0 and @ctx.datasources.results
     componentId: title
     inputs:
@@ -167,16 +171,18 @@ children:
     options:
       isHorizontal: false
       maximumItemsToRender: 3
+      onShowMorePress:
+        type: action.go-to
+        options:
+          linkTo: results-list
+          parameters:
+            resultsStrategyId: =@ctx.jig.inputs.strategyId
       data: =@ctx.datasources.results
       item: 
         type: component.custom-component
         componentId: results-list
         inputs:
           results: =@ctx.current.item
-  - type: component.custom-component
-    componentId: start-btn
-    inputs: 
-      strategyId: =@ctx.jig.inputs.strategyId
   - type: component.custom-component
     when: =@ctx.datasources.strategies.isDone = 1 and @ctx.datasources.strategies.isInProgress = 0 and @ctx.datasources.results
     componentId: title

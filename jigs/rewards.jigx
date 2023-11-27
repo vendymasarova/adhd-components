@@ -1,5 +1,4 @@
-title: Name
-description: Description of your Jig
+title: Rewards
 type: jig.default
 
 datasources:
@@ -14,6 +13,25 @@ datasources:
           achievement-progress: 90
           achievement-goal: 3
           achievement-level: Level 1
+        - id: 2
+          achievement-name: Contributor
+          achievement-description: Finish self-check-in for a whole week              
+          achievement-image: https://t14345253.p.clickup-attachments.com/t14345253/6d988869-ca83-45b1-bf77-821f5a6b0222/reward6.png?view=open
+          achievement-progress: 25
+          achievement-level: Level 2                           
+        - id: 3
+          achievement-name: Master Contributor
+          achievement-description: Finish self-check-in for 4 weeks              
+          achievement-image: https://t14345253.p.clickup-attachments.com/t14345253/cacf2038-092e-454a-b535-725ee33548ae/reward7.png?view=open   
+          achievement-progress: 0
+          achievement-level: Level 1 
+        - id: 4
+          achievement-name: Star Achiever
+          achievement-description: Complete all previous achievements             
+          achievement-image: https://t14345253.p.clickup-attachments.com/t14345253/bba01a0f-daaa-40af-b837-22919adab5ff/reward5.png?view=open
+          achievement-progress: 25
+          achievement-level: Level 2             
+
           
   extra-reward: 
     type: datasource.static
@@ -23,6 +41,10 @@ datasources:
           name: Movie ticket
           image: https://t14345253.p.clickup-attachments.com/t14345253/7a9172fe-d1d7-45ba-8d61-dd1133fbdc31/Movie%20ticket.png?view=open
           points: 180
+        - id: 2
+          name: Dinner in McDonald
+          image: https://t14345253.p.clickup-attachments.com/t14345253/19c0a035-981d-49e6-87ca-46f8b912770e/Mcdonald.png?view=open
+          points: 160
        
   results:
     type: datasource.sqlite

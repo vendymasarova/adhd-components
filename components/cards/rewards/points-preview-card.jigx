@@ -3,11 +3,6 @@ children:
   - type: component.card
     options:
       children:
-        - type: component.text
-          options:
-            value: Available points
-            size: regular
-            align: center
         - type: component.view
           options:
             style:
@@ -29,4 +24,9 @@ children:
                   value: =$sum(@ctx.inputs.results.gems)
                   color: color11
                   weight: bold
-                  size: large
+                  size: extra-large
+        - type: component.text
+          options:
+            value: Available points
+            size: regular
+            align: center

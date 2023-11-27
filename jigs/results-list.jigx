@@ -1,0 +1,34 @@
+title: All results
+description: The results of all your attempts
+type: jig.list
+icon: contact
+
+datasources:
+  results:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/strategies-results
+  
+      query: 
+        SELECT 
+        id, 
+        '$.end',
+        '$.start',
+        '$.time',
+        '$.gems',
+        '$.strategyId'
+        FROM [default/strategies-results]
+        WHERE json_extract(data, '$.strategyId') = @strategyId
+        ORDER BY json_extract(data, '$.time') ASC
+      queryParameters:
+        strategyId: =@ctx.jig.inputs.resultsStrategyId
+        
+data: =@ctx.datasources.results
+item:
+  type: component.custom-component
+  componentId: results-list
+  inputs:
+    results: =@ctx.current.item

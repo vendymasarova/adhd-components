@@ -10,7 +10,7 @@ children:
       children:
         - type: component.card
           options:
-            color: =@ctx.inputs.numberOfResults = @ctx.inputs.achievements.achievement-goal ? "positive":""
+            color: =@ctx.inputs.numberOfResults >= @ctx.inputs.achievements.achievement-goal ? "positive":""
             children:
               - type: component.view
                 options:
