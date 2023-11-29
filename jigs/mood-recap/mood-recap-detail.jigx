@@ -1,4 +1,5 @@
-title: =$type(@ctx.datasources.mood-checkins.date) != null ? $fromMillis($toMillis(@ctx.datasources.mood-checkins.date), '[D01]. [M01].'):'No data here '
+title: =@ctx.solution.state.checkin-day
+# title: =$fromMillis($toMillis(@ctx.datasources.mood-checkins.date), '[D]. [M].')
 type: jig.default
 placeholders:
   - title: No data to display
@@ -29,7 +30,7 @@ datasources:
           '$.mood',
           '$.time_of_day'
         FROM [default/mood-checkins]
-        WHERE STRFTIME('%d.%m.%Y', json_extract(data, '$.date')) = @date
+        WHERE STRFTIME('%d. %m. %Y', json_extract(data, '$.date')) = @date
         AND '$.time_of_day' = @timeOfDay
       queryParameters:
         date: =@ctx.solution.state.checkin-day
@@ -42,7 +43,7 @@ children:
     componentId: title
     inputs:
       size: regular
-      title: ='Why did you feel' & ' ' & @ctx.datasources.mood-checkins.mood
+      title: ='Why did you feel' & ' ' & @ctx.datasources.mood-checkins.mood & ' in the ' & @ctx.solution.state.timeOfDay
   - type: component.list
     when: =$type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
     options:

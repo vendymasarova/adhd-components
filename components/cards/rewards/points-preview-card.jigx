@@ -2,6 +2,7 @@ type: component.default
 children:
   - type: component.card
     options:
+      color: color3
       children:
         - type: component.view
           options:
@@ -27,6 +28,6 @@ children:
                   size: extra-large
         - type: component.text
           options:
-            value: Available points
+            value: Available gems
             size: regular
             align: center

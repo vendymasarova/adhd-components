@@ -16,7 +16,7 @@ datasources:
       query: |
         SELECT
           a.id AS id,
-          STRFTIME('%d.%m.%Y', json_extract(a.data, '$.date')) AS date,
+          STRFTIME('%d. %m. %Y', json_extract(a.data, '$.date')) AS date,
           json_extract(a.data, '$.day') AS numberOfDay,
           STRFTIME('%d', json_extract(a.data, '$.date')) AS day,
           json_extract(b.data, '$.mood') AS mood,

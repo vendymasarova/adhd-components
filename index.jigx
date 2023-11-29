@@ -1,6 +1,17 @@
 name: adhd-components
 title: adhd-components
 category: health
+
+onLoad: 
+  type: action.action-list
+  options:
+    isSequential: true
+    actions:
+      - type: action.set-state
+        options:
+          state: =@ctx.solution.state.meds
+          value: 0
+
 widgets:
   - size: 1x1 # choose size of the widget on the home hub
     jigId: first-step-custom

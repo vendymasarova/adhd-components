@@ -11,10 +11,10 @@ children:
       children:
         - type: component.card
           options:
-            color:  =@ctx.inputs.gems = @ctx.inputs.rewards.points ? 'positive':''
+            color:  =@ctx.inputs.gems >= @ctx.inputs.rewards.points ? 'positive':''
             onPress: 
               type: action.go-to
-              when: =@ctx.inputs.gems = @ctx.inputs.rewards.points
+              when: =@ctx.inputs.gems >= @ctx.inputs.rewards.points
               options:
                 linkTo: reward-detail
             children:
@@ -22,14 +22,15 @@ children:
                 options:
                   style:
                     flex: 
-                      grow: 1
-                      # shrink: 1
+                      # grow: 1
+                      shrink: 1
                   children:
                     - type: component.view
                       options:
                         style:
                           flex:
                             grow: 1
+                            shrink: 1
                             direction: row
                           # alignItems: center
                           gap: small
@@ -101,25 +102,25 @@ children:
                         value:
                           current: =@ctx.inputs.gems
                           max: =@ctx.inputs.rewards.points
-                    # - type: component.view
-                    #   when: =@ctx.inputs.gems = @ctx.inputs.rewards.points ? true:false
-                    #   options:
-                    #     style:
-                    #       flex:
-                    #         direction: row
-                    #       alignItems: center
-                    #       justifyContent: flex-end
-                    #       gap: small
-                    #       padding: 
-                    #         top: medium
-                    #     children:
-                    #       - type: component.text
-                    #         options:
-                    #           value: Claim your reward
-                    #           size: regular
-                    #           weight: semi-bold
-                    #       - type: component.icon
-                    #         options:
-                    #           icon: arrow-right
-                    #           size: small
+                    - type: component.view
+                      when: =@ctx.inputs.gems >= @ctx.inputs.rewards.points ? true:false
+                      options:
+                        style:
+                          flex:
+                            direction: row
+                          alignItems: center
+                          justifyContent: flex-end
+                          gap: small
+                          padding: 
+                            top: medium
+                        children:
+                          - type: component.text
+                            options:
+                              value: Claim your reward
+                              size: regular
+                              weight: semi-bold
+                          - type: component.icon
+                            options:
+                              icon: arrow-right
+                              size: small
                               

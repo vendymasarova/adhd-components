@@ -1,7 +1,12 @@
 type: component.default
 children:
   - type: component.view
-    when: =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-end), '[h01]:[m01]'))
+    # when: =($fromMillis($toMillis(2023-11-10T08:00:00), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis(2023-11-10T08:00:00), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-end), '[h01]:[m01]')) ? true:false 
+    when: |
+     =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) <= 17 and $string(@ctx.inputs.actualDayData) = '[]') or ($number($fromMillis($toMillis($now()), '[H01]')) >= 17 and $count(@ctx.inputs.actualDayData) > 1)
+    
+    #  =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) < 18 and $type(@ctx.inputs.reminder.mood) = null)
+    #  or (@ctx.solution.state.meds = 1 and @ctx.inputs.reminder.routineId = 5) ? true:false
     options:
       style:
         flex: 
@@ -76,8 +81,8 @@ children:
                                 - type: component.image
                                   options:
                                     size: 
-                                      height: 50
-                                      width: 50
+                                      height: 36
+                                      width: 36
                                     source:
                                       uri: =@ctx.inputs.reminder.image
                               
@@ -97,9 +102,9 @@ children:
                                     weight: bold
                                     align: left  
                                 - type: component.text
-                                  when: =@ctx.inputs.reminder.routine-description != null ? true:false
+                                  when: =@ctx.inputs.reminder.reminder-description != null ? true:false
                                   options:
-                                    value: =@ctx.inputs.reminder.routine-description
+                                    value: =@ctx.inputs.reminder.reminder-description
                                     size: small
                           - type: component.icon
                             when: =@ctx.inputs.reminder.linkTo != null ? true:false
@@ -108,6 +113,21 @@ children:
                           - type: component.icon
                             when: =@ctx.inputs.reminder.isCheckable = 1 ? true:false
                             options:
+                              onPress: 
+                                type: action.action-list
+                                options:
+                                  isSequential: false
+                                  actions:
+                                    - type: action.set-state
+                                      when: =@ctx.solution.state.meds = 0
+                                      options:
+                                        state: =@ctx.solution.state.meds
+                                        value: 1  
+                                    - type: action.set-state
+                                      when: =@ctx.solution.state.meds = 1
+                                      options:
+                                        state: =@ctx.solution.state.meds
+                                        value: 0
                               icon: =@ctx.solution.state.meds = 0 ? 'checkbox-unchecked':'checkbox-checked'
-                    
+  
                                     

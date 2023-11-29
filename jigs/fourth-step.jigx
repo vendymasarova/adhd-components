@@ -188,6 +188,6 @@ children:
           options:
             isHidden: true
             isRequired: false
-            initialValue: =$number($fromMillis($toMillis($now()), '[H01]')) >= 18 ? 'evening':'morning'
+            initialValue: =$number($fromMillis($toMillis($now()), '[H01]')) >= 17 ? 'evening':'morning'
             label: ' '
         
