@@ -3,10 +3,10 @@ options:
   provider: DATA_PROVIDER_DYNAMIC
 
   entities:
-    - default/components
+    - default/users
 
   query: 
     SELECT 
     id, 
-    '$.component'
-    FROM [default/components] 
+    '$.user'
+    FROM [default/users] 

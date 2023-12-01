@@ -22,7 +22,7 @@ children:
                     uri: https://t14345253.p.clickup-attachments.com/t14345253/31e80384-418c-40c6-9d8d-02a42d4bd731/Diamond.png?view=open
               - type: component.text
                 options:
-                  value: =$sum(@ctx.inputs.results.gems)
+                  value: =$sum(@ctx.inputs.results.gems) + $sum(@ctx.inputs.mood-gems)
                   color: color11
                   weight: bold
                   size: extra-large

@@ -1,0 +1,48 @@
+title: Strategies
+type: jig.default
+
+datasources:
+  kids:
+    type: datasource.static
+    options:
+      data:
+        - id: 1
+          avatar: https://t14345253.p.clickup-attachments.com/t14345253/78f1ae20-94cd-438b-90dd-92812838e663/avatar1.png?view=open
+          name: Jane
+          gems: 120
+        - id: 2
+          avatar: https://t14345253.p.clickup-attachments.com/t14345253/9ca8b3f2-6ed3-4c3e-9e5a-396bbb1d9450/kid-user.png?view=open
+          name: John
+          gems: 100
+children:
+  - type: component.custom-component
+    componentId: header-component
+    inputs:
+      avatar: https://t14345253.p.clickup-attachments.com/t14345253/bfb2d891-6922-437a-9733-13977eea54ad/parent-user.png?view=open
+      welcomeMessage: Hello, Marry! 👋
+      name: Marry
+      date: =$fromMillis($toMillis($now()), '[FNn], [D]. [M]. [Y]')
+  - type: component.custom-component
+    componentId: title
+    inputs: 
+      title: Your kids
+      icon: arrow-righ
+  - type: component.list
+    options:
+      data: =@ctx.datasources.kids
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      maximumItemsToRender: 8
+      item: 
+        type: component.custom-component
+        componentId: kids-card
+        inputs: 
+          kids: =@ctx.current.item
+          grid: true
+  - type: component.custom-component
+    componentId: cta-component
+    inputs:
+      goTo: add-child
+      icon: plus
+      title: Add child
+      # color: color9

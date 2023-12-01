@@ -94,6 +94,7 @@ children:
                               time: =$fromMillis($toMillis(@ctx.solution.state.activityFinishTime) - $toMillis(@ctx.solution.state.activityStartTime), '[m01]:[s01]') 
                               gems: 20
                               strategyId: =@ctx.inputs.strategyId
+                              user: =@ctx.user.email
                             onSuccess: 
                               title: Successfully saved
                               description: Your result for this strategy was saved

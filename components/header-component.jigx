@@ -42,6 +42,7 @@ children:
                               size: small 
                               emphasis: high
               - type: component.view
+                when: =@ctx.inputs.gems != null 
                 options:
                   style:
                     flex:

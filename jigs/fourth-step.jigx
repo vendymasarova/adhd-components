@@ -21,6 +21,7 @@ actions:
                   image: =@ctx.components.image.state.value
                   note: =@ctx.components.note.state.value
                   time_of_day: =@ctx.components.time_of_day.state.value
+                  user: =@ctx.user.email
                 onSuccess: 
                   title: Successfully saved
                   description: Your record was saved

@@ -1,7 +1,18 @@
 title: Adhd 
-# description: |
-#      =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) <= 14 and $string(@ctx.datasources.actual-day-and-mood) = '[]') 
+# description: =$type($count(@ctx.datasources.actual-day-and-mood))
+description: |
+     =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) <= 14 and $string(@ctx.datasources.actual-day-and-mood) = '[]') 
 type: jig.default
+
+onRefresh: 
+  type: action.action-list
+  options:
+    isSequential: true
+    actions:
+      - type: action.set-state
+        options:
+          state: =@ctx.solution.state.meds
+          value: 0
 
 datasources:
   reminders:
@@ -57,6 +68,7 @@ datasources:
           json_extract(a.data, '$.day') AS numberOfDay,
           STRFTIME('%d', json_extract(a.data, '$.date')) AS day,
           json_extract(b.data, '$.mood') AS mood,
+          json_extract(b.data, '$.gems') AS gems,
           json_extract(a.data, '$.date') AS dayDate
         FROM [default/dates] a
         LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date'))
@@ -67,6 +79,23 @@ datasources:
       queryParameters:
         actualDay: =@ctx.datasources.actualDay.day
         actualYear: =$fromMillis($toMillis($now()), '[Y]')
+  
+  mood-checkins-gems:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/mood-checkins
+  
+      query: 
+        SELECT id, 
+          '$.gems', 
+          '$.user' 
+        FROM [default/mood-checkins] 
+        WHERE '$.user' = @user
+      queryParameters:
+        user: =@ctx.user.email
         
   actual-day-and-mood:
     type: datasource.sqlite
@@ -175,7 +204,7 @@ children:
       welcomeMessage: Hello, Jane! 👋
       name: Jane
       date: =$fromMillis($toMillis($now()), '[FNn], [D]. [M]. [Y]')
-      gems: =$sum(@ctx.datasources.results.gems)
+      gems: =$sum(@ctx.datasources.results.gems) + $sum(@ctx.datasources.mood-checkins-gems.gems)
   - type: component.custom-component
     componentId: title
     inputs:

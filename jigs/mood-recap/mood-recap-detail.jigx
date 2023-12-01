@@ -2,7 +2,7 @@ title: =@ctx.solution.state.checkin-day
 # title: =$fromMillis($toMillis(@ctx.datasources.mood-checkins.date), '[D]. [M].')
 type: jig.default
 placeholders:
-  - title: No data to display
+  - title: No mood to display
     when: =($type(@ctx.datasources.mood-checkins.mood) != null) ? false:true
     icon: missing-data
   # - title: Check your mood at 6pm
