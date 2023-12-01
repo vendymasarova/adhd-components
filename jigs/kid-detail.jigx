@@ -1,9 +1,18 @@
-# title: =$fromMillis($toMillis(@ctx.datasources.mood-checkins.dayDate), '[D]') 
-title: =@ctx.datasources.mood-checkins.day & $substring(@ctx.solution.state.checkin-day, 0,2)
-description: Description of your Jig
+title: Detail of your child
+# description: Description of your Jig
 type: jig.default
 
 datasources:
+  kids:
+    type: datasource.static
+    options:
+      data:
+        - id: 1
+          avatar: https://t14345253.p.clickup-attachments.com/t14345253/78f1ae20-94cd-438b-90dd-92812838e663/avatar1.png?view=open
+          name: Vendy
+          gems: 120
+          email: vendula@jigx.com
+          
   mood-checkins:
     type: datasource.sqlite
     options:
@@ -33,8 +42,7 @@ datasources:
         actualDay: =@ctx.datasources.actualDay.day
         actualYear: =$fromMillis($toMillis($now()), '[Y]')
         timeOfDay: =@ctx.solution.state.timeOfDay
-
-                
+        
   actualDay:
     type: datasource.sqlite
     options:
@@ -53,8 +61,38 @@ datasources:
       queryParameters:
         today: =$fromMillis($toMillis($now()), '[D01].[M01].[Y]')
         
+  categories:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/strategies-category
+  
+      query: 
+        SELECT 
+        id, 
+        '$.category_id', 
+        '$.image', 
+        '$.name' 
+        FROM [default/strategies-category] 
 
 children:
+  - type: component.custom-component
+    componentId: kids-card
+    inputs: 
+      kids: =@ctx.datasources.kids
+      grid: false
+  - type: component.custom-component
+    componentId: cta-component
+    inputs: 
+      icon: messages
+      title: Chat
+      color: color9 
+  - type: component.custom-component
+    componentId: title
+    inputs:
+      title: Mood checkins 
   - type: component.custom-component
     componentId: time-of-day
   - type: component.list
@@ -70,3 +108,19 @@ children:
           checkins: =@ctx.current.item
           goTo: false
           numberOfActualDay: =@ctx.datasources.actualDay.day
+  - type: component.custom-component
+    componentId: title
+    inputs:
+      title: ='Strategies ' & @ctx.datasources.kids.name & ' works on'
+  - type: component.list
+    options:
+      data: =@ctx.datasources.categories
+      maximumItemsToRender: 8
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      item: 
+        type: component.custom-component
+        componentId: category-card
+        inputs:
+          categories: =@ctx.current.item 
+      

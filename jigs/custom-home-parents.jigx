@@ -8,12 +8,14 @@ datasources:
       data:
         - id: 1
           avatar: https://t14345253.p.clickup-attachments.com/t14345253/78f1ae20-94cd-438b-90dd-92812838e663/avatar1.png?view=open
-          name: Jane
+          name: Vendy
           gems: 120
+          email: vendula@jigx.com
         - id: 2
           avatar: https://t14345253.p.clickup-attachments.com/t14345253/9ca8b3f2-6ed3-4c3e-9e5a-396bbb1d9450/kid-user.png?view=open
           name: John
           gems: 100
+          email: john@jigx.com
 children:
   - type: component.custom-component
     componentId: header-component

@@ -164,7 +164,7 @@ children:
     when: =@ctx.datasources.strategies.isDone = 1 and @ctx.datasources.strategies.isInProgress = 0 and @ctx.datasources.results
     componentId: title
     inputs:
-      title: 'Your best results:'
+      title: 'Your best results'
       # size: regular
   - type: component.list
     when: =@ctx.datasources.strategies.isInProgress = 0

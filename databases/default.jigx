@@ -9,4 +9,5 @@ tables:
   strategies: 
   steps:
   strategies-results:
+  strategies-category:
   

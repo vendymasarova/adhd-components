@@ -6,19 +6,25 @@ children:
         flex:
           grow: 1
           shrink: 1
-          basis: 1
+          # basis: 1
           direction: row
         margin:
           right: small
       children:
         - type: component.card
           options:
+            onPress: 
+              type: action.go-to
+              options:
+                linkTo: kid-detail
+                parameters:
+                  email: =@ctx.inputs.kids.email
             children:
               - type: component.view
                 options:
                   style:
                     flex: 
-                      # grow: 1
+                      grow: 1
                       shrink: 1
                     width: =@ctx.inputs.grid = true ? 156:''
                     justifyContent: center

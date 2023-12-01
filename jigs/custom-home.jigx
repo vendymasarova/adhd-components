@@ -1,7 +1,7 @@
 title: Adhd 
 # description: =$type($count(@ctx.datasources.actual-day-and-mood))
-description: |
-     =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) <= 14 and $string(@ctx.datasources.actual-day-and-mood) = '[]') 
+# description: |
+#      =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) <= 14 and $string(@ctx.datasources.actual-day-and-mood) = '[]') 
 type: jig.default
 
 onRefresh: 

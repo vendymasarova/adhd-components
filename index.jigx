@@ -35,6 +35,7 @@ assets:
     - circle # auto-generated
     - contact # auto-generated
     - image-file-add # auto-generated
+    - messages # auto-generated
     - mood-happy # auto-generated
     - pencil # auto-generated
     - plus # auto-generated

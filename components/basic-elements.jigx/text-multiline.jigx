@@ -1,0 +1,13 @@
+type: component.default
+children:
+  - type: component.view
+    options:
+      style:
+        flex: 
+          grow: 1
+          shrink: 1
+      children:
+        - type: component.text
+          options:
+            value: =@ctx.inputs.text
+            emphasis: medium
