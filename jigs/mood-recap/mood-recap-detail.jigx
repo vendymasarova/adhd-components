@@ -91,13 +91,8 @@ children:
     inputs:
       size: regular
       title: Note of the day
-  - type: component.entity
+  - type: component.custom-component
     when: =@ctx.datasources.mood-checkins.note and $type(@ctx.datasources.mood-checkins.mood) != 'null' ? true:false
-    options:
-      children:
-        - type: component.entity-field
-          options:
-            isMultiline: true
-            label: ''
-            value: =@ctx.datasources.mood-checkins.note
-        
+    componentId: text-multiline
+    inputs: 
+      text: =@ctx.datasources.mood-checkins.note  

@@ -10,4 +10,4 @@ children:
         - type: component.text
           options:
             value: =@ctx.inputs.text
-            emphasis: medium
+            emphasis: high

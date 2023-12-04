@@ -33,3 +33,11 @@ children:
               options:
                 state: =@ctx.solution.state.idStrategy
                 value: =@ctx.inputs.strategyId
+            - type: action.set-state
+              options:
+                state: =@ctx.solution.state.countdown-finished
+                value: false
+            - type: action.set-state
+              options:
+                state: =@ctx.solution.state.countdown-start
+                value: =$now()

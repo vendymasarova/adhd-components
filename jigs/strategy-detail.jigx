@@ -1,4 +1,4 @@
-title: ' '
+title: =$type(@ctx.solution.state.countdown-finished)
 type: jig.default
 
 datasources:

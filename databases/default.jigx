@@ -3,6 +3,7 @@ tables:
   reasons:
   dates:
   mood-checkins:
+  routine-checkins:
   mood-category:
   routines:
   users:

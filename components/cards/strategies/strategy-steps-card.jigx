@@ -40,17 +40,43 @@ children:
                             grow: 1  
                             shrink: 1
                             basis: 1
-                            
+                          gap: small
                           padding:
                             top: medium
                         children:
+                          - type: component.text
+                            when: =@ctx.inputs.steps.isChecked = 0 and @ctx.solution.state.countdown-finished = false
+                            options:
+                              value: 'Reveal next step in:'
+                              weight: semi-bold
+                              emphasis: medium
+                              align: center
+                          - type: component.countdown
+                            when: =@ctx.inputs.steps.isChecked = 0 and @ctx.solution.state.countdown-finished = false
+                            options:
+                              size: small
+                              expiresAt: =$fromMillis($toMillis(@ctx.solution.state.countdown-start) + (10 * 1000))
+                              # expiresAt: =$fromMillis($toMillis(@ctx.solution.state.countdown-start) + (2 * 60 * 1000))
+                              onFinish: 
+                                type: action.action-list
+                                options:
+                                  isSequential: true
+                                  actions:
+                                    - type: action.reset-state
+                                      options:
+                                        state: =@ctx.solution.state.countdown-start
+                                    - type: action.set-state
+                                      options:
+                                        state: =@ctx.solution.state.countdown-finished
+                                        value: true
                           - type: component.button
-                            when: =@ctx.inputs.steps.isChecked = 0 
+                            when: =@ctx.inputs.steps.isChecked = 0 and @ctx.solution.state.countdown-finished = true
                             options:
                               title: =@ctx.inputs.steps.step = @ctx.inputs.numberOfSteps ? 'Check last step':'Reveal next step'
                               type: secondary
                               isCompact: true
-                                
+                              style:
+                                isDisabled: =(@ctx.datasources.steps[strategy_id = @ctx.inputs.strategyId and step != 1]) or (@ctx.solution.state.countdown-finished = true) ? false:true 
                               onPress: 
                                 type: action.action-list
                                 options:
@@ -76,6 +102,15 @@ children:
                                         data:
                                           id: =@ctx.inputs.steps.id
                                           isChecked: true
+                                    - type: action.set-state
+                                      options:
+                                        state: =@ctx.solution.state.countdown-finished
+                                        value: false
+                                    - type: action.set-state
+                                      when: =@ctx.datasources.steps[strategy_id = @ctx.inputs.steps.strategy_id and step = @ctx.inputs.steps.step].step != @ctx.inputs.numberOfSteps
+                                      options:
+                                        state: =@ctx.solution.state.countdown-start
+                                        value: =$now()
                                     - type: action.set-state
                                       when: =@ctx.datasources.steps[strategy_id = @ctx.inputs.steps.strategy_id and step = @ctx.inputs.steps.step].step = @ctx.inputs.numberOfSteps
                                       options:

@@ -20,9 +20,8 @@ children:
               - type: component.text
                 options:
                   size: =@ctx.inputs.size = 'regular' ? 'regular':'medium'
-                  weight: =@ctx.inputs.size = 'regular' ? 'regular':'semi-bold'
+                  weight: semi-bold
                   value: =@ctx.inputs.title
-                  # emphasis: =@ctx.inputs.size = 'regular' ? 'high':'none'
               - type: component.text
                 when: =@ctx.inputs.subtitle != null
                 options:
