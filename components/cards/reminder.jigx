@@ -1,12 +1,12 @@
 type: component.default
 children:
   - type: component.view
-    # when: =($fromMillis($toMillis(2023-11-10T08:00:00), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis(2023-11-10T08:00:00), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-end), '[h01]:[m01]')) ? true:false 
-    when: |
-     =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) <= 13 and $string(@ctx.inputs.actualDayData) = '[]') or (($number($fromMillis($toMillis($now()), '[H01]')) >= 13 and $count(@ctx.inputs.actualDayData) > 1 or $number($fromMillis($toMillis($now()), '[H01]')) >= 13 and $string(@ctx.inputs.actualDayData) = '[]')) or (@ctx.inputs.reminder.routine_id != 4)
-     & ($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-end), '[h01]:[m01]')) and ((@ctx.inputs.reminder.routine_id = 5) and (@ctx.solution.state.meds = 0))
+    # when: =($fromMillis($toMillis(2023-11-10T08:00:00), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_start), '[h01]:[m01]')) and ($fromMillis($toMillis(2023-11-10T08:00:00), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_end), '[h01]:[m01]')) ? true:false 
+    # when: |
+    #  =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) <= 13 and $string(@ctx.inputs.actualDayData) = '[]') or (($number($fromMillis($toMillis($now()), '[H01]')) >= 13 and $count(@ctx.inputs.actualDayData) > 1 or $number($fromMillis($toMillis($now()), '[H01]')) >= 13 and $string(@ctx.inputs.actualDayData) = '[]')) or (@ctx.inputs.reminder.routine_id != 4)
+    #  & ($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_end), '[h01]:[m01]')) and ((@ctx.inputs.reminder.routine_id = 5) and (@ctx.solution.state.meds = 0))
     
-    #  =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder-end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) < 18 and $type(@ctx.inputs.reminder.mood) = null)
+    #  =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) < 18 and $type(@ctx.inputs.reminder.mood) = null)
     #  or (@ctx.solution.state.meds = 1 and @ctx.inputs.reminder.routineId = 5) ? true:false
     options:
       style:
@@ -43,12 +43,12 @@ children:
                         children:         
                           - type: component.text
                             options:
-                              value: =@ctx.inputs.reminder.reminder-title
+                              value: =@ctx.inputs.reminder.reminder_title
                               align: left
                               size: small
                           - type: component.text
                             options:
-                              value: =@ctx.inputs.reminder.reminder-time
+                              value: =@ctx.inputs.reminder.reminder_time
                               weight: bold
                               align: left        
                               size: small                
@@ -60,7 +60,7 @@ children:
                             isSequential: false
                             actions:
                               - type: action.go-to
-                                when: =@ctx.inputs.reminder.has-detail = 1 ? true:false
+                                when: =@ctx.inputs.reminder.has_detail = 1 ? true:false
                                 options:
                                   linkTo: =@ctx.inputs.reminder.linkTo
                                   parameters:
@@ -98,14 +98,14 @@ children:
                               children:
                                 - type: component.text
                                   options:
-                                    value: =@ctx.inputs.reminder.routine-subject != null ? @ctx.inputs.reminder.routine-subject:'See your checklist'
+                                    value: =@ctx.inputs.reminder.routine_subject != null ? @ctx.inputs.reminder.routine_subject:'See your checklist'
                                     # Daily meds
                                     weight: bold
                                     align: left  
                                 - type: component.text
-                                  when: =@ctx.inputs.reminder.reminder-description != null ? true:false
+                                  when: =@ctx.inputs.reminder.reminder_description != null ? true:false
                                   options:
-                                    value: =@ctx.inputs.reminder.reminder-description
+                                    value: =@ctx.inputs.reminder.reminder_description
                                     size: small
                           - type: component.icon
                             when: =@ctx.inputs.reminder.linkTo != null ? true:false
@@ -114,11 +114,21 @@ children:
                           - type: component.icon
                             when: =@ctx.inputs.reminder.isCheckable = 1 ? true:false
                             options:
+                              icon: =@ctx.solution.state.meds = 0 ? 'checkbox-unchecked':'checkbox-checked'
                               onPress: 
                                 type: action.action-list
                                 options:
                                   isSequential: false
                                   actions:
+                                    - type: action.execute-entity
+                                      options:
+                                        provider: DATA_PROVIDER_DYNAMIC
+                                        entity: default/routine-checkins
+                                        method: save
+                                        goBack: stay
+                                        data:
+                                          routine_id: =@ctx.inputs.reminder.routine_id
+                                          date: =$now()
                                     - type: action.set-state
                                       when: =@ctx.solution.state.meds = 0
                                       options:
@@ -129,6 +139,5 @@ children:
                                       options:
                                         state: =@ctx.solution.state.meds
                                         value: 0
-                              icon: =@ctx.solution.state.meds = 0 ? 'checkbox-unchecked':'checkbox-checked'
   
                                     
