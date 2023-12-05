@@ -44,31 +44,39 @@ children:
                           padding:
                             top: medium
                         children:
-                          - type: component.text
-                            when: =@ctx.inputs.steps.isChecked = 0 and @ctx.solution.state.countdown-finished = false
+                          - type: component.view
                             options:
-                              value: 'Reveal next step in:'
-                              weight: semi-bold
-                              emphasis: medium
-                              align: center
-                          - type: component.countdown
-                            when: =@ctx.inputs.steps.isChecked = 0 and @ctx.solution.state.countdown-finished = false
-                            options:
-                              size: small
-                              expiresAt: =$fromMillis($toMillis(@ctx.solution.state.countdown-start) + (10 * 1000))
-                              # expiresAt: =$fromMillis($toMillis(@ctx.solution.state.countdown-start) + (2 * 60 * 1000))
-                              onFinish: 
-                                type: action.action-list
-                                options:
-                                  isSequential: true
-                                  actions:
-                                    - type: action.reset-state
+                              style:
+                                alignItems: flex-end
+                                justifyContent: flex-end
+                                gap: small
+                                emphasis: medium
+                              children:
+                                - type: component.text
+                                  when: =@ctx.inputs.steps.isChecked = 0 and @ctx.solution.state.countdown-finished = false
+                                  options:
+                                    value: 'Reveal next step in:'
+                                    size: small
+                                    align: center
+                                - type: component.countdown
+                                  when: =@ctx.inputs.steps.isChecked = 0 and @ctx.solution.state.countdown-finished = false
+                                  options:
+                                    size: small
+                                    align: right
+                                    expiresAt: =$fromMillis($toMillis(@ctx.solution.state.countdown-start) + (30 * 1000))
+                                    # expiresAt: =$fromMillis($toMillis(@ctx.solution.state.countdown-start) + (2 * 60 * 1000))
+                                    onFinish: 
+                                      type: action.action-list
                                       options:
-                                        state: =@ctx.solution.state.countdown-start
-                                    - type: action.set-state
-                                      options:
-                                        state: =@ctx.solution.state.countdown-finished
-                                        value: true
+                                        isSequential: true
+                                        actions:
+                                          - type: action.reset-state
+                                            options:
+                                              state: =@ctx.solution.state.countdown-start
+                                          - type: action.set-state
+                                            options:
+                                              state: =@ctx.solution.state.countdown-finished
+                                              value: true
                           - type: component.button
                             when: =@ctx.inputs.steps.isChecked = 0 and @ctx.solution.state.countdown-finished = true
                             options:

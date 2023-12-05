@@ -10,7 +10,7 @@ children:
       children:
         - type: component.card
           options:
-            color: =@ctx.inputs.numberOfResults >= @ctx.inputs.achievements.achievement-goal ? "positive":""
+            color: =@ctx.inputs.numberOfResults >= @ctx.inputs.rewards.goal ? "positive":""
             children:
               - type: component.view
                 options:
@@ -29,7 +29,7 @@ children:
                         children:
                           - type: component.text
                             options:
-                              value: =@ctx.inputs.achievements.achievement-name                 
+                              value: =@ctx.inputs.rewards.name                 
                               size: medium
                               align: center
                     - type: component.view
@@ -41,7 +41,7 @@ children:
                         children:
                           - type: component.text
                             options:
-                              value: =@ctx.inputs.achievements.achievement-description            
+                              value: =@ctx.inputs.rewards.description            
                               emphasis: medium
                               align: center
                     - type: component.image
@@ -49,7 +49,7 @@ children:
                         size: 
                           height: 80
                         source:
-                          uri: =@ctx.inputs.achievements.achievement-image
+                          uri: =@ctx.inputs.rewards.image
                         resizeMode: contain
                     - type: component.progress-bar
                       when: =@ctx.inputs.progressbar
@@ -58,5 +58,5 @@ children:
                         size: small
                         value:
                           current: =@ctx.inputs.numberOfResults
-                          max: =@ctx.inputs.achievements.achievement-goal
+                          max: =@ctx.inputs.rewards.goal
                         

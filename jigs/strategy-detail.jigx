@@ -1,4 +1,4 @@
-title: =$type(@ctx.solution.state.countdown-finished)
+title: ' '
 type: jig.default
 
 datasources:
@@ -122,31 +122,27 @@ datasources:
       queryParameters:
         strategyId: =@ctx.jig.inputs.strategyId
   
-  achievements: 
-    type: datasource.static
+  rewards: 
+    type: datasource.sqlite
     options:
-      data:
-        - id: 1
-          achievement-name: Rookie
-          achievement-description: Complete this strategy 3 times 
-          achievement-image: https://t14345253.p.clickup-attachments.com/t14345253/b1d16757-ab6d-469d-861f-b593a05a3a7b/reward1.png          
-          achievement-progress: 90
-          achievement-goal: 3
-          achievement-level: Level 1
-        - id: 2
-          achievement-name: Novice
-          achievement-description: Complete this strategy 5 times             
-          achievement-image: https://t14345253.p.clickup-attachments.com/t14345253/3bca3a6a-1761-4e54-825c-b9a73d644fbe/reward2.png
-          achievement-progress: 50
-          achievement-goal: 5
-          achievement-level: Level 1         
-        - id: 3
-          achievement-name: Elite
-          achievement-description: Complete this strategy 8 times             
-          achievement-image: https://t14345253.p.clickup-attachments.com/t14345253/d3c1c2fc-8cc9-4751-a924-b03345a29bf3/reward4.png
-          achievement-progress: 0
-          achievement-goal: 8
-          achievement-level: Level 2
+      provider: DATA_PROVIDER_DYNAMIC
+    
+      entities:
+        - default/rewards
+    
+      query: 
+        SELECT 
+        id, 
+        '$.name', 
+        '$.goal', 
+        '$.image', 
+        '$.description', 
+        '$.strategy_id' 
+        FROM [default/rewards] 
+        WHERE '$.strategy_id' = 1
+        ORDER BY '$.goal'
+      queryParameters:
+        strategyId: =@ctx.jig.inputs.strategyId
           
 children:
   - type: component.custom-component
@@ -184,7 +180,7 @@ children:
         inputs:
           results: =@ctx.current.item
   - type: component.custom-component
-    when: =@ctx.datasources.strategies.isDone = 1 and @ctx.datasources.strategies.isInProgress = 0 and @ctx.datasources.results
+    when: =@ctx.datasources.strategies.isDone = 1 and @ctx.datasources.strategies.isInProgress = 0 and @ctx.datasources.results and @ctx.datasources.rewards
     componentId: title
     inputs:
       title: 'Rewards'
@@ -194,12 +190,12 @@ children:
       isHorizontal: true
       isHorizontalScrollIndicatorHidden: true
       maximumItemsToRender: 3
-      data: =@ctx.datasources.achievements
+      data: =@ctx.datasources.rewards
       item: 
         type: component.custom-component
         componentId: achievement
         inputs:
-          achievements: =@ctx.current.item
+          rewards: =@ctx.current.item
           numberOfResults: =@ctx.datasources.row_count_results.results_count
   - type: component.list
     when: =@ctx.datasources.strategies.isInProgress = 1

@@ -1,0 +1,41 @@
+type: component.default
+children:
+  - type: component.view
+    options:
+      style:
+        margin:
+          vertical: large
+      children:
+        - type: component.view
+          options:
+            style:
+              margin: 
+                top: medium
+                bottom: medium
+            children:
+              - type: component.text
+                options:
+                  value: =@ctx.inputs.text
+                  align: center
+                  size: medium
+                  weight: medium
+        - type: component.view
+          options:
+            style:
+              gap: small
+              padding: 
+                vertical: medium
+            children:
+              - type: component.image
+                options:
+                  size: 
+                    height: 100
+                  resizeMode: contain
+                  source:
+                    uri: https://t14345253.p.clickup-attachments.com/t14345253/c174df1c-561f-4da2-b827-32e6535916eb/Treasure.png?view=open
+              - type: component.text
+                options:
+                  value: ='+ ' & @ctx.inputs.gems & ' gems'
+                  size: medium
+                  color: color11
+                  align: center

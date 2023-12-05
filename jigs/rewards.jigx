@@ -2,35 +2,27 @@ title: Rewards
 type: jig.default
 
 datasources:
-  achievements: 
-    type: datasource.static
+  rewards: 
+    type: datasource.sqlite
     options:
-      data:
-        - id: 1
-          achievement-name: Rookie
-          achievement-description: Complete Beat the clock strategy 3 times 
-          achievement-image: https://t14345253.p.clickup-attachments.com/t14345253/b1d16757-ab6d-469d-861f-b593a05a3a7b/reward1.png          
-          achievement-progress: 90
-          achievement-goal: 3
-          achievement-level: Level 1
-        - id: 2
-          achievement-name: Contributor
-          achievement-description: Finish self-check-in for a whole week              
-          achievement-image: https://t14345253.p.clickup-attachments.com/t14345253/6d988869-ca83-45b1-bf77-821f5a6b0222/reward6.png?view=open
-          achievement-progress: 25
-          achievement-level: Level 2                           
-        - id: 3
-          achievement-name: Master Contributor
-          achievement-description: Finish self-check-in for 4 weeks              
-          achievement-image: https://t14345253.p.clickup-attachments.com/t14345253/cacf2038-092e-454a-b535-725ee33548ae/reward7.png?view=open   
-          achievement-progress: 0
-          achievement-level: Level 1 
-        - id: 4
-          achievement-name: Star Achiever
-          achievement-description: Complete all previous achievements             
-          achievement-image: https://t14345253.p.clickup-attachments.com/t14345253/bba01a0f-daaa-40af-b837-22919adab5ff/reward5.png?view=open
-          achievement-progress: 25
-          achievement-level: Level 2             
+      provider: DATA_PROVIDER_DYNAMIC
+    
+      entities:
+        - default/rewards
+    
+      query: 
+        SELECT 
+        id, 
+        '$.name', 
+        '$.goal', 
+        '$.image', 
+        '$.description', 
+        '$.strategy_id' 
+        FROM [default/rewards] 
+        WHERE '$.strategy_id' = 1
+        ORDER BY '$.goal'
+      queryParameters:
+        strategyId: =@ctx.jig.inputs.strategyId           
 
           
   extra-reward: 
@@ -96,12 +88,12 @@ children:
       isHorizontal: true
       isHorizontalScrollIndicatorHidden: true
       maximumItemsToRender: 3
-      data: =@ctx.datasources.achievements
+      data: =@ctx.datasources.rewards
       item: 
         type: component.custom-component
         componentId: achievement
         inputs:
-          achievements: =@ctx.current.item
+          rewards: =@ctx.current.item
           progressbar: false
   - type: component.custom-component
     componentId: title

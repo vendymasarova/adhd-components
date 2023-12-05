@@ -1,5 +1,4 @@
 title: Adhd 
-description: =$count(@ctx.datasources.actual-day-and-mood)
 # description: =@ctx.solution.state.today & @ctx.datasources.reminders.date & @ctx.datasources.reminders.reminder_start
 # description: =$type($count(@ctx.datasources.actual-day-and-mood))
 # description: |
@@ -45,15 +44,17 @@ datasources:
           STRFTIME('%H:%M', json_extract(a.data, '$.reminder-end')) AS reminder_end
         FROM [default/routines] a
         LEFT JOIN [default/routine-checkins] b ON json_extract(a.data, '$.routine_id') = json_extract(b.data, '$.routine_id')
-        WHERE json_extract(a.data, '$.isReminiscent') = true
-        AND date is not @today
+        WHERE isReminiscent = true
         AND strftime('%H:%M', 'now') BETWEEN reminder_start AND reminder_end
-        AND strftime('%H:%M', 'now') > 15 and @actualDayData >= 1
-        GROUP BY routine_id
+        AND ((strftime('%H:%M', 'now') < '15:00' and @actualDayData is '[]') or (strftime('%H:%M', 'now') > '15:00' and @countActualDayData >= 1)) 
+        AND date is not @today
         ORDER BY priority
+        # GROUP BY routine_id
       queryParameters:
         today: =@ctx.solution.state.today
-        actualDayData: =$count(@ctx.datasources.actual-day-and-mood)
+        actualDayData: =$string(@ctx.datasources.actual-day-and-mood)
+        countActualDayData: =$count(@ctx.datasources.actual-day-and-mood)
+        now: =$fromMillis($toMillis($now()), '[h01]:[m01][P]')
         
   mood-checkins:
     type: datasource.sqlite
