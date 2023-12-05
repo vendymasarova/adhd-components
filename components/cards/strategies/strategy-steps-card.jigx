@@ -55,7 +55,7 @@ children:
                                 - type: component.text
                                   when: =@ctx.inputs.steps.isChecked = 0 and @ctx.solution.state.countdown-finished = false
                                   options:
-                                    value: 'Reveal next step in:'
+                                    value: 'Work on this step at least:'
                                     size: small
                                     align: center
                                 - type: component.countdown
@@ -78,7 +78,7 @@ children:
                                               state: =@ctx.solution.state.countdown-finished
                                               value: true
                           - type: component.button
-                            when: =@ctx.inputs.steps.isChecked = 0 and @ctx.solution.state.countdown-finished = true
+                            when: =@ctx.inputs.steps.isChecked = 0
                             options:
                               title: =@ctx.inputs.steps.step = @ctx.inputs.numberOfSteps ? 'Check last step':'Reveal next step'
                               type: secondary

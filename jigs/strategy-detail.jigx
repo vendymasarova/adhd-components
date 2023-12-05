@@ -139,7 +139,7 @@ datasources:
         '$.description', 
         '$.strategy_id' 
         FROM [default/rewards] 
-        WHERE '$.strategy_id' = 1
+        WHERE '$.strategy_id' = @strategyId
         ORDER BY '$.goal'
       queryParameters:
         strategyId: =@ctx.jig.inputs.strategyId

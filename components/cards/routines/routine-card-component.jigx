@@ -1,0 +1,81 @@
+type: component.default
+children:
+  - type: component.view
+    options:
+      style:
+        flex: 
+          grow: 1
+          shrink: 1
+          direction: row
+        gap: medium
+        margin: 
+          right: small
+      children:
+        - type: component.card
+          options:
+            onPress: 
+              type: action.go-to
+              options:
+                linkTo: checklist-detail
+                parameters:
+                  routineId: =@ctx.inputs.routines.routine_id
+            children:
+              - type: component.view
+                options:
+                  style:
+                    flex: 
+                      shrink: 1
+                    width: 220
+                    justifyContent: space-between
+                  children:
+                    - type: component.view
+                      options:
+                        style:
+                          flex: 
+                            direction: column
+                          padding: small
+                          radius: medium
+                          width: 60
+                          height: 60
+                          background:
+                            color: =@ctx.inputs.routines.type = 'school' ? 'color3':@ctx.inputs.routines.type = 'personal' ? 'color8':'color2'
+                          justifyContent: center
+                          alignItems: center
+                        children:
+                          - type: component.image
+                            options:
+                              size:
+                                height: 40
+                                width: 40
+                              resizeMode: contain
+                              source:
+                                uri:  =@ctx.inputs.routines.routine_image
+                    - type: component.view
+                      options:
+                        style:
+                          flex:
+                          margin:
+                            top: medium
+                            bottom: large
+                          gap: small
+                        children:
+                          - type: component.view
+                            options:
+                              style:
+                                flex:
+                                  grow: 1
+                              children:
+                                - type: component.text
+                                  options:
+                                    value: =@ctx.inputs.routines.routine_name
+                                    weight: semi-bold
+                    - type: component.progress-bar
+                      options:
+                        steps: =@ctx.inputs.numberOfSteps
+                        size: small
+                        value:
+                          current: =@ctx.inputs.isDoneNumber
+                          max: =@ctx.inputs.numberOfSteps
+                        subtitle:
+                          value: =@ctx.inputs.isDoneNumber & '/' & @ctx.inputs.numberOfSteps
+                        color:  =@ctx.inputs.isDoneNumber = @ctx.inputs.numberOfSteps ? 'positive':'warning'

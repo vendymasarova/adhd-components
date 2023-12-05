@@ -1,4 +1,5 @@
-title: Rewards
+title: =@ctx.datasources.results-rewards.sub
+description: =@ctx.datasources.results-rewards.reward_name
 type: jig.default
 
 datasources:
@@ -73,6 +74,39 @@ datasources:
       queryParameters:
         user: =@ctx.user.email
         
+  results-rewards:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/strategies-results
+        - default/rewards
+  
+      query:
+         SELECT DISTINCT
+            a.id AS id,
+            json_extract(a.data, '$.id') AS reward_id,
+            json_extract(a.data, '$.name') AS reward_name,
+            json_extract(a.data, '$.goal') AS goal,
+            json_extract(a.data, '$.image') AS image,
+            json_extract(a.data, '$.description') AS description,
+            json_extract(a.data, '$.strategy_id') AS strategy_id,
+            json_extract(b.data, '$.id') AS result_id,
+            json_extract(b.data, '$.end') AS time_end,
+            json_extract(b.data, '$.start') AS start,
+            json_extract(b.data, '$.time') AS time,
+            json_extract(b.data, '$.gems') AS gems
+        FROM [default/rewards] AS a
+        JOIN [default/strategies-results] AS b
+        ON
+          json_extract(a.data, '$.strategy_id') = json_extract(b.data, '$.strategyId')
+        WHERE
+          json_extract(a.data, '$.goal') = (
+          SELECT COUNT(*)
+          FROM [default/strategies-results] AS sub_results
+          WHERE json_extract(a.data, '$.strategy_id') = json_extract(sub_results.data, '$.strategyId')
+        )
 children:
   - type: component.custom-component
     componentId: points-preview-card

@@ -44,13 +44,19 @@ children:
                               value: =@ctx.inputs.rewards.description            
                               emphasis: medium
                               align: center
-                    - type: component.image
+                    - type: component.view
                       options:
-                        size: 
-                          height: 80
-                        source:
-                          uri: =@ctx.inputs.rewards.image
-                        resizeMode: contain
+                        style:
+                          padding: 
+                            vertical: small
+                        children:
+                          - type: component.image
+                            options:
+                              size: 
+                                height: 80
+                              source:
+                                uri: =@ctx.inputs.rewards.image
+                              resizeMode: contain
                     - type: component.progress-bar
                       when: =@ctx.inputs.progressbar
                       options:
