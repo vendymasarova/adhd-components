@@ -1,5 +1,5 @@
 title: Adhd 
-description: =$count(@ctx.datasources.actual-day-and-mood) >= 1 ? 'ano':'ne'
+# description: =$count(@ctx.datasources.actual-day-and-mood) >= 1 ? 'ano':'ne'
 # description: =$type($count(@ctx.datasources.actual-day-and-mood))
 # description: |
 #      =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) <= 14 and $string(@ctx.datasources.actual-day-and-mood) = '[]') 
@@ -12,27 +12,13 @@ onFocus:
     value: =$fromMillis($toMillis($now()), '[D01].[M01].[Y]')
 
 datasources:
-  checkins:
+  reminders:
     type: datasource.sqlite
     options:
       provider: DATA_PROVIDER_DYNAMIC
   
       entities:
-        - default/routine-checkins
-  
-      query: 
-        SELECT 
-        id, 
-        STRFTIME('%d.%m.%Y', json_extract(data, '$.date')) as date
-        FROM [default/routine-checkins] 
-   
-  reminders-dates:
-    type: datasource.sqlite
-    options:
-      provider: DATA_PROVIDER_DYNAMIC
-  
-      entities:
-        - default/reminders
+        - default/reminders-and-routines
   
       query: 
         SELECT 
@@ -56,7 +42,7 @@ datasources:
         '$.time_of_day',
         STRFTIME('%H:%M', json_extract(data, '$.reminder-start')) AS reminder_start,
         STRFTIME('%H:%M', json_extract(data, '$.reminder-end')) AS reminder_end
-        FROM [default/reminders]
+        FROM [default/reminders-and-routines]
         WHERE STRFTIME('%d.%m.%Y', json_extract(data, '$.date')) = @today 
         AND '$.isDone' = false
         AND STRFTIME('%H:%M', 'now') BETWEEN reminder_start AND reminder_end
@@ -67,50 +53,6 @@ datasources:
         now: =$fromMillis($toMillis($now()), '[P]')
         actualDayData: =$string(@ctx.datasources.actual-day-and-mood)
         countActualDayData: =$count(@ctx.datasources.actual-day-and-mood)
-        
-  reminders:
-    type: datasource.sqlite
-    options:
-      provider: DATA_PROVIDER_DYNAMIC
-
-      entities:
-        - default/routines
-        - default/routine-checkins
-
-      query:
-        SELECT
-          a.id AS id,
-          STRFTIME('%d.%m.%Y', json_extract(b.data, '$.date')) AS date,
-          json_extract(a.data, '$.routine_id') AS routine_id,
-          json_extract(a.data, '$.name') AS name,
-          json_extract(a.data, '$.image') AS image,
-          json_extract(a.data, '$.isDone') AS isDone,
-          json_extract(a.data, '$.type') AS type,
-          json_extract(a.data, '$.time') AS time,
-          json_extract(a.data, '$.isCheckable') AS isCheckable,
-          json_extract(a.data, '$.reminder-title') AS reminder_title,
-          json_extract(a.data, '$.reminder-time') AS reminder_time,
-          json_extract(a.data, '$.routine-subject') AS routine_subject,
-          json_extract(a.data, '$.reminder-description') AS reminder_description,
-          json_extract(a.data, '$.isReminiscent') AS isReminiscent,
-          json_extract(a.data, '$.has-detail') AS has_detail,
-          json_extract(a.data, '$.priority') AS priority,
-          json_extract(a.data, '$.linkTo') AS linkTo,
-          STRFTIME('%H:%M', json_extract(a.data, '$.reminder-start')) AS reminder_start,
-          STRFTIME('%H:%M', json_extract(a.data, '$.reminder-end')) AS reminder_end
-        FROM [default/routines] a
-        LEFT JOIN [default/routine-checkins] b ON (json_extract(a.data, '$.routine_id') = json_extract(b.data, '$.routine_id') and json_extract(a.data, '$.date') = json_extract(b.data, '$.date'))
-        WHERE isReminiscent = true
-        AND strftime('%H:%M', 'now') BETWEEN reminder_start AND reminder_end
-        AND ((strftime('%H:%M', 'now') < '15:00' and @actualDayData is '[]') or (strftime('%H:%M', 'now') > '15:00' and @countActualDayData >= 1)) 
-        AND date is not @today
-        ORDER BY priority
-        # GROUP BY routine_id
-      queryParameters:
-        today: =@ctx.solution.state.today
-        actualDayData: =$string(@ctx.datasources.actual-day-and-mood)
-        countActualDayData: =$count(@ctx.datasources.actual-day-and-mood)
-        now: =$fromMillis($toMillis($now()), '[h01]:[m01][P]')
         
   mood-checkins:
     type: datasource.sqlite
@@ -257,6 +199,48 @@ datasources:
         '$.gems'
         FROM [default/strategies-results]
         
+  routines-with-todos:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_LOCAL
+
+      entities:
+        - entity: default/todos
+        - entity: default/reminders-and-routines
+
+      query: |
+        SELECT
+          a.id AS id,
+          json_extract(a.data, '$.name') AS routine_name,
+          json_extract(a.data, '$.time') AS time,
+          json_extract(a.data, '$.type') AS type,
+          json_extract(a.data, '$.priority') AS priority,
+          json_extract(a.data, '$.description') AS description,
+          json_extract(a.data, '$.image') AS routine_image,
+          json_extract(a.data, '$.isDone') AS isDone,
+          json_extract(a.data, '$.routine_id') AS routine_id,
+          json_extract(a.data, '$.isCheckable') AS isCheckable,
+          json_extract(a.data, '$.hasChecklist') AS hasChecklist,
+          json_extract(b.data, '$.name') AS name,
+          json_extract(b.data, '$.image') AS image,
+          json_extract(b.data, '$.isChecked') AS isChecked,
+          (
+          SELECT COUNT(*)
+          FROM [default/todos] s
+          WHERE json_extract(s.data, '$.routine_id') = json_extract(a.data, '$.routine_id')
+          ) AS total_todos,
+          (
+            SELECT COUNT(*)
+            FROM [default/todos] s
+            WHERE json_extract(s.data, '$.isChecked') = 1
+            AND json_extract(s.data, '$.routine_id') = json_extract(a.data, '$.routine_id')
+          ) AS isDoneNumber
+        FROM [default/reminders-and-routines] a
+        LEFT JOIN [default/todos] b ON json_extract(a.data, '$.routine_id') = json_extract(b.data, '$.routine_id')
+        WHERE isCheckable = false
+        AND hasChecklist = true
+        GROUP BY routine_id
+        
 children:
   - type: component.custom-component
     componentId: header-component
@@ -270,10 +254,10 @@ children:
     componentId: title
     inputs:
       title: Reminders
-      subtitle: =$count(@ctx.datasources.reminders-dates) != 0 ? null:'You are all done! 🎉'
+      subtitle: =$count(@ctx.datasources.reminders) != 0 ? null:'You are all done! 🎉'
   - type: component.list
     options:
-      data: =@ctx.datasources.reminders-dates
+      data: =@ctx.datasources.reminders
       maximumItemsToRender: 8
       isHorizontal: true
       isHorizontalScrollIndicatorHidden: true
@@ -325,3 +309,16 @@ children:
           isDoneNumber: =@ctx.current.item.isDoneNumber
           goTo: true
           strategyId: =@ctx.jig.inputs.strategyId
+  - type: component.list
+    options:
+      data: =@ctx.datasources.routines-with-todos
+      maximumItemsToRender: 8
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      item:
+        type: component.custom-component
+        componentId: routine-card-component
+        inputs:
+          routines: =@ctx.current.item
+          numberOfSteps: =@ctx.current.item.total_todos
+          isDoneNumber: =@ctx.current.item.isDoneNumber

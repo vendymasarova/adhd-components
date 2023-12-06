@@ -3,7 +3,6 @@ tables:
   reasons:
   dates:
   mood-checkins:
-  routine-checkins:
   mood-category:
   routines:
   users:
@@ -13,5 +12,5 @@ tables:
   strategies-category:
   rewards:
   todos:
-  reminders:
+  reminders-and-routines:
   
