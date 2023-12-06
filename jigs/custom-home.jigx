@@ -1,5 +1,5 @@
 title: Adhd 
-# description: =@ctx.solution.state.today & @ctx.datasources.reminders.date & @ctx.datasources.reminders.reminder_start
+description: =$count(@ctx.datasources.actual-day-and-mood) >= 1 ? 'ano':'ne'
 # description: =$type($count(@ctx.datasources.actual-day-and-mood))
 # description: |
 #      =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) <= 14 and $string(@ctx.datasources.actual-day-and-mood) = '[]') 
@@ -12,6 +12,62 @@ onFocus:
     value: =$fromMillis($toMillis($now()), '[D01].[M01].[Y]')
 
 datasources:
+  checkins:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/routine-checkins
+  
+      query: 
+        SELECT 
+        id, 
+        STRFTIME('%d.%m.%Y', json_extract(data, '$.date')) as date
+        FROM [default/routine-checkins] 
+   
+  reminders-dates:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/reminders
+  
+      query: 
+        SELECT 
+        id,
+        '$.routine_id',
+        '$.name',
+        '$.date',
+        '$.image',
+        '$.isDone',
+        '$.type',
+        '$.time',
+        '$.isCheckable',
+        '$.reminder-title',
+        '$.reminder-time',
+        '$.routine-subject',
+        '$.reminder-description',
+        '$.isReminiscent',
+        '$.has-detail',
+        '$.priority',
+        '$.linkTo',
+        '$.time_of_day',
+        STRFTIME('%H:%M', json_extract(data, '$.reminder-start')) AS reminder_start,
+        STRFTIME('%H:%M', json_extract(data, '$.reminder-end')) AS reminder_end
+        FROM [default/reminders]
+        WHERE STRFTIME('%d.%m.%Y', json_extract(data, '$.date')) = @today 
+        AND '$.isDone' = false
+        AND STRFTIME('%H:%M', 'now') BETWEEN reminder_start AND reminder_end
+        AND ('$.time_of_day' = 'both' OR '$.time_of_day' = @now)
+        AND ((strftime('%H:%M', 'now') < '14:00' and @actualDayData is '[]') or (strftime('%H:%M', 'now') > '14:00' and (@actualDayData is '[]' or @countActualDayData = 1))) 
+      queryParameters:
+        today: =$fromMillis($toMillis($now()), '[D01].[M01].[Y]')
+        now: =$fromMillis($toMillis($now()), '[P]')
+        actualDayData: =$string(@ctx.datasources.actual-day-and-mood)
+        countActualDayData: =$count(@ctx.datasources.actual-day-and-mood)
+        
   reminders:
     type: datasource.sqlite
     options:
@@ -43,7 +99,7 @@ datasources:
           STRFTIME('%H:%M', json_extract(a.data, '$.reminder-start')) AS reminder_start,
           STRFTIME('%H:%M', json_extract(a.data, '$.reminder-end')) AS reminder_end
         FROM [default/routines] a
-        LEFT JOIN [default/routine-checkins] b ON json_extract(a.data, '$.routine_id') = json_extract(b.data, '$.routine_id')
+        LEFT JOIN [default/routine-checkins] b ON (json_extract(a.data, '$.routine_id') = json_extract(b.data, '$.routine_id') and json_extract(a.data, '$.date') = json_extract(b.data, '$.date'))
         WHERE isReminiscent = true
         AND strftime('%H:%M', 'now') BETWEEN reminder_start AND reminder_end
         AND ((strftime('%H:%M', 'now') < '15:00' and @actualDayData is '[]') or (strftime('%H:%M', 'now') > '15:00' and @countActualDayData >= 1)) 
@@ -117,6 +173,7 @@ datasources:
           json_extract(a.data, '$.day') AS day,
           json_extract(b.data, '$.mood') AS mood,
           json_extract(b.data, '$.time_of_day') AS time_of_day
+          
         FROM [default/dates] a
         LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m.%Y', json_extract(a.data, '$.date')) = STRFTIME('%d.%m.%Y', json_extract(b.data, '$.date'))
         WHERE date = @today
@@ -213,10 +270,10 @@ children:
     componentId: title
     inputs:
       title: Reminders
-      subtitle: =$count(@ctx.datasources.reminders) != 0 ? null:'You are all done! 🎉'
+      subtitle: =$count(@ctx.datasources.reminders-dates) != 0 ? null:'You are all done! 🎉'
   - type: component.list
     options:
-      data: =@ctx.datasources.reminders
+      data: =@ctx.datasources.reminders-dates
       maximumItemsToRender: 8
       isHorizontal: true
       isHorizontalScrollIndicatorHidden: true
