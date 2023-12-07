@@ -19,6 +19,10 @@ widgets:
     jigId: first-step-custom
   - size: 1x1 # choose size of the widget on the home hub
     jigId: mood-recap-composite
+  - size: 1x1 # choose size of the widget on the home hub
+    jigId: routine-detail
+  - size: 1x1 # choose size of the widget on the home hub
+    jigId: checklist
 home:
 - instanceId: home
 #   jigId: custom-home
@@ -34,8 +38,10 @@ assets:
     - arrow-right # auto-generated
     - check # auto-generated
     - check-circle-1 # auto-generated
+    - checklist # auto-generated
     - circle # auto-generated
     - contact # auto-generated
+    - fuel-pump-reload # auto-generated
     - image-file-add # auto-generated
     - messages # auto-generated
     - mood-happy # auto-generated

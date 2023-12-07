@@ -1,0 +1,229 @@
+title:  ' '
+type: jig.default
+icon: contact
+
+onFocus: 
+  type: action.set-state
+  options:
+    state: =@ctx.solution.state.add-todo
+    value: 0
+          
+actions:
+  - children:
+      - type: action.submit-form
+        when: =@ctx.solution.state.add-todo = 1 
+        options:
+          formId: new-todo-routine-form
+          provider: DATA_PROVIDER_DYNAMIC
+          title: Create new Todo
+          entity: default/todos
+          method: save
+          goBack: stay 
+          onSuccess: 
+            title: New todo created
+            type: action.set-state
+            options:
+              state: =@ctx.solution.state.add-todo
+              value: 0
+        
+          
+datasources:
+  routines:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/reminders-and-routines
+  
+      query: 
+        SELECT 
+          id, 
+          '$.name', 
+          '$.image',
+          '$.isDone',
+          '$.type',
+          '$.time',
+          '$.hasEmoji',
+          '$.routine_id',
+          '$.description'
+        FROM [default/reminders-and-routines] 
+        WHERE '$.routine_id' = @yourRoutineId
+      queryParameters:
+        yourRoutineId: =@ctx.jig.inputs.routineId
+
+  todos:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/todos
+  
+      query: 
+        SELECT 
+          id, 
+          '$.type', 
+          '$.name',
+          '$.image',
+          '$.isChecked',
+          '$.hasEmoji',
+          '$.routine_id'
+        FROM [default/todos] 
+        WHERE '$.routine_id' = @todoRoutineId
+        ORDER BY '$.isChecked' AND '$.name' desc
+      queryParameters:
+        todoRoutineId: =@ctx.jig.inputs.routineId
+  
+  images: 
+    type: datasource.static
+    options:
+      data:
+        - id: 1
+          name: Pencil
+          image: https://t14345253.p.clickup-attachments.com/t14345253/646c1c55-c975-4f91-86b7-202713a78356/Pencil.png?view=open
+        - id: 2
+          name: Breakfast
+          image: https://t14345253.p.clickup-attachments.com/t14345253/5be1182b-8e77-4fb7-ab0d-69b607dc3a64/Boiled%20Egg.png?view=open
+        - id: 3
+          name: Bag
+          image: https://t14345253.p.clickup-attachments.com/t14345253/a44dccc7-f28c-4377-a531-4ee425878ff6/Study%20bag.png?view=open
+        - id: 4
+          name: Water
+          image: https://t14345253.p.clickup-attachments.com/t14345253/3b42d7d9-5d7e-4f40-87f0-4da4dbb6229f/Water%20Bottle.png?view=open
+        - id: 5
+          name: Hygiene
+          image: https://t14345253.p.clickup-attachments.com/t14345253/f39f073c-2ddb-4bec-8b38-b9887bd71e19/Clean%20Teeth.png?view=open
+        - id: 6
+          name: Snack
+          image: https://t14345253.p.clickup-attachments.com/t14345253/141ded58-8cde-4efb-87f2-1335cfb0c794/Burger.png?view=open
+        - id: 7
+          name: Stretch
+          image: https://t14345253.p.clickup-attachments.com/t14345253/debd3a94-da9e-482b-8c0f-2b1782506771/Tummy%20Exercise.png?view=open
+  
+  types:
+    type: datasource.static
+    options:
+      data:
+        - id: 1
+          type: School
+          image: https://t14345253.p.clickup-attachments.com/t14345253/67638b68-4c84-4c2d-887a-d335db8164d0/School.png?view=open
+        - id: 2
+          type: Work
+          image: https://t14345253.p.clickup-attachments.com/t14345253/67638b68-4c84-4c2d-887a-d335db8164d0/School.png?view=open
+        - id: 3
+          type: Personal
+          image: https://t14345253.p.clickup-attachments.com/t14345253/67638b68-4c84-4c2d-887a-d335db8164d0/School.png?view=open
+        - id: 4
+          type: Housework
+          image: https://t14345253.p.clickup-attachments.com/t14345253/67638b68-4c84-4c2d-887a-d335db8164d0/School.png?view=open
+
+ 
+children:
+  - type: component.custom-component
+    componentId: routine-header
+    inputs:
+      routines: =@ctx.datasources.routines
+  - type: component.list
+    # when: =$count(@ctx.datasources.fuelcheckdaily[is_checked = 1]) < $count(@ctx.datasources.fuel-daily-checks)
+    options:
+      data: =@ctx.datasources.todos
+      item:
+        type: component.list-item
+        options:
+          title: =@ctx.current.item.name
+          color:
+            - when: =1=1
+              color: color2
+          leftElement: 
+            element: icon
+      #      icon: checkbox-unchecked
+            icon: |
+              =@ctx.datasources.todos[id=@ctx.current.item.id].isChecked = 1 ? 'checkbox-checked' : 'checkbox-unchecked'
+          onPress: 
+            type: action.execute-entity
+            options: 
+              provider: DATA_PROVIDER_LOCAL
+              entity: fuel_daily_local
+              method: save
+              goBack: stay
+              data: 
+                id: =@ctx.current.item.id
+                itemname: =@ctx.current.item.itemname
+                check_type: 'fuel_daily'
+                check_date: =$now()
+                is_checked: |
+                    =@ctx.datasources.fuelcheckdaily[id=@ctx.current.item.id].is_checked = 1 ? 0 : 1
+  - type: component.list
+    options:
+      maximumItemsToRender: 100
+      data: =@ctx.datasources.todos
+      item: 
+        type: component.custom-component
+        componentId: todo-component
+        inputs:
+          todos: =@ctx.current.item
+          id: =@ctx.current.item.id
+      # onShowMorePress:
+      #   type: action.go-to
+      #   options:
+      #     linkTo: checklist-all
+      #     parameters:
+      #       routineId: =@ctx.datasources.routines.routine_id
+  - type: component.custom-component  
+    componentId: plus-btn
+  - type: component.form
+    when: =@ctx.solution.state.add-todo = 1
+    instanceId: new-todo-routine-form
+    options:
+      children:
+        - type: component.field-row
+          options:
+            children:
+              - type: component.text-field
+                instanceId: name
+                options:
+                  label: Name
+        - type: component.text-field
+          instanceId: type
+          options:
+            label: type
+            isHidden: true
+            initialValue: =@ctx.datasources.routines.type
+        - type: component.number-field
+          instanceId: routine_id
+          options:
+            isHidden: true
+            label: routine id
+            initialValue: =@ctx.datasources.routines.routine_id
+        - type: component.checkbox
+          instanceId: hasEmoji
+          options:
+            isHidden: true
+            label: hasEmoji
+            initialValue: false
+        - type: component.dropdown
+          instanceId: image
+          options:
+            label: Icon
+            data: =@ctx.datasources.images
+            style:
+              flex: 1
+            item:
+              type: component.dropdown-item
+              options:
+                title: =@ctx.current.item.name
+                value: =@ctx.current.item.image
+                # leftElement: 
+                #   element: image
+                #   text: ''
+                #   uri: =@ctx.current.item.image
+                #   resizeMode: contain
+                leftElement: 
+                  element: avatar
+                  text: =@ctx.current.item.name
+                  uri: =@ctx.current.item.image
+                  
+        
+        
+          

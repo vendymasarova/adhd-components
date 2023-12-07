@@ -1,0 +1,137 @@
+title: =@ctx.datasources.checklist
+type: jig.default
+icon: checklist
+
+
+header:
+  type: component.jig-header
+  options:
+    height: medium
+    children:
+      type: component.image
+      options:
+        resizeMode: contain
+        source:
+          uri: https://www.northerntankstore.co.uk/images/big/Piusi-hand-operated-diesel-pump-1.jpg
+
+onFocus: 
+  type: action.action-list
+  options:
+    isSequential: true
+    actions:
+      - type: action.execute-entities
+        options: 
+          provider: DATA_PROVIDER_LOCAL
+          method: delete
+          entity: checklist-local
+          goBack: stay
+          data: |
+            =@ctx.datasources.checklist.{ 'id': id }[]
+
+actions:
+  - children:
+      - type: action.action-list
+        options:
+          title: Complete
+          isSequential: true
+          style:
+            isDisabled: |
+              =($count(@ctx.datasources.checklist[isChecked = 1]) < $count(@ctx.datasources.todos))
+          actions:
+            - type: action.execute-entities
+              options: 
+                provider: DATA_PROVIDER_DYNAMIC
+                entity: default/checklist-check
+                goBack: stay
+                method: save
+                data: | 
+                    =$map(@ctx.datasources.checklist , function($v , $i , $a) {
+                    $.{
+                      "id" : $string($v.id),
+                      "isChecked" : $v.isChecked,
+                      "name" : $v.name,
+                      "check_date" : $now(),
+                      "checked_by" : @ctx.user.email
+                    }
+                    } )
+
+summary:
+  children:
+    type: component.summary
+    options: 
+      layout: default
+      leftIcon:
+        element: icon
+        icon: fuel-pump-reload
+        isDuotone: true
+      title: |
+        =$count(@ctx.datasources.checklist[isChecked = 1]) & ' / ' & $count(@ctx.datasources.todos) & ' Completed'
+
+datasources:
+  checklist:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_LOCAL
+  
+      entities:
+        - checklist-local
+  
+      query: |
+        SELECT id
+        ,'$.name'
+        ,'$.isChecked'
+        ,'$.check_date'
+        FROM [checklist-local]
+      queryParameters:
+        dateofcheck: =$now()
+  
+  todos:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/todos
+  
+      query: 
+        SELECT 
+        id, 
+        '$.name', 
+        '$.isChecked',
+        '$.routine_id'
+        FROM [default/todos]
+        WHERE '$.routine_id' = 3
+        ORDER BY '$.name'
+
+children:
+  - type: component.list
+    when: =$count(@ctx.datasources.checklist[is_checked = 1]) < $count(@ctx.datasources.todos)
+    options:
+      data: =@ctx.datasources.todos
+      item:
+        type: component.list-item
+        options:
+          title: =@ctx.current.item.name
+          color:
+            - when: =1=1
+              color: color2
+          leftElement: 
+            element: icon
+      #      icon: checkbox-unchecked
+            icon: |
+              =@ctx.datasources.checklist[id=@ctx.current.item.id].isChecked = 1 ? 'checkbox-checked' : 'checkbox-unchecked'
+          onPress: 
+            type: action.execute-entity
+            options: 
+              provider: DATA_PROVIDER_LOCAL
+              entity: checklist-local
+              method: save
+              goBack: stay
+              data: 
+                id: =@ctx.current.item.id
+                name: =@ctx.current.item.name
+                check_date: =$now()
+                isChecked: |
+                    =@ctx.datasources.checklist[id=@ctx.current.item.id].isChecked = 1 ? 0 : 1
+
+          

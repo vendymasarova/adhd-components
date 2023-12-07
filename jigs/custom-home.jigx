@@ -309,16 +309,16 @@ children:
           isDoneNumber: =@ctx.current.item.isDoneNumber
           goTo: true
           strategyId: =@ctx.jig.inputs.strategyId
-  - type: component.list
-    options:
-      data: =@ctx.datasources.routines-with-todos
-      maximumItemsToRender: 8
-      isHorizontal: true
-      isHorizontalScrollIndicatorHidden: true
-      item:
-        type: component.custom-component
-        componentId: routine-card-component
-        inputs:
-          routines: =@ctx.current.item
-          numberOfSteps: =@ctx.current.item.total_todos
-          isDoneNumber: =@ctx.current.item.isDoneNumber
+  # - type: component.list
+  #   options:
+  #     data: =@ctx.datasources.routines-with-todos
+  #     maximumItemsToRender: 8
+  #     isHorizontal: true
+  #     isHorizontalScrollIndicatorHidden: true
+  #     item:
+  #       type: component.custom-component
+  #       componentId: routine-card-component
+  #       inputs:
+  #         routines: =@ctx.current.item
+  #         numberOfSteps: =@ctx.current.item.total_todos
+  #         isDoneNumber: =@ctx.current.item.isDoneNumber
