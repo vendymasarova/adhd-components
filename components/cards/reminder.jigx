@@ -66,6 +66,7 @@ children:
                                   parameters:
                                     routineId: =@ctx.inputs.reminder.routine_id
                                     strategyId: =@ctx.inputs.reminder.routine_id
+                                    itemId: =@ctx.inputs.reminder.id
                         style:
                           flex: 
                             direction: row

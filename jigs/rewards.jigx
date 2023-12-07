@@ -1,4 +1,4 @@
-title: =@ctx.datasources.results-rewards.sub
+title: =@ctx.datasources.results-rewards.reward_name
 description: =@ctx.datasources.results-rewards.reward_name
 type: jig.default
 
@@ -84,8 +84,8 @@ datasources:
         - default/rewards
   
       query:
-         SELECT DISTINCT
-            a.id AS id,
+         SELECT
+            b.id AS id,
             json_extract(a.data, '$.id') AS reward_id,
             json_extract(a.data, '$.name') AS reward_name,
             json_extract(a.data, '$.goal') AS goal,
@@ -101,12 +101,13 @@ datasources:
         JOIN [default/strategies-results] AS b
         ON
           json_extract(a.data, '$.strategy_id') = json_extract(b.data, '$.strategyId')
-        WHERE
-          json_extract(a.data, '$.goal') = (
-          SELECT COUNT(*)
-          FROM [default/strategies-results] AS sub_results
-          WHERE json_extract(a.data, '$.strategy_id') = json_extract(sub_results.data, '$.strategyId')
-        )
+        GROUP BY strategy_id
+        # WHERE
+        #   json_extract(a.data, '$.goal') = (
+        #   SELECT COUNT(*)
+        #   FROM [default/strategies-results] AS sub_results
+        #   WHERE json_extract(a.data, '$.strategy_id') = json_extract(sub_results.data, '$.strategyId')
+        # )
 children:
   - type: component.custom-component
     componentId: points-preview-card
@@ -122,7 +123,7 @@ children:
       isHorizontal: true
       isHorizontalScrollIndicatorHidden: true
       maximumItemsToRender: 3
-      data: =@ctx.datasources.rewards
+      data: =@ctx.datasources.results-rewards
       item: 
         type: component.custom-component
         componentId: achievement

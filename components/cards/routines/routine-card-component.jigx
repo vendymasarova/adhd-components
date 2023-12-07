@@ -19,6 +19,7 @@ children:
                 linkTo: checklist-detail
                 parameters:
                   routineId: =@ctx.inputs.routines.routine_id
+                  itemId: =@ctx.inputs.routines.id
             children:
               - type: component.view
                 options:

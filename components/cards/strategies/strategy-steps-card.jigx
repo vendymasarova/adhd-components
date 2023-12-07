@@ -63,7 +63,7 @@ children:
                                   options:
                                     size: small
                                     align: right
-                                    expiresAt: =$fromMillis($toMillis(@ctx.solution.state.countdown-start) + (30 * 1000))
+                                    expiresAt: =$fromMillis($toMillis(@ctx.solution.state.countdown-start) + (10 * 1000))
                                     # expiresAt: =$fromMillis($toMillis(@ctx.solution.state.countdown-start) + (2 * 60 * 1000))
                                     onFinish: 
                                       type: action.action-list

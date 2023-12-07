@@ -1,0 +1,28 @@
+type: datasource.sqlite
+options:
+  provider: DATA_PROVIDER_DYNAMIC
+
+  entities:
+    - default/reminders-and-routines
+
+  query: 
+    SELECT 
+    id,
+    '$.routine_id',
+    '$.name',
+    '$.date',
+    '$.image',
+    '$.isDone',
+    '$.type',
+    '$.time',
+    '$.isCheckable',
+    '$.reminder-title',
+    '$.reminder-time',
+    '$.routine-subject',
+    '$.reminder-description',
+    '$.isReminiscent',
+    '$.has-detail',
+    '$.priority',
+    '$.linkTo',
+    '$.time_of_day'
+    FROM [default/reminders-and-routines]
