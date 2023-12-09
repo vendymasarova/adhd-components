@@ -51,6 +51,9 @@ item:
   type: component.list-item
   options:
     title: =@ctx.current.item.emoji & ' ' & @ctx.current.item.name
+    color:
+      - when: =1=1
+        color: color2
     rightElement: 
       element: checkbox
       value: |

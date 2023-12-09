@@ -1,4 +1,5 @@
-title: Adhd 
+title: ' '
+description: =@ctx.datasources.reminders.date
 # description: =$count(@ctx.datasources.actual-day-and-mood) >= 1 ? 'ano':'ne'
 # description: =$type($count(@ctx.datasources.actual-day-and-mood))
 # description: |
@@ -16,43 +17,90 @@ datasources:
     type: datasource.sqlite
     options:
       provider: DATA_PROVIDER_DYNAMIC
-  
+
       entities:
         - default/reminders-and-routines
-  
-      query: 
-        SELECT 
-        id,
-        '$.routine_id',
-        '$.name',
-        '$.date',
-        '$.image',
-        '$.isDone',
-        '$.type',
-        '$.time',
-        '$.isCheckable',
-        '$.reminder-title',
-        '$.reminder-time',
-        '$.routine-subject',
-        '$.reminder-description',
-        '$.isReminiscent',
-        '$.has-detail',
-        '$.priority',
-        '$.linkTo',
-        '$.time_of_day',
-        STRFTIME('%H:%M', json_extract(data, '$.reminder-start')) AS reminder_start,
-        STRFTIME('%H:%M', json_extract(data, '$.reminder-end')) AS reminder_end
-        FROM [default/reminders-and-routines]
-        WHERE STRFTIME('%d.%m.%Y', json_extract(data, '$.date')) = @today 
-        AND '$.isDone' = false
-        AND STRFTIME('%H:%M', 'now') BETWEEN reminder_start AND reminder_end
-        AND ('$.time_of_day' = 'both' OR '$.time_of_day' = @now)
-        AND ((strftime('%H:%M', 'now') < '14:00' and @actualDayData is '[]') or (strftime('%H:%M', 'now') > '14:00' and (@actualDayData is '[]' or @countActualDayData = 1))) 
+        - default/routine-checkins
+
+      query:
+        SELECT
+          a.id AS id,
+          json_extract(a.data, '$.routine_id') AS routine_id,
+          json_extract(a.data, '$.name') AS name,
+          json_extract(a.data, '$.image') AS image,
+          json_extract(a.data, '$.isDone') AS isDone,
+          json_extract(a.data, '$.type') AS type,
+          json_extract(a.data, '$.time') AS time,
+          json_extract(a.data, '$.isCheckable') AS isCheckable,
+          json_extract(a.data, '$.reminder-title') AS reminder_title,
+          json_extract(a.data, '$.reminder-time') AS reminder_time,
+          json_extract(a.data, '$.routine-subject') AS routine_subject,
+          json_extract(a.data, '$.reminder-description') AS reminder_description,
+          json_extract(a.data, '$.isReminiscent') AS isReminiscent,
+          json_extract(a.data, '$.has-detail') AS has_detail,
+          json_extract(a.data, '$.priority') AS priority,
+          json_extract(a.data, '$.linkTo') AS linkTo,
+          STRFTIME('%H:%M', json_extract(a.data, '$.reminder-start')) AS reminder_start,
+          STRFTIME('%H:%M', json_extract(a.data, '$.reminder-end')) AS reminder_end,
+          STRFTIME('%d.%m.%Y', json_extract(b.data, '$.date')) AS date
+        FROM [default/reminders-and-routines] a
+        LEFT JOIN [default/routine-checkins] b ON json_extract(a.data, '$.routine_id') = json_extract(b.data, '$.routine_id') AND json_extract(b.data, '$.date') = @today
+        WHERE  (date != @today OR json_extract(b.data, '$.date') IS NULL)
+        # AND strftime('%H:%M', 'now') BETWEEN reminder_start AND reminder_end
+        # AND ('$.time_of_day' = 'both' OR '$.time_of_day' = @now)
+        # AND ((strftime('%H:%M', 'now') < '14:00' and @actualDayData is '[]') or (strftime('%H:%M', 'now') > '14:00' and (@actualDayData is '[]' or @countActualDayData is 1))) 
+        
+        # ORDER BY priority
+        # AND ((strftime('%H:%M', 'now') < '15:00' and @actualDayData is '[]') or (strftime('%H:%M', 'now') > '15:00' and @countActualDayData >= 1)) 
+        # GROUP BY routine_id
       queryParameters:
-        today: =$fromMillis($toMillis($now()), '[D01].[M01].[Y]')
-        now: =$fromMillis($toMillis($now()), '[P]')
+        today: =@ctx.solution.state.today
         actualDayData: =$string(@ctx.datasources.actual-day-and-mood)
         countActualDayData: =$count(@ctx.datasources.actual-day-and-mood)
+        now: =$fromMillis($toMillis($now()), '[h01]:[m01][P]')
+        nowDate: =$fromMillis($toMillis($now()), '[D01].[M01].[Y]')
+
+  # reminders:
+  #   type: datasource.sqlite
+  #   options:
+  #     provider: DATA_PROVIDER_DYNAMIC
+  
+  #     entities:
+  #       - default/reminders-and-routines
+  
+  #     query: 
+  #       SELECT 
+  #       id,
+  #       '$.routine_id',
+  #       '$.name',
+  #       '$.date',
+  #       '$.image',
+  #       '$.isDone',
+  #       '$.type',
+  #       '$.time',
+  #       '$.isCheckable',
+  #       '$.reminder-title',
+  #       '$.reminder-time',
+  #       '$.routine-subject',
+  #       '$.reminder-description',
+  #       '$.isReminiscent',
+  #       '$.has-detail',
+  #       '$.priority',
+  #       '$.linkTo',
+  #       '$.time_of_day',
+  #       STRFTIME('%H:%M', json_extract(data, '$.reminder-start')) AS reminder_start,
+  #       STRFTIME('%H:%M', json_extract(data, '$.reminder-end')) AS reminder_end
+  #       FROM [default/reminders-and-routines]
+  #       WHERE STRFTIME('%d.%m.%Y', json_extract(data, '$.date')) = @today 
+  #       AND '$.isDone' = false
+  #       AND STRFTIME('%H:%M', 'now') BETWEEN reminder_start AND reminder_end
+  #       AND ('$.time_of_day' = 'both' OR '$.time_of_day' = @now)
+  #       AND ((strftime('%H:%M', 'now') < '14:00' and @actualDayData is '[]') or (strftime('%H:%M', 'now') > '14:00' and (@actualDayData is '[]' or @countActualDayData is 1))) 
+  #     queryParameters:
+  #       today: =$fromMillis($toMillis($now()), '[D01].[M01].[Y]')
+  #       now: =$fromMillis($toMillis($now()), '[P]')
+  #       actualDayData: =$string(@ctx.datasources.actual-day-and-mood)
+  #       countActualDayData: =$count(@ctx.datasources.actual-day-and-mood)
         
   mood-checkins:
     type: datasource.sqlite

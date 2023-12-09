@@ -32,22 +32,19 @@ actions:
             #     entity: default/reminders-and-routines
             #     method: update
             #     data: =@ctx.datasources.reminders-and-routines-data[id = @ctx.jig.inputs.itemId].{'id':id, 'isDone':true}
-            - type: action.execute-entities
+            - type: action.execute-entity
               options: 
                 provider: DATA_PROVIDER_DYNAMIC
-                entity: default/checklist-check
-                goBack: stay
+                entity: default/routine-checkins
+                goBack: home
                 method: save
-                data: | 
-                    =$map(@ctx.datasources.checklist , function($v , $i , $a) {
-                    $.{
-                      "id" : $string($v.id),
-                      "isChecked" : $v.isChecked,
-                      "name" : $v.name,
-                      "check_date" : $now(),
-                      "checked_by" : @ctx.user.email
-                    }
-                    } )
+                data:
+                  date: =$now()
+                  user: =@ctx.user.email
+                  routine_id: =@ctx.jig.inputs.routineId
+                onSuccess: 
+                  title: You made it!
+                  description: You are prepared for your activity
 
 summary:
   children:
@@ -74,7 +71,8 @@ datasources:
         SELECT id
         ,'$.name'
         ,'$.isChecked'
-        ,'$.check_date'
+        ,'$.date'
+        ,'$.user'
         FROM [checklist-local]
       queryParameters:
         dateofcheck: =$now()

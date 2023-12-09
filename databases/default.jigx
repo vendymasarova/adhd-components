@@ -13,5 +13,6 @@ tables:
   rewards:
   todos:
   reminders-and-routines:
-  checklist-check:
+  checklist-check: 
+  routine-checkins:
   
