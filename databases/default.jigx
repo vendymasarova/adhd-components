@@ -10,6 +10,7 @@ tables:
   steps:
   strategies-results:
   strategies-category:
+  extra-rewards:
   rewards:
   todos:
   reminders-and-routines:

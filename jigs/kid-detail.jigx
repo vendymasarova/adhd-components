@@ -76,6 +76,56 @@ datasources:
         '$.image', 
         '$.name' 
         FROM [default/strategies-category] 
+  
+  extra-reward: 
+    type: datasource.static
+    options:
+      data:
+        - id: 1
+          name: Movie ticket
+          image: https://t14345253.p.clickup-attachments.com/t14345253/7a9172fe-d1d7-45ba-8d61-dd1133fbdc31/Movie%20ticket.png?view=open
+          points: 240
+        - id: 2
+          name: Dinner in McDonald
+          image: https://t14345253.p.clickup-attachments.com/t14345253/19c0a035-981d-49e6-87ca-46f8b912770e/Mcdonald.png?view=open
+          points: 160
+  
+  results:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/strategies-results
+  
+      query: 
+        SELECT 
+        id, 
+        '$.end',
+        '$.start',
+        '$.time',
+        '$.gems',
+        '$.strategyId',
+        '$.user'
+        FROM [default/strategies-results]
+        WHERE '$.user' = 'vendula@jigx.com'
+        
+  mood-checkins-gems:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/mood-checkins
+  
+      query: 
+        SELECT id, 
+          '$.gems', 
+          '$.user' 
+        FROM [default/mood-checkins] 
+        WHERE '$.user' = @user
+      queryParameters:
+        user: =@ctx.user.email
 
 children:
   - type: component.custom-component
@@ -123,4 +173,19 @@ children:
         componentId: category-card
         inputs:
           categories: =@ctx.current.item 
-      
+  - type: component.custom-component
+    componentId: title
+    inputs:
+      title: Extra Rewards
+  - type: component.list
+    options:
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      maximumItemsToRender: 3
+      data: =@ctx.datasources.extra-reward
+      item: 
+        type: component.custom-component
+        componentId: extra-reward
+        inputs:
+          rewards: =@ctx.current.item
+          gems: =$sum(@ctx.datasources.results.gems) + $sum(@ctx.datasources.mood-checkins-gems.gems)

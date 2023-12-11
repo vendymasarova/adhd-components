@@ -40,19 +40,17 @@ datasources:
           json_extract(a.data, '$.has-detail') AS has_detail,
           json_extract(a.data, '$.priority') AS priority,
           json_extract(a.data, '$.linkTo') AS linkTo,
+          json_extract(a.data, '$.time_of_day') AS time_of_day,
           STRFTIME('%H:%M', json_extract(a.data, '$.reminder-start')) AS reminder_start,
           STRFTIME('%H:%M', json_extract(a.data, '$.reminder-end')) AS reminder_end,
           STRFTIME('%d.%m.%Y', json_extract(b.data, '$.date')) AS date
         FROM [default/reminders-and-routines] a
-        LEFT JOIN [default/routine-checkins] b ON json_extract(a.data, '$.routine_id') = json_extract(b.data, '$.routine_id') AND json_extract(b.data, '$.date') = @today
-        WHERE  (date != @today OR json_extract(b.data, '$.date') IS NULL)
-        # AND strftime('%H:%M', 'now') BETWEEN reminder_start AND reminder_end
-        # AND ('$.time_of_day' = 'both' OR '$.time_of_day' = @now)
-        # AND ((strftime('%H:%M', 'now') < '14:00' and @actualDayData is '[]') or (strftime('%H:%M', 'now') > '14:00' and (@actualDayData is '[]' or @countActualDayData is 1))) 
-        
-        # ORDER BY priority
-        # AND ((strftime('%H:%M', 'now') < '15:00' and @actualDayData is '[]') or (strftime('%H:%M', 'now') > '15:00' and @countActualDayData >= 1)) 
-        # GROUP BY routine_id
+        LEFT JOIN [default/routine-checkins] b ON json_extract(a.data, '$.routine_id') = json_extract(b.data, '$.routine_id')
+        WHERE  date != @today or date is null
+        AND strftime('%H:%M', 'now') BETWEEN reminder_start AND reminder_end
+        AND ((strftime('%H:%M', 'now') < '14:00' and @actualDayData is '[]') or (strftime('%H:%M', 'now') > '14:00' and (@actualDayData is '[]' or @countActualDayData is 1))) 
+        AND (time_of_day = 'both' OR time_of_day = @now)
+        ORDER BY priority
       queryParameters:
         today: =@ctx.solution.state.today
         actualDayData: =$string(@ctx.datasources.actual-day-and-mood)
