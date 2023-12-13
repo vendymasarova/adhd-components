@@ -27,17 +27,25 @@ datasources:
 
           
   extra-reward: 
-    type: datasource.static
+    type: datasource.sqlite
     options:
-      data:
-        - id: 1
-          name: Movie ticket
-          image: https://t14345253.p.clickup-attachments.com/t14345253/7a9172fe-d1d7-45ba-8d61-dd1133fbdc31/Movie%20ticket.png?view=open
-          points: 240
-        - id: 2
-          name: Dinner in McDonald
-          image: https://t14345253.p.clickup-attachments.com/t14345253/19c0a035-981d-49e6-87ca-46f8b912770e/Mcdonald.png?view=open
-          points: 160
+      provider: DATA_PROVIDER_DYNAMIC
+    
+      entities:
+        - default/extra-rewards
+    
+      query: 
+        SELECT 
+        id, 
+        '$.image', 
+        '$.name',
+        '$.user',
+        '$.points'
+        FROM [default/extra-rewards]
+        WHERE '$.image' is not NULL
+        AND '$.user' is @user
+      queryParameters:
+        user: =@ctx.user.email
        
   results:
     type: datasource.sqlite

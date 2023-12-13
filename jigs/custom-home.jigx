@@ -1,5 +1,4 @@
 title: ' '
-description: =@ctx.datasources.reminders.date
 # description: =$count(@ctx.datasources.actual-day-and-mood) >= 1 ? 'ano':'ne'
 # description: =$type($count(@ctx.datasources.actual-day-and-mood))
 # description: |
@@ -9,8 +8,8 @@ type: jig.default
 onFocus: 
   type: action.set-state
   options:
-    state: =@ctx.solution.state.today
-    value: =$fromMillis($toMillis($now()), '[D01].[M01].[Y]')
+    state: =@ctx.solution.state.timeOfDay
+    value: morning
 
 datasources:
   reminders:
@@ -115,11 +114,12 @@ datasources:
           STRFTIME('%d. %m. %Y', json_extract(a.data, '$.date')) AS date,
           json_extract(a.data, '$.day') AS numberOfDay,
           STRFTIME('%d', json_extract(a.data, '$.date')) AS day,
+          json_extract(a.data, '$.date') AS dayDate,
           json_extract(b.data, '$.mood') AS mood,
           json_extract(b.data, '$.gems') AS gems,
-          json_extract(a.data, '$.date') AS dayDate
+          json_extract(b.data, '$.user') AS user
         FROM [default/dates] a
-        LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date'))
+        LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date')) AND (user = @child OR user is NULL)
         WHERE numberOfDay > @actualDay -5
         AND numberOfDay <= @actualDay
         GROUP BY date 
@@ -127,6 +127,7 @@ datasources:
       queryParameters:
         actualDay: =@ctx.datasources.actualDay.day
         actualYear: =$fromMillis($toMillis($now()), '[Y]')
+        child: =@ctx.user.email
   
   mood-checkins-gems:
     type: datasource.sqlite
@@ -177,6 +178,7 @@ datasources:
       entities:
         - entity: default/steps
         - entity: default/strategies
+        - entity: default/strategies-assign
 
       query: |
         SELECT
@@ -196,6 +198,7 @@ datasources:
           json_extract(b.data, '$.step') AS step,
           json_extract(b.data, '$.step_id') AS step_id,
           json_extract(b.data, '$.isChecked') AS step_isChecked,
+          json_extract(c.data, '$.user') AS user,
           (
           SELECT COUNT(*)
           FROM [default/steps] s
@@ -209,9 +212,13 @@ datasources:
           ) AS isDoneNumber
         FROM [default/strategies] a
         LEFT JOIN [default/steps] b ON json_extract(a.data, '$.strategy_id') = json_extract(b.data, '$.strategy_id')
+        LEFT JOIN [default/strategies-assign] c ON json_extract(a.data, '$.strategy_id') = json_extract(c.data, '$.strategy_id') and (json_extract(c.data, '$.user') = @user)
         WHERE isActive = 1
+        AND user is @user
         GROUP BY strategy_id
         ORDER BY isDone
+      queryParameters:
+        user: =@ctx.user.email
   
   actualDay:
     type: datasource.sqlite

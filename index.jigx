@@ -26,10 +26,10 @@ widgets:
 home:
 - instanceId: home
 #   jigId: custom-home
-  when: =@ctx.datasources.user-data.user = 0
+  when: =@ctx.user.email = 'vendula@jigx.com'
   jigId: custom-home
 - instanceId: home2
-  when: =@ctx.datasources.user-data.user = 1
+  when: =@ctx.user.email != 'vendula@jigx.com'
   jigId: custom-home-parents
     
 

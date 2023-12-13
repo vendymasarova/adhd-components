@@ -24,6 +24,7 @@ children:
                     flex: 
                       # grow: 1
                       shrink: 1
+                    width: 250
                   children:
                     - type: component.view
                       options:
@@ -41,12 +42,15 @@ children:
                               style:
                                 flex:
                                   grow: 1
+                                  shrink: 1
                                   direction: row
+                                justifyContent: =@ctx.inputs.rewards.image = null ? 'center':''
                                 gap: small
                                 padding: 
                                   bottom: medium
                               children:
                                 - type: component.view
+                                  when: =@ctx.inputs.rewards.image != null
                                   options:
                                     style:
                                       background:
@@ -67,13 +71,17 @@ children:
                                   options:
                                     style:
                                       gap: minimal
-                                      # justifyContent: center
+                                      flex:
+                                        shrink: 1
+                                      justifyContent: space-between
                                     children:
                                       - type: component.text
                                         options:
                                           value: =@ctx.inputs.rewards.name
                                           size: medium
+                                          align: =@ctx.inputs.rewards.image = null ? 'center':''
                                       - type: component.view
+                                        when: =@ctx.inputs.rewards.points != null
                                         options:
                                           style:
                                             flex:
@@ -95,7 +103,7 @@ children:
                                                 weight: bold
                                                 size: medium
                     - type: component.progress-bar
-                      # when: =@ctx.inputs.gems != @ctx.inputs.rewards.points
+                      when: =@ctx.inputs.rewards.points != null
                       options:
                         size: small
                         color: color11
@@ -116,11 +124,27 @@ children:
                         children:
                           - type: component.text
                             options:
-                              value: Claim your reward
+                              value: =@ctx.user.email = @ctx.datasources.extra-reward.user ? 'Claim your reward':'Reward your child'
                               size: regular
                               weight: semi-bold
                           - type: component.icon
                             options:
                               icon: arrow-right
                               size: small
-                              
+              - type: component.view
+                when: =@ctx.inputs.rewards.image = null
+                options:
+                  style:
+                    
+                  children:
+                    - type: component.icon
+                      options:
+                        icon: plus
+                        color: color3
+                        shape: circle
+                        size: 40
+                        type: contained
+                        onPress: 
+                          type: action.go-to
+                          options:
+                            linkTo: new-extra-reward

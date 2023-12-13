@@ -18,34 +18,35 @@ children:
               options:
                 linkTo: kid-detail
                 parameters:
-                  email: =@ctx.inputs.kids.email
+                  email: =@ctx.inputs.kids.user
             children:
               - type: component.view
                 options:
                   style:
                     flex: 
                       grow: 1
-                      shrink: 1
-                    width: =@ctx.inputs.grid = true ? 156:''
-                    justifyContent: center
+                      # shrink: 1
+                      direction: =@ctx.inputs.grid = false ? 'row':'column'
+                    width: =$count(@ctx.inputs.child-data) > 1 ? 156:320
+                    justifyContent: =@ctx.inputs.grid = false ? '':'center'
+                    alignItems: center
+                    gap: small
                   children:
                     - type: component.avatar
                       options:
                         align: center
-                        size: large
+                        size: =@ctx.inputs.grid = false ? 'medium':'large'
                         title: Jane
                         uri: =@ctx.inputs.kids.avatar
                     - type: component.view
                       options:
                         style:
-                          padding:
-                            top: small
                         children:
                           - type: component.text
                             options:
                               value: =@ctx.inputs.kids.name
                               align: center
-                              size: large
+                              size: =@ctx.inputs.grid = false ? 'medium':'large' 
                               emphasis: high
                           - type: component.view
                             # when: =@ctx.inputs.gems != null 
@@ -60,13 +61,14 @@ children:
                                 - type: component.image
                                   options:
                                     size: 
-                                      width: 32      
-                                      height: 32
+                                      width: 24      
+                                      height: 24
                                     source:
                                       uri: https://t14345253.p.clickup-attachments.com/t14345253/9838e496-dfcf-45c8-960f-2d45bec07f88/diamonds.png?view=open
-                                    resizeMode: contain
+                                    resizeMode: cover
                                 - type: component.text
                                   options:
-                                    value: =@ctx.inputs.kids.gems
-                                    size: medium
+                                    value: =@ctx.inputs.gems
+                                    size: =@ctx.inputs.grid = false ? 'regular':'medium' 
+                                    weight: semi-bold
                                     color: color11

@@ -1,0 +1,125 @@
+title: All learnings
+type: jig.default
+
+# actions:
+#   - children:
+#       - type: action.submit-form
+#         options: 
+#           title: Assign strategy
+#           provider: DATA_PROVIDER_DYNAMIC
+#           entity: default/strategies-assign
+#           method: save
+#           formId: learning-assign
+#           goBack: stay
+#           onSuccess: 
+#             title: Strategy successfully assigned.
+#             description: Your child can now work on this strategy.
+
+datasources:
+  strategies-with-assignment:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+
+      entities:
+        - entity: default/strategies-assign
+        - entity: default/strategies
+
+      query: |
+        SELECT
+          a.id AS id,
+          b.id AS uuid,
+          json_extract(a.data, '$.name') AS name,
+          json_extract(a.data, '$.time') AS time,
+          json_extract(a.data, '$.category_id') AS category_id,
+          json_extract(a.data, '$.category_name') AS category_name,
+          json_extract(a.data, '$.description') AS description,
+          json_extract(a.data, '$.preview') AS preview,
+          json_extract(a.data, '$.image') AS image,
+          json_extract(a.data, '$.isDone') AS isDone,
+          json_extract(a.data, '$.isInProgress') AS isInProgress,
+          json_extract(a.data, '$.strategy_id') AS strategy_id,
+          json_extract(a.data, '$.isActive') AS isActive,
+          json_extract(a.data, '$.numberOfSteps') AS numberOfSteps,
+          json_extract(b.data, '$.user') AS user
+        FROM [default/strategies] a
+        LEFT JOIN [default/strategies-assign] b ON json_extract(a.data, '$.strategy_id') = json_extract(b.data, '$.strategy_id') and (json_extract(b.data, '$.user') = @user)
+        WHERE image is not NULL  
+        GROUP BY strategy_id, user, name
+      queryParameters:
+        user: =@ctx.jig.inputs.user
+        
+  strategies-to-be-assigned:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+
+      entities:
+        - entity: default/strategies-assign
+        - entity: default/strategies
+
+      query: |
+        SELECT
+          a.id AS id,
+          json_extract(a.data, '$.name') AS name,
+          json_extract(a.data, '$.image') AS image,
+          json_extract(a.data, '$.strategy_id') AS strategy_id,
+          json_extract(b.data, '$.user') AS user
+        FROM [default/strategies] a
+        LEFT JOIN [default/strategies-assign] b ON json_extract(a.data, '$.strategy_id') = json_extract(b.data, '$.strategy_id') and (json_extract(b.data, '$.user') = @user)
+        WHERE image is not NULL 
+        AND user is not @user 
+        GROUP BY strategy_id, user, name
+      queryParameters:
+        user: =@ctx.jig.inputs.user
+        
+  strategies: 
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/strategies
+  
+      query: 
+        SELECT 
+          id, 
+          '$.name',
+          '$.time',
+          '$.category_id',
+          '$.category_name',
+          '$.finishTime',
+          '$.description',
+          '$.image',
+          '$.isDone',
+          '$.isInProgress',
+          '$.strategy_id',
+          '$.steps',
+          '$.user',
+          '$.numberOfSteps' 
+        FROM [default/strategies]
+        WHERE '$.image' is not NULL  
+        GROUP BY '$.strategy_id'         
+
+children:
+  - type: component.list
+    options:
+      data: =@ctx.datasources.strategies-with-assignment
+      maximumItemsToRender: 8
+      item: 
+        type: component.custom-component
+        componentId: strategy-card
+        inputs:
+          strategies: =@ctx.current.item
+          numberOfSteps: =@ctx.current.item.numberOfSteps
+          currentUser: =@ctx.jig.inputs.user
+
+                
+                
+                
+                
+                
+                
+                
+                
+                

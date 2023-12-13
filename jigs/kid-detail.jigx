@@ -1,17 +1,47 @@
 title: Detail of your child
-# description: Description of your Jig
 type: jig.default
 
+onFocus: 
+  type: action.set-state
+  options:
+    state: =@ctx.solution.state.timeOfDay
+    value: morning
+
 datasources:
-  kids:
-    type: datasource.static
+  child-data:
+    type: datasource.sqlite
     options:
-      data:
-        - id: 1
-          avatar: https://t14345253.p.clickup-attachments.com/t14345253/78f1ae20-94cd-438b-90dd-92812838e663/avatar1.png?view=open
-          name: Vendy
-          gems: 120
-          email: vendula@jigx.com
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/users
+        - default/strategies-results
+        - default/mood-checkins
+  
+      query: |
+        SELECT 
+          a.id AS id, 
+          json_extract(a.data, '$.user') AS user,
+          json_extract(a.data, '$.username') AS name,
+          json_extract(a.data, '$.avatar') AS avatar,
+          json_extract(a.data, '$.role') AS role,
+          json_extract(b.data, '$.gems') AS gems,
+          json_extract(c.data, '$.gems') AS mood_checkins_gems,
+          (SELECT COALESCE(SUM(CAST(json_extract(s.data, '$.gems') AS DECIMAL)), 0)
+          FROM [default/strategies-results] s
+          WHERE json_extract(s.data, '$.user') = json_extract(a.data, '$.user')
+          ) AS total_strategies_results_gems,
+          (SELECT COALESCE(SUM(CAST(json_extract(d.data, '$.gems') AS DECIMAL)), 0)
+          FROM [default/mood-checkins] d
+          WHERE json_extract(d.data, '$.user') = json_extract(a.data, '$.user')
+          ) AS total_mood_checkins_gems
+        FROM [default/users] a
+        LEFT JOIN [default/strategies-results] b ON json_extract(a.data, '$.user') = json_extract(b.data, '$.user')
+        LEFT JOIN [default/mood-checkins] c ON json_extract(a.data, '$.user') = json_extract(c.data, '$.user')
+        WHERE user is @child
+        GROUP BY  user, avatar, role
+      queryParameters:
+        child: =@ctx.jig.inputs.email
           
   mood-checkins:
     type: datasource.sqlite
@@ -28,20 +58,22 @@ datasources:
           STRFTIME('%d. %m. %Y', json_extract(a.data, '$.date')) AS date,
           json_extract(a.data, '$.day') AS numberOfDay,
           STRFTIME('%d', json_extract(a.data, '$.date')) AS day,
+          json_extract(a.data, '$.date') AS dayDate,
           json_extract(b.data, '$.mood') AS mood,
           json_extract(b.data, '$.time_of_day') AS time_of_day,
-          json_extract(a.data, '$.date') AS dayDate
+          json_extract(b.data, '$.user') AS user
         FROM [default/dates] a
-        LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date')) AND (time_of_day = @timeOfDay OR time_of_day IS NULL)
+        LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date')) AND (time_of_day = @timeOfDay OR time_of_day IS NULL) AND (user = @child OR user is NULL)
         WHERE numberOfDay > @actualDay - 5
           AND numberOfDay <= @actualDay
-        GROUP BY date, time_of_day
+        GROUP BY date, time_of_day, user
         HAVING COUNT(*) = 1
         ORDER BY numberOfDay;
       queryParameters:
         actualDay: =@ctx.datasources.actualDay.day
         actualYear: =$fromMillis($toMillis($now()), '[Y]')
         timeOfDay: =@ctx.solution.state.timeOfDay
+        child: =@ctx.jig.inputs.email
         
   actualDay:
     type: datasource.sqlite
@@ -76,63 +108,90 @@ datasources:
         '$.image', 
         '$.name' 
         FROM [default/strategies-category] 
-  
-  extra-reward: 
-    type: datasource.static
-    options:
-      data:
-        - id: 1
-          name: Movie ticket
-          image: https://t14345253.p.clickup-attachments.com/t14345253/7a9172fe-d1d7-45ba-8d61-dd1133fbdc31/Movie%20ticket.png?view=open
-          points: 240
-        - id: 2
-          name: Dinner in McDonald
-          image: https://t14345253.p.clickup-attachments.com/t14345253/19c0a035-981d-49e6-87ca-46f8b912770e/Mcdonald.png?view=open
-          points: 160
-  
-  results:
+    
+  strategies:
     type: datasource.sqlite
     options:
       provider: DATA_PROVIDER_DYNAMIC
   
       entities:
-        - default/strategies-results
+        - default/strategies
   
       query: 
         SELECT 
         id, 
-        '$.end',
-        '$.start',
-        '$.time',
-        '$.gems',
-        '$.strategyId',
-        '$.user'
-        FROM [default/strategies-results]
-        WHERE '$.user' = 'vendula@jigx.com'
+        '$.image', 
+        '$.name',
+        '$.user',
+        '$.strategy_id'
+        FROM [default/strategies] 
+        WHERE ('$.user' = @user or '$.user' is 'all')
+        ORDER BY '$.name' DESC
+      queryParameters:
+        user: =@ctx.jig.inputs.email
         
-  mood-checkins-gems:
+  strategies-with-assignment:
     type: datasource.sqlite
     options:
       provider: DATA_PROVIDER_DYNAMIC
-  
+
       entities:
-        - default/mood-checkins
-  
-      query: 
-        SELECT id, 
-          '$.gems', 
-          '$.user' 
-        FROM [default/mood-checkins] 
-        WHERE '$.user' = @user
+        - entity: default/strategies-assign
+        - entity: default/strategies
+
+      query: |
+        SELECT
+          a.id AS id,
+          b.id AS uuid,
+          json_extract(a.data, '$.name') AS name,
+          json_extract(a.data, '$.time') AS time,
+          json_extract(a.data, '$.category_id') AS category_id,
+          json_extract(a.data, '$.category_name') AS category_name,
+          json_extract(a.data, '$.description') AS description,
+          json_extract(a.data, '$.preview') AS preview,
+          json_extract(a.data, '$.image') AS image,
+          json_extract(a.data, '$.isDone') AS isDone,
+          json_extract(a.data, '$.isInProgress') AS isInProgress,
+          json_extract(a.data, '$.strategy_id') AS strategy_id,
+          json_extract(a.data, '$.isActive') AS isActive,
+          json_extract(a.data, '$.numberOfSteps') AS numberOfSteps,
+          json_extract(b.data, '$.user') AS user
+        FROM [default/strategies] a
+        LEFT JOIN [default/strategies-assign] b ON json_extract(a.data, '$.strategy_id') = json_extract(b.data, '$.strategy_id') and (json_extract(b.data, '$.user') = @user or user = 'all')
+        WHERE (user is @user or user = 'all')
+        GROUP BY strategy_id, user, name
+        ORDER BY name DESC
       queryParameters:
-        user: =@ctx.user.email
+        user: =@ctx.jig.inputs.email
+
+  extra-reward: 
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+    
+      entities:
+        - default/extra-rewards
+    
+      query: 
+        SELECT 
+        id, 
+        '$.image', 
+        '$.name',
+        '$.points',
+        '$.user'
+        FROM [default/extra-rewards]
+        WHERE ('$.user' = @child or ('$.user' is NULL AND '$.image' is NULL))
+        ORDER BY '$.image' DESC
+      queryParameters:
+        child: =@ctx.jig.inputs.email
 
 children:
   - type: component.custom-component
     componentId: kids-card
     inputs: 
-      kids: =@ctx.datasources.kids
+      kids: =@ctx.datasources.child-data
       grid: false
+      gems: =$sum(@ctx.datasources.child-data.total_strategies_results_gems) + $sum(@ctx.datasources.child-data.total_mood_checkins_gems)
   - type: component.custom-component
     componentId: cta-component
     inputs: 
@@ -143,6 +202,7 @@ children:
     componentId: title
     inputs:
       title: Mood checkins 
+      subtitle: =$fromMillis($toMillis(@ctx.datasources.mood-checkins[0].dayDate), '[D01]. [M01].') & ' - ' & $fromMillis($toMillis(@ctx.datasources.mood-checkins[4].dayDate), '[D01]. [M01]. [Y]')
   - type: component.custom-component
     componentId: time-of-day
   - type: component.list
@@ -158,13 +218,14 @@ children:
           checkins: =@ctx.current.item
           goTo: false
           numberOfActualDay: =@ctx.datasources.actualDay.day
+          user: =@ctx.jig.inputs.email
   - type: component.custom-component
     componentId: title
     inputs:
-      title: ='Strategies ' & @ctx.datasources.kids.name & ' works on'
+      title: ='Strategies ' & @ctx.datasources.child-data.name & ' works on'
   - type: component.list
     options:
-      data: =@ctx.datasources.categories
+      data: =@ctx.datasources.strategies-with-assignment
       maximumItemsToRender: 8
       isHorizontal: true
       isHorizontalScrollIndicatorHidden: true
@@ -173,6 +234,7 @@ children:
         componentId: category-card
         inputs:
           categories: =@ctx.current.item 
+          user: =@ctx.jig.inputs.email
   - type: component.custom-component
     componentId: title
     inputs:
@@ -187,5 +249,6 @@ children:
         type: component.custom-component
         componentId: extra-reward
         inputs:
+          isUserChild: =@ctx.user.email = @ctx.datasources.extra-reward.user
           rewards: =@ctx.current.item
-          gems: =$sum(@ctx.datasources.results.gems) + $sum(@ctx.datasources.mood-checkins-gems.gems)
+          gems: =$sum(@ctx.datasources.child-data.total_strategies_results_gems) + $sum(@ctx.datasources.child-data.total_mood_checkins_gems)

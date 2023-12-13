@@ -1,4 +1,5 @@
 title: ' '
+description: =@ctx.jig.inputs.email
 type: jig.default
 
 datasources:
@@ -24,6 +25,7 @@ datasources:
           '$.isInProgress',
           '$.strategy_id',
           '$.steps',
+          '$.user',
           json_array_length(json_extract(data, '$.steps')) AS numberOfSteps 
         FROM [default/strategies] 
         WHERE '$.strategy_id' = @strategyId
@@ -100,12 +102,15 @@ datasources:
         '$.start',
         '$.time',
         '$.gems',
+        '$.user',
         '$.strategyId'
         FROM [default/strategies-results]
         WHERE json_extract(data, '$.strategyId') = @strategyId
+        AND ('$.user' is @user)
         ORDER BY json_extract(data, '$.time') ASC
       queryParameters:
         strategyId: =@ctx.jig.inputs.strategyId
+        user: =@ctx.jig.inputs.email
         
   row_count_results:
     type: datasource.sqlite
@@ -153,6 +158,7 @@ children:
       isDoneNumber: =@ctx.datasources.isDone_count.isDone
   
   - type: component.custom-component
+    when: =@ctx.datasources.strategies.user = @ctx.user.email
     componentId: start-btn
     inputs: 
       strategyId: =@ctx.jig.inputs.strategyId
@@ -160,7 +166,7 @@ children:
     when: =@ctx.datasources.strategies.isDone = 1 and @ctx.datasources.strategies.isInProgress = 0 and @ctx.datasources.results
     componentId: title
     inputs:
-      title: 'Your best results'
+      title: =@ctx.datasources.strategies.user = @ctx.user.email ? 'Your best results':'Best results'
       # size: regular
   - type: component.list
     when: =@ctx.datasources.strategies.isInProgress = 0
@@ -196,7 +202,7 @@ children:
         componentId: achievement
         inputs:
           rewards: =@ctx.current.item
-          numberOfResults: =@ctx.datasources.row_count_results.results_count
+          numberOfResults: =$count(@ctx.datasources.results)
   - type: component.list
     when: =@ctx.datasources.strategies.isInProgress = 1
     options:

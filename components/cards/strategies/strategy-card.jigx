@@ -48,7 +48,7 @@ children:
                               style:
                                 flex: 
                                   direction: row
-                                alignItems: center
+                                # alignItems: center
                                 gap: small
                               children:
                                 - type: component.view
@@ -76,8 +76,7 @@ children:
                                       flex: 
                                         # grow: 0
                                         shrink: 1
-                                      justifyContent: flex-start
-                                      alignItems: center
+                                      # alignItems: center
                                       # alignSelf: flex-start
                                     children:
                                       - type: component.text
@@ -87,33 +86,14 @@ children:
                                           weight: bold
                                           size: medium
                                       - type: component.view
-                                        when: =@ctx.inputs.strategies.isDone = true ? true:false
+                                        when: =@ctx.inputs.strategies.user != @ctx.user.email
                                         options:
                                           style:
-                                            flex: 
-                                              grow: 0
-                                              shrink: 1
-                                              direction: row
-                                            gap: small
-                                            padding: 
-                                              vertical: minimal
-                                              horizontal: small
-                                            background:
-                                              color: positive
-                                            alignItems: center
-                                            justifyContent: center
-                                            radius: tiny
-                                            alignSelf: flex-start
                                           children:
                                             - type: component.text
                                               options:
-                                                value: You are done
-                                            - type: component.icon
-                                              options:
-                                                icon: check
-                                                size: medium
-                                                # type: duotone
-                                                # shape: circle
+                                                value: =@ctx.inputs.numberOfSteps & " steps"
+                                                align: left
                          
                           - type: component.text
                             options:
@@ -127,6 +107,75 @@ children:
                         value: =@ctx.inputs.strategies.description
                         emphasis: high
                     - type: component.view
+                      when: =@ctx.inputs.strategies.user != @ctx.user.email
+                      options:
+                        style:
+                          alignItems: center
+                          justifyContent: =@ctx.inputs.strategies.user = @ctx.inputs.currentUser ? 'space-between':'flex-end'
+                          flex: 
+                            direction: row
+                        children:
+                          - type: component.view
+                            when: =@ctx.inputs.strategies.user = @ctx.inputs.currentUser
+                            options:
+                              style:
+                                background:
+                                  color: positive
+                                radius: tiny
+                                padding: 
+                                  vertical: minimal
+                                  horizontal: small
+                              children:
+                                - type: component.text
+                                  options:
+                                    value: Already assigned
+                                    
+                          - type: component.view
+                            when: =@ctx.inputs.strategies.user = @ctx.inputs.currentUser
+                            options:
+                              style:
+                              children:
+                                - type: component.text
+                                  options:
+                                    value: REMOVE
+                                    color: negative
+                                    onPress: 
+                                      type: action.execute-entity
+                                      options: 
+                                        provider: DATA_PROVIDER_DYNAMIC
+                                        entity: default/strategies-assign
+                                        method: delete
+                                        goBack: stay
+                                        data: 
+                                          id: =@ctx.inputs.strategies.uuid
+                          - type: component.view
+                            when: =@ctx.inputs.strategies.user != @ctx.inputs.currentUser
+                            options:
+                              style:
+                                background:
+                                  color: positive
+                                radius: tiny
+                                padding: 
+                                  vertical: minimal
+                                  horizontal: small
+                              children:
+                                - type: component.text
+                                  options:
+                                    value: ASSIGN
+                                    onPress: 
+                                      type: action.execute-entity
+                                      options: 
+                                        provider: DATA_PROVIDER_DYNAMIC
+                                        entity: default/strategies-assign
+                                        method: save
+                                        goBack: stay
+                                        data: 
+                                          id: =@ctx.inputs.strategies.id
+                                          strategy_id: =@ctx.inputs.strategies.strategy_id
+                                          user: =@ctx.inputs.currentUser
+
+                    - type: component.view
+                      when: =@ctx.inputs.strategies.user = @ctx.user.email
                       options:
                         style:
                         children:

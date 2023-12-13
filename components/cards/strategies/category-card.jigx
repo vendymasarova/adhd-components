@@ -11,22 +11,20 @@ children:
       children:
         - type: component.card
           options:
-            color: =@ctx.solution.state.categoryId = @ctx.inputs.categories.category_id and $type(@ctx.inputs.higlight) != null ? 'color9':'color3'
+            color: =@ctx.inputs.categories.image != null ? 'color3':''
+            # color: =@ctx.solution.state.categoryId = @ctx.inputs.categories.category_id and $type(@ctx.inputs.higlight) != null ? 'color9':'color3'
             onPress: 
               type: action.action-list
               options:
                 isSequential: true
                 actions:
-                  - type: action.set-state
-                    options:
-                      state: =@ctx.solution.state.categoryId
-                      value: =@ctx.inputs.categories.category_id
                   - type: action.go-to
-                    when: =@ctx.inputs.goTo
+                    when: =@ctx.inputs.categories.strategy_id
                     options:
-                      linkTo: strategies-composite
+                      linkTo: strategy-detail
                       parameters:
-                        categoryId: =@ctx.inputs.categories.category_id
+                        strategyId: =@ctx.inputs.categories.strategy_id
+                        email: =@ctx.inputs.user
             children:
               - type: component.view
                 options:
@@ -39,6 +37,20 @@ children:
                     width: 160
                     gap: small
                   children:
+                    - type: component.icon
+                      when: =@ctx.inputs.categories.image = null
+                      options:
+                        icon: plus
+                        color: color3
+                        shape: circle
+                        size: 40
+                        type: contained
+                        onPress: 
+                          type: action.go-to
+                          options:
+                            linkTo: new-learnings
+                            parameters:
+                              user: =@ctx.inputs.user
                     - type: component.image
                       options:
                         resizeMode: contain

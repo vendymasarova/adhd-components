@@ -29,12 +29,15 @@ datasources:
           '$.note',
           '$.mood',
           '$.time_of_day'
+          '$.user'
         FROM [default/mood-checkins]
         WHERE STRFTIME('%d. %m. %Y', json_extract(data, '$.date')) = @date
         AND '$.time_of_day' = @timeOfDay
+        AND '$.user' = @user
       queryParameters:
         date: =@ctx.solution.state.checkin-day
         timeOfDay: =@ctx.solution.state.timeOfDay
+        user: =@ctx.user.email
         
 children:
 

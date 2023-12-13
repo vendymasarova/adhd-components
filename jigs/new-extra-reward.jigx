@@ -1,0 +1,99 @@
+title: Create new extra reward
+# description: Description of your Jig
+type: jig.default
+
+actions:
+  - children:
+      - type: action.submit-form
+        options: 
+          title: Create reward
+          provider: DATA_PROVIDER_DYNAMIC
+          entity: default/extra-rewards
+          method: save
+          formId: extra-reward
+          onSuccess: 
+            title: Reward created successfully
+            description: Your child can now see the reward.
+
+datasources:
+  images:
+    type: datasource.static
+    options:
+      data:
+        - id: 1
+          name: Tickets
+          image: https://t14345253.p.clickup-attachments.com/t14345253/7a9172fe-d1d7-45ba-8d61-dd1133fbdc31/Movie%20ticket.png?view=open
+        - id: 2
+          name: McDonald
+          image: https://t14345253.p.clickup-attachments.com/t14345253/19c0a035-981d-49e6-87ca-46f8b912770e/Mcdonald.png?view=open
+        - id: 3
+          name: Restaurant
+          image: https://t14345253.p.clickup-attachments.com/t14345253/ecd8d342-2779-4bda-9f0a-088f9ba1a1cf/restaurant.png?view=open
+          
+  gems: 
+    type: datasource.static
+    options:
+      data:
+        - id: 1
+          gem: 240
+        - id: 2
+          gem: 160
+          
+  kids:
+    type: datasource.static
+    options:
+      data:
+        - id: 1
+          avatar: https://t14345253.p.clickup-attachments.com/t14345253/78f1ae20-94cd-438b-90dd-92812838e663/avatar1.png?view=open
+          name: Vendy
+          gems: 120
+          email: vendula@jigx.com
+        - id: 2
+          avatar: https://t14345253.p.clickup-attachments.com/t14345253/9ca8b3f2-6ed3-4c3e-9e5a-396bbb1d9450/kid-user.png?view=open
+          name: John
+          gems: 100
+          email: john@jigx.com
+
+children:
+  - type: component.form
+    instanceId: extra-reward
+    options:
+      children:
+        - type: component.text-field
+          instanceId: name
+          options:
+            label: What is the reward?
+        - type: component.dropdown
+          instanceId: image
+          options:
+            label: Reward image
+            data: =@ctx.datasources.images
+            item:
+              type: component.dropdown-item
+              options:
+                leftElement: 
+                  element: image
+                  text: =@ctx.current.item.name
+                  uri: =@ctx.current.item.image
+                title: =@ctx.current.item.name
+                value: =@ctx.current.item.image
+        - type: component.dropdown
+          instanceId: points
+          options:
+            label: How many gems
+            data: =@ctx.datasources.gems
+            item:
+              type: component.dropdown-item
+              options:
+                title: =@ctx.current.item.gem
+                value: =@ctx.current.item.gem
+        - type: component.dropdown
+          instanceId: user
+          options:
+            label: Assign reward to
+            data: =@ctx.datasources.kids
+            item:
+              type: component.dropdown-item
+              options:
+                title: =@ctx.current.item.name
+                value: =@ctx.current.item.email

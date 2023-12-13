@@ -1,5 +1,5 @@
-# title: =$fromMillis($toMillis(@ctx.datasources.mood-checkins.dayDate), '[D]') 
-title: =@ctx.datasources.mood-checkins.day & $substring(@ctx.solution.state.checkin-day, 0,2)
+title: =@ctx.datasources.mood-checkins.user
+# title: =@ctx.datasources.mood-checkins.day & $substring(@ctx.solution.state.checkin-day, 0,2)
 description: Description of your Jig
 type: jig.default
 
@@ -18,21 +18,23 @@ datasources:
           a.id AS id,
           STRFTIME('%d. %m. %Y', json_extract(a.data, '$.date')) AS date,
           json_extract(a.data, '$.day') AS numberOfDay,
+          json_extract(a.data, '$.date') AS dayDate,
           STRFTIME('%d', json_extract(a.data, '$.date')) AS day,
           json_extract(b.data, '$.mood') AS mood,
           json_extract(b.data, '$.time_of_day') AS time_of_day,
-          json_extract(a.data, '$.date') AS dayDate
+          json_extract(b.data, '$.user') AS user
         FROM [default/dates] a
-        LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date')) AND (time_of_day = @timeOfDay OR time_of_day IS NULL)
+        LEFT JOIN [default/mood-checkins] b ON STRFTIME('%d.%m', json_extract(a.data, '$.date')) = STRFTIME('%d.%m', json_extract(b.data, '$.date')) AND (time_of_day = @timeOfDay OR time_of_day IS NULL) AND (user = @child OR user is NULL)
         WHERE numberOfDay > @actualDay - 5
           AND numberOfDay <= @actualDay
-        GROUP BY date, time_of_day
+        GROUP BY date, time_of_day, user
         HAVING COUNT(*) = 1
         ORDER BY numberOfDay;
       queryParameters:
         actualDay: =@ctx.datasources.actualDay.day
         actualYear: =$fromMillis($toMillis($now()), '[Y]')
         timeOfDay: =@ctx.solution.state.timeOfDay
+        child: =@ctx.user.email
 
                 
   actualDay:
