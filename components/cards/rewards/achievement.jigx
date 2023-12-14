@@ -41,7 +41,7 @@ children:
                         children:
                           - type: component.text
                             options:
-                              value: =@ctx.inputs.rewards.description            
+                              value: =@ctx.inputs.progressbar = false ? @ctx.inputs.description:@ctx.inputs.rewards.description            
                               emphasis: medium
                               align: center
                     - type: component.view

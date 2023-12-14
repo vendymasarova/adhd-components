@@ -249,8 +249,12 @@ datasources:
       query: 
         SELECT 
         id, 
-        '$.gems'
+        '$.gems',
+        '$.user'
         FROM [default/strategies-results]
+        WHERE '$.user' = @user
+      queryParameters:
+        user: =@ctx.user.email
         
   routines-with-todos:
     type: datasource.sqlite

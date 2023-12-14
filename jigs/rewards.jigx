@@ -1,5 +1,4 @@
-title: =@ctx.datasources.results-rewards.reward_name
-description: =@ctx.datasources.results-rewards.reward_name
+title: Rewards
 type: jig.default
 
 datasources:
@@ -62,8 +61,13 @@ datasources:
         '$.start',
         '$.time',
         '$.gems',
-        '$.strategyId'
+        '$.strategyId',
+        '$.user'
         FROM [default/strategies-results]
+        WHERE '$.user' = @user
+      queryParameters:
+        user: =@ctx.user.email
+        
   
   mood-checkins-gems:
     type: datasource.sqlite
@@ -90,12 +94,14 @@ datasources:
       entities:
         - default/strategies-results
         - default/rewards
+        - default/strategies-assign
+        - default/strategies
   
       query:
-         SELECT
-            b.id AS id,
+        SELECT
+            a.id AS id,
             json_extract(a.data, '$.id') AS reward_id,
-            json_extract(a.data, '$.name') AS reward_name,
+            json_extract(a.data, '$.name') AS name,
             json_extract(a.data, '$.goal') AS goal,
             json_extract(a.data, '$.image') AS image,
             json_extract(a.data, '$.description') AS description,
@@ -104,18 +110,25 @@ datasources:
             json_extract(b.data, '$.end') AS time_end,
             json_extract(b.data, '$.start') AS start,
             json_extract(b.data, '$.time') AS time,
-            json_extract(b.data, '$.gems') AS gems
-        FROM [default/rewards] AS a
-        JOIN [default/strategies-results] AS b
-        ON
-          json_extract(a.data, '$.strategy_id') = json_extract(b.data, '$.strategyId')
-        GROUP BY strategy_id
-        # WHERE
-        #   json_extract(a.data, '$.goal') = (
-        #   SELECT COUNT(*)
-        #   FROM [default/strategies-results] AS sub_results
-        #   WHERE json_extract(a.data, '$.strategy_id') = json_extract(sub_results.data, '$.strategyId')
-        # )
+            json_extract(b.data, '$.gems') AS gems,
+            json_extract(c.data, '$.user') AS user,
+            json_extract(d.data, '$.name') AS stategy_name,
+            (
+                SELECT COUNT(*)
+                FROM [default/strategies-results] s
+                WHERE json_extract(s.data, '$.strategyId') = json_extract(a.data, '$.strategy_id')
+                AND json_extract(s.data, '$.user') = @user
+            ) AS total_results
+        FROM [default/rewards] a
+        LEFT JOIN [default/strategies-results] b ON json_extract(a.data, '$.strategy_id') = json_extract(b.data, '$.strategyId')
+        LEFT JOIN [default/strategies-assign] c ON json_extract(a.data, '$.strategy_id') = json_extract(c.data, '$.strategy_id')
+        LEFT JOIN [default/strategies] d ON json_extract(a.data, '$.strategy_id') = json_extract(d.data, '$.strategy_id')
+        WHERE user = @user
+        GROUP BY strategy_id, name, goal
+        HAVING goal <= total_results
+        ORDER BY goal
+      queryParameters:
+        user: =@ctx.user.email
 children:
   - type: component.custom-component
     componentId: points-preview-card
@@ -137,6 +150,7 @@ children:
         componentId: achievement
         inputs:
           rewards: =@ctx.current.item
+          description: ='You completed strategy ' & @ctx.current.item.stategy_name & ' ' & @ctx.current.item.goal & ' times'
           progressbar: false
   - type: component.custom-component
     componentId: title

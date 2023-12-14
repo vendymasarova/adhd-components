@@ -110,7 +110,7 @@ datasources:
         ORDER BY json_extract(data, '$.time') ASC
       queryParameters:
         strategyId: =@ctx.jig.inputs.strategyId
-        user: =@ctx.jig.inputs.email
+        user: =@ctx.user.email
         
   row_count_results:
     type: datasource.sqlite
@@ -186,7 +186,7 @@ children:
         inputs:
           results: =@ctx.current.item
   - type: component.custom-component
-    when: =@ctx.datasources.strategies.isDone = 1 and @ctx.datasources.strategies.isInProgress = 0 and @ctx.datasources.results and @ctx.datasources.rewards
+    when: =@ctx.datasources.strategies.isDone = 1 and @ctx.datasources.strategies.isInProgress = 0 and @ctx.datasources.rewards
     componentId: title
     inputs:
       title: 'Rewards'

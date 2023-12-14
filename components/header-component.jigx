@@ -12,58 +12,57 @@ children:
         options:
           linkTo: user-data
       children:
-
-              # Avatar
-              - type: component.avatar
+        # Avatar
+        - type: component.avatar
+          options:
+            title: =@ctx.inputs.name
+            uri: =@ctx.inputs.avatar
+            size: regular
+        # Text
+        - type: component.view
+          options:
+            style:
+              flex: 
+                grow: 1
+            children:
+              - type: component.text
                 options:
-                  title: =@ctx.inputs.name
-                  uri: =@ctx.inputs.avatar
-                  size: regular
-              # Text
+                  value: =@ctx.inputs.welcomeMessage
+                  weight: semi-bold
+                  size: medium
               - type: component.view
                 options:
                   style:
-                    flex: 
-                      grow: 1
+                    justifyContent: center
                   children:
                     - type: component.text
                       options:
-                        value: =@ctx.inputs.welcomeMessage
-                        weight: semi-bold
-                        size: medium
-                    - type: component.view
-                      options:
-                        style:
-                          justifyContent: center
-                        children:
-                          - type: component.text
-                            options:
-                              value: ="It's" & ' ' & @ctx.inputs.date
-                              size: small 
-                              emphasis: high
-              - type: component.view
-                when: =@ctx.inputs.gems = null 
+                        value: ="It's" & ' ' & @ctx.inputs.date
+                        size: small 
+                        emphasis: high
+        - type: component.view
+          when: =@ctx.inputs.gems != false
+          options:
+            style:
+              flex:
+                direction: row
+              alignItems: center
+              gap: minimal
+            onPress: 
+              type: action.go-to
+              options:
+                linkTo: rewards
+            children:
+              - type: component.image
                 options:
-                  style:
-                    flex:
-                      direction: row
-                    alignItems: center
-                    gap: minimal
-                  onPress: 
-                    type: action.go-to
-                    options:
-                      linkTo: rewards
-                  children:
-                    - type: component.image
-                      options:
-                        size: 
-                          width: 32      
-                          height: 32
-                        source:
-                          uri: https://t14345253.p.clickup-attachments.com/t14345253/9838e496-dfcf-45c8-960f-2d45bec07f88/diamonds.png?view=open
-                        resizeMode: contain
-                    - type: component.text
-                      options:
-                        value: =@ctx.inputs.gems
-                        weight: bold
-                        color: color11
+                  size: 
+                    width: 32      
+                    height: 32
+                  source:
+                    uri: https://t14345253.p.clickup-attachments.com/t14345253/9838e496-dfcf-45c8-960f-2d45bec07f88/diamonds.png?view=open
+                  resizeMode: contain
+              - type: component.text
+                options:
+                  value: =@ctx.inputs.gems
+                  weight: bold
+                  color: color11
