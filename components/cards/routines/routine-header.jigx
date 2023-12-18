@@ -1,0 +1,60 @@
+type: component.default
+children:
+  - type: component.view
+    options:
+      style:
+        gap: medium
+        margin: 
+          bottom: medium
+      children:
+        - type: component.view
+          options:
+            style:
+              flex:
+                direction: row
+              gap: medium
+              alignItems: center
+            children:
+              - type: component.view
+                options:
+                  style:
+                    flex: 
+                      shrink: 1
+                    padding: small
+                    radius: medium
+                    background:
+                      color: =@ctx.inputs.routines.type = 'school' ? 'color3':@ctx.inputs.routines.type = 'personal' ? 'color8':'color2'
+                  children:
+                    - type: component.image
+                      options:
+                        size:
+                          height: 60
+                          width: 60
+                        resizeMode: contain
+                        # title: =@ctx.inputs.routines.name
+                        source:
+                          uri: =@ctx.inputs.routines.image
+              - type: component.text
+                options:
+                  value: =@ctx.inputs.routines.name
+                  weight: bold
+                  size: large
+        - type: component.view
+          options:
+            style:
+              flex: 
+                direction: row
+              gap: medium
+              alignItems: center
+            children:
+              - type: component.icon
+                options:
+                  icon: time-clock-circle
+              - type: component.text
+                options:
+                  value: =@ctx.inputs.routines.time
+                  weight: semi-bold
+        - type: component.text
+          options:
+            value: =@ctx.inputs.routines.description
+            emphasis: high

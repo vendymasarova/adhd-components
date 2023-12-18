@@ -1,0 +1,30 @@
+type: component.default
+children:
+  - type: component.view
+    options:
+      style:   {}
+      children:
+        - type: component.icon
+          options:
+            icon: =@ctx.solution.state.add-todo = 1 ? 'minus':'plus'
+            color: color9
+            type: duotone
+            shape: circle
+            size: medium
+            onPress: 
+              type: action.action-list
+              options:
+                isSequential: false
+                actions:
+                  - type: action.set-state
+                    when: =@ctx.solution.state.add-todo = 1 ? true:false
+                    options:
+                      state: =@ctx.solution.state.add-todo
+                      value: 0
+                  - type: action.set-state
+                    when: =@ctx.solution.state.add-todo = 0 ? true:false
+                    options:
+                      state: =@ctx.solution.state.add-todo
+                      value: 1
+          
+      

@@ -1,5 +1,4 @@
 title: ' '
-description: =@ctx.jig.inputs.email
 type: jig.default
 
 datasources:
@@ -106,11 +105,12 @@ datasources:
         '$.strategyId'
         FROM [default/strategies-results]
         WHERE json_extract(data, '$.strategyId') = @strategyId
-        AND ('$.user' is @user)
+        AND ('$.user' is @user or '$.user' is @child)
         ORDER BY json_extract(data, '$.time') ASC
       queryParameters:
         strategyId: =@ctx.jig.inputs.strategyId
         user: =@ctx.user.email
+        child: =@ctx.jig.inputs.email
         
   row_count_results:
     type: datasource.sqlite

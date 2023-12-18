@@ -124,7 +124,7 @@ children:
                         children:
                           - type: component.text
                             options:
-                              value: =@ctx.user.email = @ctx.datasources.extra-reward.user ? 'Claim your reward':'Reward your child'
+                              value: =@ctx.user.email = @ctx.inputs.rewards.user ? 'Claim your reward':'Reward your child'
                               size: regular
                               weight: semi-bold
                           - type: component.icon

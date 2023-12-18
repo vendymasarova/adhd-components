@@ -6,15 +6,11 @@ onFocus:
   type: action.action-list
   options:
     isSequential: true
-    actions:
-      - type: action.execute-entities
-        options: 
-          provider: DATA_PROVIDER_LOCAL
-          method: delete
-          entity: checklist-local
-          goBack: stay
-          data: |
-            =@ctx.datasources.checklist.{ 'id': id }[]
+    actions: 
+      - type: action.set-state
+        options:
+          state: =@ctx.solution.state.add-todo
+          value: 0
 
 actions:
   - children:
@@ -45,6 +41,33 @@ actions:
                 onSuccess: 
                   title: You made it!
                   description: You are prepared for your activity
+            - type: action.execute-entities
+              options: 
+                provider: DATA_PROVIDER_LOCAL
+                method: delete
+                entity: checklist-local
+                goBack: stay
+                data: |
+                  =@ctx.datasources.checklist.{ 'id': id }[]
+      - type: action.submit-form
+        when: =@ctx.solution.state.add-todo = 1 
+        options:
+          formId: new-todo-routine-form
+          provider: DATA_PROVIDER_DYNAMIC
+          title: Create new Todo
+          entity: default/todos
+          method: save
+          goBack: stay 
+          data: 
+            name: =@ctx.components.name.state.value
+            isChecked: false
+            routine_id: =@ctx.jig.inputs.routineId
+          onSuccess: 
+            title: New todo created
+            type: action.set-state
+            options:
+              state: =@ctx.solution.state.add-todo
+              value: 0
 
 summary:
   children:
@@ -96,8 +119,35 @@ datasources:
         ORDER BY '$.name'
       queryParameters:
         routineId: =@ctx.jig.inputs.routineId
+  
+  routines:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/reminders-and-routines
+  
+      query: 
+        SELECT 
+          id, 
+          '$.name', 
+          '$.image',
+          '$.isDone',
+          '$.type',
+          '$.time',
+          '$.routine_id',
+          '$.description'
+        FROM [default/reminders-and-routines] 
+        WHERE '$.routine_id' = @yourRoutineId
+      queryParameters:
+        yourRoutineId: =@ctx.jig.inputs.routineId
 
 children:
+  - type: component.custom-component
+    componentId: routine-header
+    inputs: 
+      routines: =@ctx.datasources.routines 
   - type: component.list
     when: =$count(@ctx.datasources.checklist[is_checked = 1]) < $count(@ctx.datasources.todos)
     options:
@@ -105,10 +155,27 @@ children:
       item:
         type: component.list-item
         options:
+          swipeable:
+            left:
+              - label: Delete
+                icon: trash-bin-circle
+                color: negative
+                onPress: 
+                  type: action.execute-entity
+                  options:
+                    provider: DATA_PROVIDER_DYNAMIC
+                    entity: default/todos
+                    method: delete
+                    goBack: stay
+                    data:
+                      id: =@ctx.current.item.id
+                  
           title: =@ctx.current.item.name
           color:
             - when: =1=1
               color: color2
+          style:
+            isStrikeThrough: =@ctx.datasources.checklist[id=@ctx.current.item.id].isChecked = 1
           leftElement: 
             element: icon
       #      icon: checkbox-unchecked
@@ -127,5 +194,18 @@ children:
                 check_date: =$now()
                 isChecked: |
                     =@ctx.datasources.checklist[id=@ctx.current.item.id].isChecked = 1 ? 0 : 1
-
+  - type: component.custom-component
+    componentId: plus-btn
+  
+  - type: component.form
+    when: =@ctx.solution.state.add-todo = 1
+    instanceId: new-todo-routine-form
+    options:
+      children:
+        - type: component.text-field
+          instanceId: name
+          options:
+            label: Todo title
+  
           
+       

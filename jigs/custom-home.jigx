@@ -298,6 +298,26 @@ datasources:
         AND hasChecklist = true
         GROUP BY routine_id
         
+  checklist:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_LOCAL
+  
+      entities:
+        - checklist-local
+  
+      query: |
+        SELECT id
+        ,'$.name'
+        ,'$.isChecked'
+        ,'$.date'
+        ,'$.user'
+        FROM [checklist-local]
+        WHERE '$.isChecked' = 1
+      queryParameters:
+        dateofcheck: =$now()
+      
+        
 children:
   - type: component.custom-component
     componentId: header-component
@@ -366,16 +386,16 @@ children:
           isDoneNumber: =@ctx.current.item.isDoneNumber
           goTo: true
           strategyId: =@ctx.jig.inputs.strategyId
-  # - type: component.list
-  #   options:
-  #     data: =@ctx.datasources.routines-with-todos
-  #     maximumItemsToRender: 8
-  #     isHorizontal: true
-  #     isHorizontalScrollIndicatorHidden: true
-  #     item:
-  #       type: component.custom-component
-  #       componentId: routine-card-component
-  #       inputs:
-  #         routines: =@ctx.current.item
-  #         numberOfSteps: =@ctx.current.item.total_todos
-  #         isDoneNumber: =@ctx.current.item.isDoneNumber
+  - type: component.list
+    options:
+      data: =@ctx.datasources.routines-with-todos
+      maximumItemsToRender: 8
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      item:
+        type: component.custom-component
+        componentId: routine-card-component
+        inputs:
+          routines: =@ctx.current.item
+          numberOfSteps: =@ctx.current.item.total_todos
+          isDoneNumber: =$count(@ctx.datasources.checklist)
