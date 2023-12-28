@@ -1,0 +1,60 @@
+title: Profile information
+type: jig.default
+          
+actions:
+  - children:
+      - type: action.go-to
+        options:
+          title: Edit user data
+          linkTo: edit-user-data
+          parameters:
+            userId: =@ctx.datasources.user.id
+        
+datasources:
+  user:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/users
+        
+      query: |
+        SELECT
+          id
+          ,'$.avatar'
+          ,'$.birth-date'
+          ,'$.user'
+          ,'$.username'
+        FROM [default/users]
+        WHERE '$.user' = @user
+      queryParameters:
+        user: =@ctx.user.email
+        
+children:
+  - type: component.avatar
+    options:
+      title: =$substring(@ctx.datasources.user.username)
+      uri: =@ctx.datasources.user.avatar
+      size: large
+      align: center
+  - type: component.entity
+    options:
+      children:
+        - type: component.section
+          options:
+            title: Personal information
+            children:
+              - type: component.entity-field
+                options:
+                  label: How we call you
+                  value: =@ctx.datasources.user.username
+              - type: component.entity-field
+                options:
+                  label: When were you born?
+                  value: =@ctx.datasources.user.birth-date
+              - type: component.entity-field
+                options:
+                  label: Your e-mail
+                  value: =@ctx.datasources.user.user
+                  contentType: email

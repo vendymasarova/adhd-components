@@ -10,7 +10,7 @@ children:
       onPress: 
         type: action.go-to
         options:
-          linkTo: user-data
+          linkTo: user-profile
       children:
         # Avatar
         - type: component.avatar

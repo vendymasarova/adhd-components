@@ -12,17 +12,17 @@ children:
         - type: component.card
           options:
             color:  =@ctx.inputs.gems >= @ctx.inputs.rewards.points ? 'positive':''
-            onPress: 
-              type: action.go-to
-              when: =@ctx.inputs.gems >= @ctx.inputs.rewards.points
-              options:
-                linkTo: reward-detail
+            # onPress: 
+            #   type: action.go-to
+            #   when: =@ctx.inputs.gems >= @ctx.inputs.rewards.points
+            #   options:
+            #     linkTo: reward-detail
             children:
               - type: component.view
                 options:
                   style:
                     flex: 
-                      # grow: 1
+                      grow: 1
                       shrink: 1
                     width: 250
                   children:
@@ -111,7 +111,7 @@ children:
                           current: =@ctx.inputs.gems
                           max: =@ctx.inputs.rewards.points
                     - type: component.view
-                      when: =@ctx.inputs.gems >= @ctx.inputs.rewards.points ? true:false
+                      when: =(@ctx.inputs.gems >= @ctx.inputs.rewards.points) and (@ctx.inputs.rewards.isCompleted = false) ? true:false
                       options:
                         style:
                           flex:
@@ -121,10 +121,17 @@ children:
                           gap: small
                           padding: 
                             top: medium
+                        onPress: 
+                          type: action.go-to
+                          options:
+                            linkTo: create-new-event
+                            parameters:
+                              reward-name: =@ctx.inputs.rewards.name
+                              reward-id: =@ctx.inputs.rewards.id
                         children:
                           - type: component.text
                             options:
-                              value: =@ctx.user.email = @ctx.inputs.rewards.user ? 'Claim your reward':'Reward your child'
+                              value: =@ctx.user.email = @ctx.inputs.rewards.user ? '':'Reward your child'
                               size: regular
                               weight: semi-bold
                           - type: component.icon

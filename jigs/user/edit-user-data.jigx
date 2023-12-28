@@ -1,0 +1,62 @@
+title: Edit your profile
+type: jig.default
+
+actions:
+  - children:
+      - type: action.submit-form
+        options:
+          formId: user-form
+          provider: DATA_PROVIDER_DYNAMIC
+          title: Update Record
+          entity: default/users
+          method: update
+          data: 
+            id: =@ctx.datasources.users.id
+          onSuccess: 
+            title: Data updated
+            description: Your user data were succesfully udpdated
+            
+datasources:
+  users: 
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+      entities:
+        - default/users
+      query: |
+        SELECT
+          id
+          ,'$.avatar'
+          ,'$.birth-date'
+          ,'$.user'
+          ,'$.username'
+        FROM [default/users]
+        WHERE id = @userId
+      queryParameters:
+        userId: =@ctx.jig.inputs.userId
+        
+children:
+  - type: component.form
+    instanceId: user-form
+    options:
+      children:
+        - type: component.avatar-field
+          instanceId: avatar
+          options:
+            label: Avatar
+            initialValue: =@ctx.datasources.users.avatar
+        - type: component.text-field
+          instanceId: username
+          options:
+            label: First name
+            initialValue: =@ctx.datasources.users.username
+        - type: component.date-picker
+          instanceId: birth-date
+          options:
+            label: Date of Birth
+            initialValue: =@ctx.datasources.users.birth-date
+        - type: component.email-field
+          instanceId: user
+          options:
+            label: email
+            initialValue: =@ctx.datasources.users.user

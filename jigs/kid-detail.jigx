@@ -178,9 +178,11 @@ datasources:
         '$.image', 
         '$.name',
         '$.points',
-        '$.user'
+        '$.user',
+        '$.isCompleted'
         FROM [default/extra-rewards]
         WHERE ('$.user' = @child or ('$.user' is NULL AND '$.image' is NULL))
+        AND '$.isCompleted' = false
         ORDER BY '$.image' DESC
       queryParameters:
         child: =@ctx.jig.inputs.email
@@ -198,6 +200,7 @@ children:
       icon: messages
       title: Chat
       color: color9 
+      goTo: chat
   - type: component.custom-component
     componentId: title
     inputs:
@@ -239,6 +242,9 @@ children:
     componentId: title
     inputs:
       title: Extra Rewards
+      link: all-extra-rewards
+      icon: arrow-right
+      email: =@ctx.jig.inputs.email
   - type: component.list
     options:
       isHorizontal: true

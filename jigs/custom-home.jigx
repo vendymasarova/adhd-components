@@ -347,6 +347,13 @@ children:
           mood: =@ctx.datasources.actual-day-and-mood.mood
           actualDayData: =@ctx.datasources.actual-day-and-mood
   - type: component.custom-component
+    componentId: cta-component
+    inputs: 
+      icon: messages
+      title: Chat
+      color: color9 
+      goTo: chat
+  - type: component.custom-component
     componentId: title
     inputs:
       title: Mood checkins
@@ -369,7 +376,7 @@ children:
   - type: component.custom-component
     componentId: title
     inputs: 
-      title: Learnings
+      title: Strategies
       icon: arrow-righ
   - type: component.list
     options:

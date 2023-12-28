@@ -1,0 +1,36 @@
+title: Calendar
+type: jig.calendar
+
+datasources:
+  events: 
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/events
+  
+      query:
+        SELECT 
+          id, 
+          '$.event-title', 
+          '$.event-end', 
+          '$.event-end-time', 
+          '$.event-start', 
+          '$.event-start-time', 
+          '$.event-invitation', 
+          '$.event-location', 
+          '$.event-tags'
+        FROM [default/events] 
+
+data: =@ctx.datasources.events
+item:
+  type: component.event
+  options:
+    from: =@ctx.current.item.event-start
+    to: =@ctx.current.item.event-end
+    title: =@ctx.current.item.event-title
+    location: =@ctx.current.item.event-location
+    people: 
+      =@ctx.current.item.event-invitation
+    tags: =@ctx.current.item.event-tags

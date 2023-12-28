@@ -1,0 +1,81 @@
+title: =@ctx.jig.inputs.email
+type: jig.list
+icon: contact
+
+filter: 
+  - title: All
+    value: ''
+  - title: Active
+    value: 0
+  - title: Rewarded
+    value: 1
+
+datasources:
+  child-data:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/users
+        - default/strategies-results
+        - default/mood-checkins
+  
+      query: |
+        SELECT 
+          a.id AS id, 
+          json_extract(a.data, '$.user') AS user,
+          json_extract(a.data, '$.username') AS name,
+          json_extract(a.data, '$.avatar') AS avatar,
+          json_extract(a.data, '$.role') AS role,
+          json_extract(b.data, '$.gems') AS gems,
+          json_extract(c.data, '$.gems') AS mood_checkins_gems,
+          (SELECT COALESCE(SUM(CAST(json_extract(s.data, '$.gems') AS DECIMAL)), 0)
+          FROM [default/strategies-results] s
+          WHERE json_extract(s.data, '$.user') = json_extract(a.data, '$.user')
+          ) AS total_strategies_results_gems,
+          (SELECT COALESCE(SUM(CAST(json_extract(d.data, '$.gems') AS DECIMAL)), 0)
+          FROM [default/mood-checkins] d
+          WHERE json_extract(d.data, '$.user') = json_extract(a.data, '$.user')
+          ) AS total_mood_checkins_gems
+        FROM [default/users] a
+        LEFT JOIN [default/strategies-results] b ON json_extract(a.data, '$.user') = json_extract(b.data, '$.user')
+        LEFT JOIN [default/mood-checkins] c ON json_extract(a.data, '$.user') = json_extract(c.data, '$.user')
+        WHERE user is @child
+        GROUP BY  user, avatar, role
+      queryParameters:
+        child: =@ctx.jig.inputs.email
+        
+  extra-reward: 
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+    
+      entities:
+        - default/extra-rewards
+    
+      query: 
+        SELECT 
+        id, 
+        '$.image', 
+        '$.name',
+        '$.points',
+        '$.user',
+        '$.isCompleted'
+        FROM [default/extra-rewards]
+        WHERE ('$.user' = @child or ('$.user' is NULL AND '$.image' is NULL))
+        AND '$.isCompleted' LIKE @filter or @filter IS NULL
+        AND '$.isCompleted' = false
+        ORDER BY '$.image' DESC
+      queryParameters:
+        child: =@ctx.jig.inputs.email
+        filter: =@ctx.jig.state.filter
+        
+data: =@ctx.datasources.extra-reward
+item:
+  type: component.custom-component
+  componentId: extra-reward
+  inputs:
+    isUserChild: =@ctx.user.email = @ctx.datasources.extra-reward.user
+    rewards: =@ctx.current.item
+    gems: =$sum(@ctx.datasources.child-data.total_strategies_results_gems) + $sum(@ctx.datasources.child-data.total_mood_checkins_gems)

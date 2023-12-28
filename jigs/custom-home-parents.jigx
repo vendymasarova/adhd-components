@@ -139,7 +139,12 @@ children:
   - type: component.custom-component
     componentId: cta-component
     inputs:
+      goTo: calendar
+      icon: calendar
+      title: Events
+  - type: component.custom-component
+    componentId: cta-component
+    inputs:
       goTo: add-child
       icon: plus
       title: Add child
-      # color: color9

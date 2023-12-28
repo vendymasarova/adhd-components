@@ -17,4 +17,5 @@ tables:
   checklist-check: 
   routine-checkins:
   strategies-assign:
+  events:
   

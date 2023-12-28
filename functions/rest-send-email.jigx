@@ -1,0 +1,31 @@
+provider: DATA_PROVIDER_REST
+method: POST
+url: "https://api.sendgrid.com/v3/mail/send"
+inputTransform: >-
+  $.{"personalizations": [{ "to": [ { "email": emailto, "name": name }]}],"from": {"email": emailfrom, "name": name}, "reply to": {"email": emailfrom, "name": name },"subject": subject, "content": [{ "type": "text/html", "value": content}]}
+parameters:
+  Authorization:
+    location: header
+    type: string
+    value: Bearer SG.testingtestingdemo.2kyqYOFa_bPwlPJbUWtnTWHLs5PuL-VOA22gW1koEIY
+    required: true
+  emailfrom:
+    location: body
+    type: string
+    required: true
+  emailto:
+    location: body
+    type: string
+    required: true
+  name:
+    location: body
+    type: string
+    required: true
+  subject:
+    location: body
+    type: string
+    required: true
+  content:
+    location: body
+    type: string
+    required: true

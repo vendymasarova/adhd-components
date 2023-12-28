@@ -1,0 +1,135 @@
+title: Create new event
+type: jig.default
+
+actions:
+  - children:
+      - type: action.action-list
+        options:
+          title: Create reward
+          isSequential: true
+          actions:
+            - type: action.submit-form
+              options: 
+                provider: DATA_PROVIDER_DYNAMIC
+                entity: default/events
+                method: save
+                formId: new-event
+                goBack: stay
+                onSuccess: 
+                  title: Event created successfully
+                  description: Your child can now see the event.
+            - type: action.execute-entity
+              options:
+                provider: DATA_PROVIDER_DYNAMIC
+                entity: default/extra-rewards
+                method: update
+                goBack: previous
+                data: =@ctx.datasources.extra-rewards[id = @ctx.jig.inputs.reward-id].{"id" :id, "isCompleted" :true}
+
+datasources:
+  users: 
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+
+      entities:
+        - default/users
+
+      query: 
+        SELECT 
+        id, 
+        '$.user',
+        '$.avatar',
+        '$.username',
+        '$.role'
+        FROM [default/users] 
+        WHERE '$.role' = 'child'
+        
+  tags: 
+    type: datasource.static
+    options:
+      data:
+        - id: 1
+          title: extra-reward
+          color: color2
+        - id: 2
+          title: school
+          color: color9
+        - id: 3
+          title: doctors
+          color: color8
+          
+        
+children:
+  - type: component.form
+    instanceId: new-event
+    options:
+      children:
+        - type: component.text-field
+          instanceId: event-title
+          options:
+            label: Title
+            initialValue: =@ctx.jig.inputs.reward-name
+        - type: component.field-row
+          options:
+            children:
+              - type: component.date-picker
+                instanceId: event-start
+                options:
+                  label: Event start
+              # - type: component.date-picker
+              #   instanceId: event-start-time
+              #   options:
+              #     format: HH:mm
+              #     helperText: Time picker with min and max
+              #     isRequired: true
+              #     label: Event time start
+              #     mode: time
+        - type: component.field-row
+          options:
+            children:
+              - type: component.date-picker
+                instanceId: event-end
+                options:
+                  label: Event end
+              # - type: component.date-picker
+              #   instanceId: event-end-time
+              #   options:
+              #     format: HH:mm
+              #     helperText: Time picker with min and max
+              #     isRequired: true
+              #     label: Event time end
+              #     mode: time
+        - type: component.text-field
+          instanceId: event-location
+          options:
+            label: Location
+        - type: component.dropdown
+          instanceId: event-invititation
+          options:
+            isMultiple: true
+            label: Users
+            data: =@ctx.datasources.users
+            item:
+              type: component.dropdown-item
+              options:
+                leftElement: 
+                  element: avatar
+                  text: =@ctx.current.item.username
+                  uri: =@ctx.current.item.avatar
+                title: =@ctx.current.item.username
+                value: =@ctx.current.item.username
+        - type: component.dropdown
+          instanceId: event-tags
+          options:
+            isRequired: false
+            isMultiple: true
+            label: Tags
+            data: =@ctx.datasources.tags
+            item:
+              type: component.dropdown-item
+              options:
+                title: =@ctx.current.item.title
+                value: =@ctx.current.item.title
+                  
+                

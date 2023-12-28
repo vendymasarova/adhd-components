@@ -58,12 +58,16 @@ actions:
           entity: default/todos
           method: save
           goBack: stay 
+          icon: plus
+          style:
+            isDisabled: |
+             =@ctx.components.name.state.value = null
+
           data: 
             name: =@ctx.components.name.state.value
             isChecked: false
             routine_id: =@ctx.jig.inputs.routineId
           onSuccess: 
-            title: New todo created
             type: action.set-state
             options:
               state: =@ctx.solution.state.add-todo
@@ -169,7 +173,7 @@ children:
                     goBack: stay
                     data:
                       id: =@ctx.current.item.id
-                  
+          isContained: true
           title: =@ctx.current.item.name
           color:
             - when: =1=1
@@ -194,9 +198,6 @@ children:
                 check_date: =$now()
                 isChecked: |
                     =@ctx.datasources.checklist[id=@ctx.current.item.id].isChecked = 1 ? 0 : 1
-  - type: component.custom-component
-    componentId: plus-btn
-  
   - type: component.form
     when: =@ctx.solution.state.add-todo = 1
     instanceId: new-todo-routine-form
@@ -205,7 +206,6 @@ children:
         - type: component.text-field
           instanceId: name
           options:
-            label: Todo title
-  
-          
-       
+            label: Create new todo
+  - type: component.custom-component
+    componentId: plus-btn

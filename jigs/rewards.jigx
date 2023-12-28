@@ -126,7 +126,7 @@ datasources:
         WHERE user = @user
         GROUP BY strategy_id, name, goal
         HAVING goal <= total_results
-        ORDER BY goal
+        ORDER BY strategy_id
       queryParameters:
         user: =@ctx.user.email
 children:

@@ -2,8 +2,6 @@ name: adhd-components
 title: adhd-components
 category: health
 
-
-
 onRefresh: 
   type: action.action-list
   options:

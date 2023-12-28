@@ -15,6 +15,7 @@ children:
                 isSequential: true
                 actions:
                   - type: action.set-state
+                    when: =@ctx.inputs.goTo = null
                     options:
                       state: =@ctx.solution.state.checkin-day
                       value: =@ctx.inputs.checkins.date

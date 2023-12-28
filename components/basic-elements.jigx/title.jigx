@@ -40,5 +40,7 @@ children:
               type: action.go-to
               options:
                 linkTo: =@ctx.inputs.link
+                parameters:
+                  email: =@ctx.inputs.email
         
       

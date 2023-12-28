@@ -1,0 +1,56 @@
+title: Email Employee
+icon: synchronize-arrows-1
+type: jig.default
+
+actions:
+  - children:
+      - type: action.submit-form
+        options:
+          formId: form-three-rest
+          provider: DATA_PROVIDER_REST
+          method: functionCall
+          title: Send join request
+          entity: notify-employee
+          function: rest-send-email
+          # onSuccess: 
+          #   title: Email has been sent
+          #      description: Done
+          #   actions:
+          #     - type: action.go-to
+          #       options:
+          #         title: Employees 
+          #         linkTo: list-four           
+
+children:
+  - type: component.form
+    instanceId: form-three-rest
+    options:
+      children:
+        - type: "component.text-field"
+          instanceId: name
+          options:
+            label: "Employee Name"
+            isHidden: true
+            initialValue: Jigx Team
+        - type: "component.text-field"
+          instanceId: emailfrom
+          options:
+            label: Email From
+            isHidden: true
+            initialValue: 'vendula@jigx.com'
+        - type: "component.text-field"
+          instanceId: emailto
+          options:
+            label: "Email to:"
+        - type: "component.text-field"
+          instanceId: subject
+          options:
+            label: "subject"
+            isHidden: true
+            initialValue: 'Employee information updated'
+        - type: "component.text-field"
+          instanceId: message
+          options:
+            label: "Message"
+            isMultiline: true
+            textArea: large

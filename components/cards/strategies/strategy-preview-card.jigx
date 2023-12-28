@@ -30,23 +30,23 @@ children:
                     width: 320
                   children:
                               
-                    # CONTENT
-                    - type: component.view
-                      options:
-                        style:
-                          flex:
-                            #  grow: 1
-                             basis: 2
-                          padding:
-                            vertical : medium
-                        children:
-                          - type: component.image
-                            options:
-                              size: 
-                                height: 230
-                              resizeMode: contain
-                              source:
-                                uri: =@ctx.inputs.strategies.image
+                    # CONTENxT
+                    # - type: component.view
+                    #   options:
+                    #     style:
+                    #       flex:
+                    #         #  grow: 1
+                    #          basis: 2
+                    #       padding:
+                    #         vertical : medium
+                    #     children:
+                    #       - type: component.image
+                    #         options:
+                    #           size: 
+                    #             height: 230
+                    #           resizeMode: contain
+                    #           source:
+                    #             uri: =@ctx.inputs.strategies.image
 
               
                     - type: component.view

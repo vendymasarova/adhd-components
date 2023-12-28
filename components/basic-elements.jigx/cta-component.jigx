@@ -24,8 +24,8 @@ children:
                 when: =@ctx.inputs.icon != null 
                 options:
                   icon: =@ctx.inputs.icon
-                  color: =@ctx.inputs.color = null ? 'color9':''
-                  type: =@ctx.inputs.color = null ? 'duotone':'contained'
+                  color: =@ctx.inputs.color != null ? '':'color9'
+                  type: =@ctx.inputs.color != null ? 'contained':'duotone'
                   shape: circle
                   size: small
               - type: component.view
