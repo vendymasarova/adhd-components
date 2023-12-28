@@ -182,7 +182,7 @@ datasources:
         '$.isCompleted'
         FROM [default/extra-rewards]
         WHERE ('$.user' = @child or ('$.user' is NULL AND '$.image' is NULL))
-        AND '$.isCompleted' = false
+        AND ('$.isCompleted' = false or '$.isCompleted' IS NULL)
         ORDER BY '$.image' DESC
       queryParameters:
         child: =@ctx.jig.inputs.email

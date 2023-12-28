@@ -1,10 +1,8 @@
-title: =@ctx.jig.inputs.email
+title: All extra rewards
 type: jig.list
 icon: contact
 
 filter: 
-  - title: All
-    value: ''
   - title: Active
     value: 0
   - title: Rewarded
@@ -65,7 +63,6 @@ datasources:
         FROM [default/extra-rewards]
         WHERE ('$.user' = @child or ('$.user' is NULL AND '$.image' is NULL))
         AND '$.isCompleted' LIKE @filter or @filter IS NULL
-        AND '$.isCompleted' = false
         ORDER BY '$.image' DESC
       queryParameters:
         child: =@ctx.jig.inputs.email
@@ -76,6 +73,7 @@ item:
   type: component.custom-component
   componentId: extra-reward
   inputs:
+    full: true
     isUserChild: =@ctx.user.email = @ctx.datasources.extra-reward.user
     rewards: =@ctx.current.item
     gems: =$sum(@ctx.datasources.child-data.total_strategies_results_gems) + $sum(@ctx.datasources.child-data.total_mood_checkins_gems)
