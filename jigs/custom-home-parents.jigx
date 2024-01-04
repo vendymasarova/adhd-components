@@ -148,3 +148,4 @@ children:
       goTo: add-child
       icon: plus
       title: Add child
+      color: color9

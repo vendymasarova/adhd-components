@@ -29,15 +29,22 @@ datasources:
         - id: 3
           name: Restaurant
           image: https://t14345253.p.clickup-attachments.com/t14345253/ecd8d342-2779-4bda-9f0a-088f9ba1a1cf/restaurant.png?view=open
+        - id: 4
+          name: Gift
+          image: https://t14345253.p.clickup-attachments.com/t14345253/8a22535d-7ed5-40a1-872e-873be283a387/Gift.png?view=open
           
   gems: 
     type: datasource.static
     options:
       data:
         - id: 1
-          gem: 240
-        - id: 2
           gem: 160
+        - id: 2
+          gem: 240
+        - id: 3
+          gem: 360
+        - id: 4
+          gem: 480
           
   kids:
     type: datasource.static
@@ -59,14 +66,10 @@ children:
     instanceId: extra-reward
     options:
       children:
-        - type: component.text-field
-          instanceId: name
-          options:
-            label: What is the reward?
         - type: component.dropdown
           instanceId: image
           options:
-            label: Reward image
+            label: Reward type
             data: =@ctx.datasources.images
             item:
               type: component.dropdown-item
@@ -77,6 +80,10 @@ children:
                   uri: =@ctx.current.item.image
                 title: =@ctx.current.item.name
                 value: =@ctx.current.item.image
+        - type: component.text-field
+          instanceId: name
+          options:
+            label: What is the reward?
         - type: component.dropdown
           instanceId: points
           options:
@@ -97,3 +104,10 @@ children:
               options:
                 title: =@ctx.current.item.name
                 value: =@ctx.current.item.email
+        - type: component.checkbox
+          instanceId: isCompleted
+          options:
+            isHidden: true
+            isRequired: false
+            label: isCompleted
+            initialValue: false

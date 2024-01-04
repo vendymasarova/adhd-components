@@ -105,7 +105,7 @@ datasources:
         '$.strategyId'
         FROM [default/strategies-results]
         WHERE json_extract(data, '$.strategyId') = @strategyId
-        AND ('$.user' is @user or '$.user' is @child)
+        AND ('$.user' is @user OR '$.user' is @child)
         ORDER BY json_extract(data, '$.time') ASC
       queryParameters:
         strategyId: =@ctx.jig.inputs.strategyId
@@ -179,6 +179,7 @@ children:
           linkTo: results-list
           parameters:
             resultsStrategyId: =@ctx.jig.inputs.strategyId
+            child: =@ctx.jig.inputs.email
       data: =@ctx.datasources.results
       item: 
         type: component.custom-component

@@ -1,0 +1,99 @@
+type: component.default
+children:
+  - type: component.view
+    options:
+      style:
+        flex: 
+          basis: 1
+          grow: 1
+          direction: row
+        gap: small
+      children:
+        - type: component.view
+          options:
+            style:
+              flex: 
+                grow: 1
+                shrink: 1
+                basis: 1
+            children:
+              - type: component.card
+                options:
+                  color: =@ctx.inputs.color1
+                  onPress: 
+                    type: action.go-to
+                    options:
+                      linkTo: =@ctx.inputs.goTo1
+                  children:
+                    - type: component.view
+                      options:
+                        style:
+                          height: 
+                            min: 40
+                          flex: 
+                            grow: 1
+                            direction: row
+                          gap: medium
+                          justifyContent: center
+                          alignItems: center
+                        children:
+                          - type: component.icon
+                            when: =@ctx.inputs.icon1 != null 
+                            options:
+                              icon: =@ctx.inputs.icon1
+                              color: =@ctx.inputs.color1 != null ? '':'color9'
+                              type: =@ctx.inputs.color1 != null ? 'contained':'duotone'
+                              shape: circle
+                              size: small
+                          - type: component.view
+                            options:
+                              style:
+                              children:
+                                - type: component.text
+                                  options:
+                                    value: =@ctx.inputs.title1 != null ? @ctx.inputs.title1:'Title required'
+                                    numberOfLines: 1
+        - type: component.view
+          options:
+            style:
+              flex: 
+                grow: 1
+                basis: 1
+                shrink: 1
+            children:
+              - type: component.card
+                options:
+                  color: =@ctx.inputs.color2
+                  onPress: 
+                    type: action.go-to
+                    options:
+                      linkTo: =@ctx.inputs.goTo2
+                  children:
+                    - type: component.view
+                      options:
+                        style:
+                          height: 
+                            min: 40
+                          flex: 
+                            grow: 1
+                            direction: row
+                          gap: medium
+                          justifyContent: center
+                          alignItems: center
+                        children:
+                          - type: component.icon
+                            when: =@ctx.inputs.icon2 != null 
+                            options:
+                              icon: =@ctx.inputs.icon2
+                              color: =@ctx.inputs.color2 != null ? '':'color9'
+                              type: =@ctx.inputs.color2 != null ? 'contained':'duotone'
+                              shape: circle
+                              size: small
+                          - type: component.view
+                            options:
+                              style:
+                              children:
+                                - type: component.text
+                                  options:
+                                    value: =@ctx.inputs.title2 != null ? @ctx.inputs.title2:'Title required'
+                                    numberOfLines: 1

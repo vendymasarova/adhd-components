@@ -1,14 +1,30 @@
-title: All extra rewards
-type: jig.list
-icon: contact
-
-filter: 
-  - title: Active
-    value: 0
-  - title: Rewarded
-    value: 1
+title: Reward detail
+description: =@ctx.jig.inputs.reward_id
+type: jig.default
 
 datasources:
+  extra-reward: 
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+    
+      entities:
+        - default/extra-rewards
+    
+      query: 
+        SELECT 
+        id, 
+        '$.image', 
+        '$.name',
+        '$.points',
+        '$.user',
+        '$.isCompleted'
+        FROM [default/extra-rewards]
+        WHERE id = @reward_id
+      queryParameters:
+        child: =@ctx.jig.inputs.email
+        reward_id: =@ctx.jig.inputs.reward_id
+
   child-data:
     type: datasource.sqlite
     options:
@@ -43,39 +59,19 @@ datasources:
         GROUP BY  user, avatar, role
       queryParameters:
         child: =@ctx.jig.inputs.email
-        
-  extra-reward: 
-    type: datasource.sqlite
+children:
+  - type: component.list
     options:
-      provider: DATA_PROVIDER_DYNAMIC
-    
-      entities:
-        - default/extra-rewards
-    
-      query: 
-        SELECT 
-        id, 
-        '$.image', 
-        '$.name',
-        '$.points',
-        '$.user',
-        '$.isCompleted'
-        FROM [default/extra-rewards]
-        WHERE ('$.user' = @child or ('$.user' is NULL AND '$.image' is NULL))
-        AND '$.isCompleted' LIKE @filter or @filter IS NULL
-        AND ('$.user' is @child or '$.user' is @user)
-        ORDER BY '$.image' DESC
-      queryParameters:
-        child: =@ctx.jig.inputs.email
-        user: =@ctx.user.email
-        filter: =@ctx.jig.state.filter
-        
-data: =@ctx.datasources.extra-reward
-item:
-  type: component.custom-component
-  componentId: extra-reward
-  inputs:
-    full: true
-    isUserChild: =@ctx.user.email = @ctx.datasources.extra-reward.user
-    rewards: =@ctx.current.item
-    gems: =$sum(@ctx.datasources.child-data.total_strategies_results_gems) + $sum(@ctx.datasources.child-data.total_mood_checkins_gems)
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      maximumItemsToRender: 3
+      data: =@ctx.datasources.extra-reward
+      item: 
+        type: component.custom-component
+        componentId: extra-reward
+        inputs:
+          isUserChild: =@ctx.user.email = @ctx.datasources.extra-reward.user
+          rewards: =@ctx.current.item
+          gems: =$sum(@ctx.datasources.child-data.total_strategies_results_gems) + $sum(@ctx.datasources.child-data.total_mood_checkins_gems)
+          goTo: create-new-event
+          full: true

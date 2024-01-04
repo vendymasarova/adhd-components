@@ -39,10 +39,13 @@ datasources:
         '$.image', 
         '$.name',
         '$.user',
-        '$.points'
+        '$.points',
+        '$.isCompleted'
         FROM [default/extra-rewards]
         WHERE '$.image' is not NULL
         AND '$.user' is @user
+        AND '$.isCompleted' is 0
+        ORDER BY '$.points'
       queryParameters:
         user: =@ctx.user.email
        
@@ -106,6 +109,7 @@ datasources:
             json_extract(a.data, '$.image') AS image,
             json_extract(a.data, '$.description') AS description,
             json_extract(a.data, '$.strategy_id') AS strategy_id,
+            json_extract(a.data, '$.isCompleted') AS isCompleted,
             json_extract(b.data, '$.id') AS result_id,
             json_extract(b.data, '$.end') AS time_end,
             json_extract(b.data, '$.start') AS start,
@@ -138,7 +142,7 @@ children:
   - type: component.custom-component
     componentId: title
     inputs:
-      title: Rewards
+      title: Badges
   - type: component.list
     options:
       isHorizontal: true
@@ -156,6 +160,10 @@ children:
     componentId: title
     inputs:
       title: Extra Rewards
+      subtitle: =$count(@ctx.datasources.extra-reward) != 0 ? null:'There are no extra rewards from your parent'
+      link: all-extra-rewards
+      icon: arrow-right
+      email: =@ctx.user.email
   - type: component.list
     options:
       isHorizontal: true
@@ -168,3 +176,4 @@ children:
         inputs:
           rewards: =@ctx.current.item
           gems: =$sum(@ctx.datasources.results.gems) + $sum(@ctx.datasources.mood-checkins-gems.gems)
+          goTo: chat

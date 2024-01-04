@@ -22,9 +22,12 @@ datasources:
         '$.strategyId'
         FROM [default/strategies-results]
         WHERE json_extract(data, '$.strategyId') = @strategyId
+        AND ('$.user' is @user OR '$.user' is @child)
         ORDER BY json_extract(data, '$.time') ASC
       queryParameters:
         strategyId: =@ctx.jig.inputs.resultsStrategyId
+        user: =@ctx.user.email
+        child: =@ctx.jig.inputs.child
         
 data: =@ctx.datasources.results
 item:

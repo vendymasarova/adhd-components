@@ -1,13 +1,6 @@
 type: component.default
 children:
   - type: component.view
-    # when: =($fromMillis($toMillis(2023-11-10T08:00:00), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_start), '[h01]:[m01]')) and ($fromMillis($toMillis(2023-11-10T08:00:00), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_end), '[h01]:[m01]')) ? true:false 
-    # when: |
-    #  =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) <= 13 and $string(@ctx.inputs.actualDayData) = '[]') or (($number($fromMillis($toMillis($now()), '[H01]')) >= 13 and $count(@ctx.inputs.actualDayData) > 1 or $number($fromMillis($toMillis($now()), '[H01]')) >= 13 and $string(@ctx.inputs.actualDayData) = '[]')) or (@ctx.inputs.reminder.routine_id != 4)
-    #  & ($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_end), '[h01]:[m01]')) and ((@ctx.inputs.reminder.routine_id = 5) and (@ctx.solution.state.meds = 0))
-    
-    #  =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.inputs.reminder.reminder_end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) < 18 and $type(@ctx.inputs.reminder.mood) = null)
-    #  or (@ctx.solution.state.meds = 1 and @ctx.inputs.reminder.routineId = 5) ? true:false
     options:
       style:
         flex: 

@@ -1,9 +1,9 @@
 title: ' '
+type: jig.default
 # description: =$count(@ctx.datasources.actual-day-and-mood) >= 1 ? 'ano':'ne'
 # description: =$type($count(@ctx.datasources.actual-day-and-mood))
 # description: |
 #      =($fromMillis($toMillis($now()), '[h01]:[m01]') >= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-start), '[h01]:[m01]')) and ($fromMillis($toMillis($now()), '[h01]:[m01]') <= $fromMillis($toMillis(@ctx.datasources.reminders.reminder-end), '[h01]:[m01]')) and ($number($fromMillis($toMillis($now()), '[H01]')) <= 14 and $string(@ctx.datasources.actual-day-and-mood) = '[]') 
-type: jig.default
 
 onFocus: 
   type: action.set-state
@@ -42,14 +42,16 @@ datasources:
           json_extract(a.data, '$.time_of_day') AS time_of_day,
           STRFTIME('%H:%M', json_extract(a.data, '$.reminder-start')) AS reminder_start,
           STRFTIME('%H:%M', json_extract(a.data, '$.reminder-end')) AS reminder_end,
-          STRFTIME('%d.%m.%Y', json_extract(b.data, '$.date')) AS date
+          STRFTIME('%d.%m.%Y', json_extract(b.data, '$.date')) AS date,
+          STRFTIME('%Y', json_extract(b.data, '$.date')) AS year
         FROM [default/reminders-and-routines] a
         LEFT JOIN [default/routine-checkins] b ON json_extract(a.data, '$.routine_id') = json_extract(b.data, '$.routine_id')
-        WHERE  date != @today or date is null
-        AND strftime('%H:%M', 'now') BETWEEN reminder_start AND reminder_end
-        AND ((strftime('%H:%M', 'now') < '14:00' and @actualDayData is '[]') or (strftime('%H:%M', 'now') > '14:00' and (@actualDayData is '[]' or @countActualDayData is 1))) 
+        WHERE strftime('%H:%M', 'now') BETWEEN reminder_start AND reminder_end
         AND (time_of_day = 'both' OR time_of_day = @now)
+        AND ((strftime('%H:%M', 'now') < '14:00' and @actualDayData is '[]') or (strftime('%H:%M', 'now') > '14:00' and (@actualDayData is '[]' or @countActualDayData is 1))) 
+        AND year is 2024
         ORDER BY priority
+        # WHERE  date != @today or date is null
       queryParameters:
         today: =@ctx.solution.state.today
         actualDayData: =$string(@ctx.datasources.actual-day-and-mood)
@@ -331,7 +333,7 @@ children:
     componentId: title
     inputs:
       title: Reminders
-      subtitle: =$count(@ctx.datasources.reminders) != 0 ? null:'You are all done! 🎉'
+      subtitle: =$count(@ctx.datasources.reminders) != 0 ? null:'You have no reminders, everything is completed! 🎉'
   - type: component.list
     options:
       data: =@ctx.datasources.reminders
@@ -347,12 +349,19 @@ children:
           mood: =@ctx.datasources.actual-day-and-mood.mood
           actualDayData: =@ctx.datasources.actual-day-and-mood
   - type: component.custom-component
-    componentId: cta-component
+    componentId: title
     inputs: 
-      icon: messages
-      title: Chat
-      color: color9 
-      goTo: chat
+      title: Toolbox
+  - type: component.custom-component
+    componentId: grid-cards
+    inputs: 
+      icon1: messages
+      title1: Chat
+      color1: color9 
+      goTo1: chat
+      icon2: calendar
+      title2: Calendar
+      goTo2: calendar
   - type: component.custom-component
     componentId: title
     inputs:
@@ -393,6 +402,11 @@ children:
           isDoneNumber: =@ctx.current.item.isDoneNumber
           goTo: true
           strategyId: =@ctx.jig.inputs.strategyId
+  - type: component.custom-component
+    componentId: title
+    inputs: 
+      title: Routines
+      icon: arrow-righ
   - type: component.list
     options:
       data: =@ctx.datasources.routines-with-todos

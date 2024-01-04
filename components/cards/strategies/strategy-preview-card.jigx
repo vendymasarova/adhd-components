@@ -25,35 +25,32 @@ children:
                   style:
                     flex:
                       grow: 1
-                      # shrink: 1
                     gap: medium
                     width: 320
                   children:
                               
                     # CONTENxT
-                    # - type: component.view
-                    #   options:
-                    #     style:
-                    #       flex:
-                    #         #  grow: 1
-                    #          basis: 2
-                    #       padding:
-                    #         vertical : medium
-                    #     children:
-                    #       - type: component.image
-                    #         options:
-                    #           size: 
-                    #             height: 230
-                    #           resizeMode: contain
-                    #           source:
-                    #             uri: =@ctx.inputs.strategies.image
+                    - type: component.view
+                      options:
+                        style:
+                          flex:
+                             basis: 2
+                          padding:
+                            vertical : medium
+                        children:
+                          - type: component.image
+                            options:
+                              size: 
+                                height: 230
+                              resizeMode: contain
+                              source:
+                                uri: =@ctx.inputs.strategies.image
 
               
                     - type: component.view
                       options:
                         style:
                           flex: 
-                            # grow: 1
                             basis: 1
                             direction: column
                         children:
@@ -74,7 +71,6 @@ children:
                                   top: small
                                 height: 
                                   min: 60
-                                  # bottom: medium
                               children:
                                 - type: component.text
                                   options:
@@ -83,8 +79,6 @@ children:
                                     size: medium
                                     weight: regular
                                     emphasis: high
-                                    # weight: regular
-                
                     - type: component.progress-bar
                       when: =@ctx.inputs.strategies.isDone = 0 ? true:false
                       options:
@@ -92,31 +86,14 @@ children:
                         size: small
                         value:
                           current: =@ctx.inputs.isDoneNumber
-                          # current: =@ctx.inputs.strategies.isDone = 1 and @ctx.inputs.strategies.isInProgress = 1 ? @ctx.inputs.isDoneNumber:@ctx.inputs.numberOfSteps
                           max: =@ctx.inputs.numberOfSteps
                         subtitle:
                           value: =@ctx.inputs.isDoneNumber & '/' & @ctx.inputs.numberOfSteps
-                        # color:  =@ctx.inputs.isDoneNumber = @ctx.inputs.numberOfSteps ? 'positive':'warning'
                         color:  =@ctx.inputs.isDoneNumber = @ctx.inputs.numberOfSteps ? 'positive':'warning'
-                    # - type: component.progress-bar
-                    #   when: =@ctx.inputs.strategies.isInProgress = 1 and @ctx.inputs.strategies.isDone = 0 ? true:false
-                    #   options:
-                    #     steps: =@ctx.inputs.numberOfSteps
-                    #     size: small
-                    #     value:
-                    #       current: =@ctx.inputs.isDoneNumber
-                    #       max: =@ctx.inputs.numberOfSteps
-                    #     subtitle:
-                    #       value: =@ctx.inputs.isDoneNumber & '/' & @ctx.inputs.numberOfSteps
-                    #     # color:  =@ctx.inputs.isDoneNumber = @ctx.inputs.numberOfSteps ? 'positive':'warning'
-                    #     color:  positive
                     - type: component.view
                       when: =@ctx.inputs.strategies.isDone = 1 and @ctx.inputs.strategies.isInProgress = 0 ? true:false
                       options:
                         style:
-                          # position: absolute
-                          # bottom: small
-                          # left: small
                           alignSelf: flex-start
                         children:
                           - type: component.icon
