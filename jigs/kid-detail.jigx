@@ -301,6 +301,7 @@ children:
           rewards: =@ctx.current.item
           description: ='You completed strategy ' & @ctx.current.item.stategy_name & ' ' & @ctx.current.item.goal & ' times'
           progressbar: false
+          email: =@ctx.jig.inputs.email
   - type: component.custom-component
     componentId: title
     inputs:
@@ -322,3 +323,5 @@ children:
           rewards: =@ctx.current.item
           gems: =$sum(@ctx.datasources.child-data.total_strategies_results_gems) + $sum(@ctx.datasources.child-data.total_mood_checkins_gems)
           goTo: create-new-event
+          user: =@ctx.jig.inputs.email
+          hasDetail: true

@@ -177,3 +177,4 @@ children:
           rewards: =@ctx.current.item
           gems: =$sum(@ctx.datasources.results.gems) + $sum(@ctx.datasources.mood-checkins-gems.gems)
           goTo: chat
+          hasDetail: true

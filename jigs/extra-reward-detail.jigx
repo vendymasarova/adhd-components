@@ -1,5 +1,4 @@
 title: Reward detail
-description: =@ctx.jig.inputs.reward_id
 type: jig.default
 
 datasources:
@@ -22,8 +21,89 @@ datasources:
         FROM [default/extra-rewards]
         WHERE id = @reward_id
       queryParameters:
-        child: =@ctx.jig.inputs.email
+        child: =@ctx.jig.inputs.user
         reward_id: =@ctx.jig.inputs.reward_id
+  
+  results-rewards:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/strategies-results
+        - default/rewards
+        - default/strategies-assign
+        - default/strategies
+  
+      query:
+        SELECT
+            a.id AS id,
+            json_extract(a.data, '$.id') AS reward_id,
+            json_extract(a.data, '$.name') AS name,
+            json_extract(a.data, '$.goal') AS goal,
+            json_extract(a.data, '$.image') AS image,
+            json_extract(a.data, '$.description') AS description,
+            json_extract(a.data, '$.strategy_id') AS strategy_id,
+            json_extract(a.data, '$.isCompleted') AS isCompleted,
+            json_extract(b.data, '$.id') AS result_id,
+            json_extract(b.data, '$.end') AS time_end,
+            json_extract(b.data, '$.start') AS start,
+            json_extract(b.data, '$.time') AS time,
+            json_extract(b.data, '$.gems') AS gems,
+            json_extract(c.data, '$.user') AS user,
+            json_extract(d.data, '$.name') AS stategy_name,
+            (
+                SELECT COUNT(*)
+                FROM [default/strategies-results] s
+                WHERE json_extract(s.data, '$.strategyId') = json_extract(a.data, '$.strategy_id')
+                AND json_extract(s.data, '$.user') = @user
+            ) AS total_results
+        FROM [default/rewards] a
+        LEFT JOIN [default/strategies-results] b ON json_extract(a.data, '$.strategy_id') = json_extract(b.data, '$.strategyId')
+        LEFT JOIN [default/strategies-assign] c ON json_extract(a.data, '$.strategy_id') = json_extract(c.data, '$.strategy_id')
+        LEFT JOIN [default/strategies] d ON json_extract(a.data, '$.strategy_id') = json_extract(d.data, '$.strategy_id')
+        WHERE user = @user
+        GROUP BY strategy_id, name, goal
+        HAVING goal <= total_results
+        ORDER BY strategy_id
+      queryParameters:
+        user: =@ctx.jig.inputs.user
+        
+  strategies-results:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/strategies-results
+  
+      query: 
+        SELECT 
+          id, 
+          '$.gems', 
+          '$.user' 
+        FROM [default/strategies-results] 
+        WHERE '$.user' = @user
+      queryParameters:
+        user: =@ctx.jig.inputs.user
+  
+  mood-checkins:
+    type: datasource.sqlite
+    options:
+      provider: DATA_PROVIDER_DYNAMIC
+  
+      entities:
+        - default/mood-checkins
+  
+      query: 
+        SELECT 
+          id, 
+          '$.gems', 
+          '$.user' 
+        FROM [default/mood-checkins] 
+        WHERE '$.user' = @user
+      queryParameters:
+        user: =@ctx.jig.inputs.user
 
   child-data:
     type: datasource.sqlite
@@ -58,13 +138,11 @@ datasources:
         WHERE user is @child
         GROUP BY  user, avatar, role
       queryParameters:
-        child: =@ctx.jig.inputs.email
+        child: =@ctx.jig.inputs.user
+        
 children:
   - type: component.list
     options:
-      isHorizontal: true
-      isHorizontalScrollIndicatorHidden: true
-      maximumItemsToRender: 3
       data: =@ctx.datasources.extra-reward
       item: 
         type: component.custom-component
@@ -75,3 +153,28 @@ children:
           gems: =$sum(@ctx.datasources.child-data.total_strategies_results_gems) + $sum(@ctx.datasources.child-data.total_mood_checkins_gems)
           goTo: create-new-event
           full: true
+          hasDetail: false 
+  - type: component.custom-component
+    componentId: title
+    inputs:
+      title: Badges
+      subtitle: =$count(@ctx.datasources.results-rewards) = 0 ? @ctx.datasources.child-data.name & ' ' & "hasn't earned any badges yet":'20 points gained for every finished strategy, in total:' & ' ' & $sum(@ctx.datasources.strategies-results.gems)
+  - type: component.list
+    options:
+      isHorizontal: true
+      isHorizontalScrollIndicatorHidden: true
+      maximumItemsToRender: 3
+      data: =@ctx.datasources.results-rewards
+      item: 
+        type: component.custom-component
+        componentId: achievement
+        inputs:
+          rewards: =@ctx.current.item
+          description: ='You completed strategy ' & @ctx.current.item.stategy_name & ' ' & @ctx.current.item.goal & ' times'
+          progressbar: false
+          user: =@ctx.jig.inputs.user
+  - type: component.custom-component
+    componentId: title
+    inputs:
+      title: Mood checks
+      subtitle: ='10 points gained for every mood check, in total:' & ' ' & $sum(@ctx.datasources.mood-checkins.gems)

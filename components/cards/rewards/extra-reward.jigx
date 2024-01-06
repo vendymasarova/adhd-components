@@ -12,6 +12,7 @@ children:
           bottom: small
       onPress: 
         type: action.go-to
+        when: =@ctx.inputs.hasDetail != false and @ctx.inputs.rewards.image != null
         options:
           linkTo: extra-reward-detail
           parameters:

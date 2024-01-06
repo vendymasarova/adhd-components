@@ -79,3 +79,5 @@ item:
     isUserChild: =@ctx.user.email = @ctx.datasources.extra-reward.user
     rewards: =@ctx.current.item
     gems: =$sum(@ctx.datasources.child-data.total_strategies_results_gems) + $sum(@ctx.datasources.child-data.total_mood_checkins_gems)
+    user: =@ctx.jig.inputs.email
+    hasDetail: true

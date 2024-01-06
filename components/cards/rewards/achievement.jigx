@@ -7,6 +7,13 @@ children:
           grow: 1
         margin:
           right: small
+      onPress: 
+        type: action.go-to
+        options:
+          linkTo: strategy-detail
+          parameters:
+            strategyId: =@ctx.inputs.rewards.strategy_id
+            email: =@ctx.inputs.user
       children:
         - type: component.card
           options:
